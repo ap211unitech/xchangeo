@@ -32,7 +32,10 @@ contract ERC20Token is ERC20Capped, ERC20Burnable, Ownable {
         return _logoIpfsCid;
     }
 
-    function mint(address account, uint256 amount) public returns (bool) {
+    function mint(
+        address account,
+        uint256 amount
+    ) public onlyOwner returns (bool) {
         _mint(account, amount);
         return true;
     }
