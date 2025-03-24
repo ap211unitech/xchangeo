@@ -51,5 +51,10 @@ interface IERC20Faucet {
     function setLockTime(uint256 lockTime) external;
 
     // Get Balance of Faucet
-    function getBalance() external returns (uint256);
+    function getBalance() external view returns (uint256);
+
+    // Get next access time
+    function getNextAccessTime(
+        address user
+    ) external view returns (uint256, uint256);
 }
