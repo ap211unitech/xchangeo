@@ -4,11 +4,7 @@ import { AddressLike, ContractTransactionResponse, Typed } from "ethers";
 
 import { ERC20Token } from "../typechain-types";
 import { formatUnits, parseUnits } from "../utils";
-
-const TOKEN_NAME = "Tether USD";
-const TOKEN_SYMBOL = "USDT";
-const TOKEN_LOGO_CID = "USDT";
-const TOKEN_MAXIMUM_CAP = 100_000_000; // 100 million
+import { deployERC20TokenContract, TOKEN } from "./consts";
 
 describe("ERC20Token contract", () => {
   // global vars
@@ -20,16 +16,10 @@ describe("ERC20Token contract", () => {
   let addr2: { address: Typed | AddressLike };
 
   beforeEach(async function () {
-    // Get the ContractFactory and Signers here.
-    const Token = await hre.ethers.getContractFactory("ERC20Token");
+    // Get Signers here.
     [owner, addr1, addr2] = await hre.ethers.getSigners();
 
-    usdtToken = await Token.deploy(
-      TOKEN_NAME,
-      TOKEN_SYMBOL,
-      TOKEN_LOGO_CID,
-      TOKEN_MAXIMUM_CAP
-    );
+    usdtToken = await deployERC20TokenContract();
   });
 
   describe("Deployment", function () {
@@ -38,15 +28,15 @@ describe("ERC20Token contract", () => {
     });
 
     it("Should set the metadata", async function () {
-      expect(await usdtToken.name()).to.equal(TOKEN_NAME);
-      expect(await usdtToken.symbol()).to.equal(TOKEN_SYMBOL);
+      expect(await usdtToken.name()).to.equal(TOKEN.name);
+      expect(await usdtToken.symbol()).to.equal(TOKEN.symbol);
       expect(await usdtToken.decimals()).to.equal(18);
-      expect(await usdtToken.logo()).to.equal(TOKEN_LOGO_CID);
+      expect(await usdtToken.logo()).to.equal(TOKEN.logoIpfsCid);
     });
 
     it("Should assign the initial supply to 10 million", async function () {
       const totalSupply = await usdtToken.totalSupply();
-      expect(formatUnits(totalSupply)).to.equal(TOKEN_MAXIMUM_CAP / 10);
+      expect(formatUnits(totalSupply)).to.equal(TOKEN.maximumCap / 10);
     });
 
     it("Should assign the initial supply of tokens to the owner", async function () {
@@ -56,7 +46,7 @@ describe("ERC20Token contract", () => {
 
     it("Should set the max capped supply to 100 millions", async function () {
       const cap = await usdtToken.cap();
-      expect(Number(formatUnits(cap))).to.equal(TOKEN_MAXIMUM_CAP);
+      expect(Number(formatUnits(cap))).to.equal(TOKEN.maximumCap);
     });
   });
 
@@ -83,7 +73,7 @@ describe("ERC20Token contract", () => {
       const totalSupply = formatUnits(await usdtToken.totalSupply());
 
       // Mint remaining supply between some accounts in random proportion //
-      const REMAINING_SUPPY = TOKEN_MAXIMUM_CAP - totalSupply;
+      const REMAINING_SUPPY = TOKEN.maximumCap - totalSupply;
 
       const PART_1 = parseUnits(REMAINING_SUPPY * 0.2);
       const PART_2 = parseUnits(REMAINING_SUPPY * 0.3);
@@ -102,7 +92,7 @@ describe("ERC20Token contract", () => {
       const totalSupply = formatUnits(await usdtToken.totalSupply());
 
       const MINIMUM_AMOUNT_TO_EXCEED_MAX_CAP =
-        parseUnits(TOKEN_MAXIMUM_CAP - totalSupply) + BigInt(1);
+        parseUnits(TOKEN.maximumCap - totalSupply) + BigInt(1);
 
       await expect(
         usdtToken.mint(addr1.address, MINIMUM_AMOUNT_TO_EXCEED_MAX_CAP)
