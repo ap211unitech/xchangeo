@@ -81,6 +81,18 @@ contract ERC20Faucet is IERC20Faucet, Ownable {
     }
 
     /******************** Getters ********************/
+    function getToken() external view returns (address) {
+        return address(token);
+    }
+
+    function getLockTime() external view returns (uint256) {
+        return lockTime;
+    }
+
+    function getWithdrawalAmount() external view returns (uint256) {
+        return withdrawalAmount;
+    }
+
     function getBalance() external view returns (uint256) {
         return token.balanceOf(address(this));
     }
