@@ -77,6 +77,9 @@ describe("ERC20Faucet Contract", () => {
       expect(await usdtToken.balanceOf(await faucet.getAddress())).to.be.equal(
         mintBalance - FAUCET.withdrawlAmount
       );
+      expect(await faucet.getBalance()).to.be.equal(
+        mintBalance - FAUCET.withdrawlAmount
+      );
     });
 
     it("Should increase user balance", async () => {
@@ -107,7 +110,7 @@ describe("ERC20Faucet Contract", () => {
         );
     });
 
-    it("Should wait till next access time", async () => {
+    it("Should throw error Insufficient Time Elapsed", async () => {
       // Requesting second time
       await expect(
         faucet.connect(addr1 as any).requestTokens()
@@ -115,6 +118,15 @@ describe("ERC20Faucet Contract", () => {
         faucet,
         "Faucet__InsufficientTimeElapsed"
       );
+    });
+
+    it("Should throw error if faucet doesn't have enough funds", async () => {
+      // withdraw all funds from faucet
+      await faucet.withdraw();
+
+      await expect(
+        faucet.connect(addr1 as any).requestTokens()
+      ).to.be.revertedWithCustomError(faucet, "Faucet__InsufficientFunds");
     });
   });
 });
