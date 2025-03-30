@@ -137,6 +137,12 @@ describe("ERC20Faucet Contract", () => {
       await faucet.setLockTime(newLockTime);
     });
 
+    it("Should not set lock time by any random user", async () => {
+      await expect(
+        faucet.connect(addr1 as any).setLockTime(newLockTime)
+      ).to.be.revertedWithCustomError(faucet, "OwnableUnauthorizedAccount");
+    });
+
     it("Should set new lockTime", async () => {
       expect(await faucet.getLockTime()).to.be.equal(newLockTime);
     });
@@ -165,6 +171,76 @@ describe("ERC20Faucet Contract", () => {
         expect(await usdtToken.balanceOf(addr2.address)).to.be.equal(
           BigInt(2 * Number(FAUCET.withdrawlAmount))
         );
+      });
+    });
+  });
+
+  describe("Set Withdrawal Amount", async () => {
+    const newWithdrawalAmount = parseUnits(100);
+    beforeEach(async () => {
+      await faucet.setWithdrawalAmount(newWithdrawalAmount);
+    });
+
+    it("Should not set withdrawal amount by any random user", async () => {
+      await expect(
+        faucet.connect(addr1 as any).setWithdrawalAmount(newWithdrawalAmount)
+      ).to.be.revertedWithCustomError(faucet, "OwnableUnauthorizedAccount");
+    });
+
+    it("Should set new withdrawalAmount", async () => {
+      expect(await faucet.getWithdrawalAmount()).to.be.equal(
+        newWithdrawalAmount
+      );
+    });
+
+    describe("Request tokens", () => {
+      let tx: ContractTransactionResponse;
+      let initialFaucetBalance = BigInt(0);
+      const mintBalance = parseUnits(1000);
+      beforeEach(async () => {
+        // Mint Some Balance to faucet
+        await usdtToken.mint(await faucet.getAddress(), mintBalance);
+
+        initialFaucetBalance = await faucet.getBalance();
+        tx = await faucet.connect(addr2 as any).requestTokens();
+      });
+
+      it("Should decrease faucet balance", async () => {
+        // Faucet Balance should decrease by withdrawal amount
+        expect(
+          await usdtToken.balanceOf(await faucet.getAddress())
+        ).to.be.equal(mintBalance - newWithdrawalAmount);
+        expect(await faucet.getBalance()).to.be.equal(
+          mintBalance - newWithdrawalAmount
+        );
+      });
+
+      it("Should increase user balance", async () => {
+        // User Balance should increase by withdrawal amount
+        expect(await usdtToken.balanceOf(addr2.address)).to.be.equal(
+          newWithdrawalAmount
+        );
+      });
+
+      it("Should have correct nextAccessTime", async () => {
+        const prevAccessTime = BigInt((await tx.getBlock())?.timestamp || 0);
+        const nextAccessTime = await faucet.getNextAccessTime(addr2.address);
+
+        // Verify nextAccessTime
+        expect(nextAccessTime - prevAccessTime).to.be.equal(FAUCET.lockTime);
+      });
+
+      it("Should emit event", async () => {
+        await expect(tx)
+          .to.be.emit(faucet, "Faucet__ReceivedFunds")
+          .withArgs(
+            await faucet.getAddress(),
+            addr2.address,
+            newWithdrawalAmount,
+            (
+              await tx.getBlock()
+            )?.timestamp
+          );
       });
     });
   });
