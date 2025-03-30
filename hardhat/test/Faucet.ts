@@ -8,7 +8,7 @@ import {
   deployERC20TokenFaucetContract,
   FAUCET,
 } from "./consts";
-import { parseUnits } from "../utils";
+import { parseUnits, sleep } from "../utils";
 
 describe("ERC20Faucet Contract", () => {
   // global vars
@@ -127,6 +127,45 @@ describe("ERC20Faucet Contract", () => {
       await expect(
         faucet.connect(addr1 as any).requestTokens()
       ).to.be.revertedWithCustomError(faucet, "Faucet__InsufficientFunds");
+    });
+  });
+
+  describe("Set Lock Time", () => {
+    const newLockTime = 1; // 1s
+
+    beforeEach(async () => {
+      await faucet.setLockTime(newLockTime);
+    });
+
+    it("Should set new lockTime", async () => {
+      expect(await faucet.getLockTime()).to.be.equal(newLockTime);
+    });
+
+    describe("Request tokens", () => {
+      let initialFaucetBalance = BigInt(0);
+      const mintBalance = parseUnits(10);
+      beforeEach(async () => {
+        // Mint Some Balance to faucet
+        await usdtToken.mint(await faucet.getAddress(), mintBalance);
+
+        initialFaucetBalance = await faucet.getBalance();
+        await faucet.connect(addr2 as any).requestTokens();
+      });
+
+      it("Should request tokens after time elapsed according to new lock time", async () => {
+        await sleep(newLockTime);
+        await faucet.connect(addr2 as any).requestTokens();
+
+        // Should decrease faucet balance
+        expect(await faucet.getBalance()).to.be.equal(
+          initialFaucetBalance - BigInt(2 * Number(FAUCET.withdrawlAmount))
+        );
+
+        // Should increase faucet balance
+        expect(await usdtToken.balanceOf(addr2.address)).to.be.equal(
+          BigInt(2 * Number(FAUCET.withdrawlAmount))
+        );
+      });
     });
   });
 });
