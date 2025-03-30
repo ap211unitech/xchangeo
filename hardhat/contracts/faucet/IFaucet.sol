@@ -28,7 +28,8 @@ interface IERC20Faucet {
     event Faucet__ReceivedFunds(
         address indexed from,
         address indexed to,
-        uint256 indexed amount
+        uint256 indexed amount,
+        uint256 timestamp
     );
 
     // Emit when owner withdraw all tokens from faucet
@@ -54,7 +55,5 @@ interface IERC20Faucet {
     function getBalance() external view returns (uint256);
 
     // Get next access time
-    function getNextAccessTime(
-        address user
-    ) external view returns (uint256, uint256);
+    function getNextAccessTime(address user) external view returns (uint256);
 }

@@ -57,7 +57,12 @@ contract ERC20Faucet is IERC20Faucet, Ownable {
         nextAccessTime[msg.sender] = block.timestamp + lockTime;
         token.transfer(msg.sender, withdrawalAmount);
 
-        emit Faucet__ReceivedFunds(address(this), msg.sender, withdrawalAmount);
+        emit Faucet__ReceivedFunds(
+            address(this),
+            msg.sender,
+            withdrawalAmount,
+            block.timestamp
+        );
 
         return true;
     }
@@ -97,9 +102,7 @@ contract ERC20Faucet is IERC20Faucet, Ownable {
         return token.balanceOf(address(this));
     }
 
-    function getNextAccessTime(
-        address user
-    ) external view returns (uint256, uint256) {
-        return (nextAccessTime[user], block.timestamp);
+    function getNextAccessTime(address user) external view returns (uint256) {
+        return (nextAccessTime[user]);
     }
 }
