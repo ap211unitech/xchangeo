@@ -2,11 +2,13 @@
 
 pragma solidity ^0.8.28;
 
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
 import {ERC20Token} from "../../token/Token.sol";
 import {LpToken} from "../../token/LpToken.sol";
 import "./IERC20SwapPool.sol";
 
-contract ERC20SwapPool is IERC20SwapPool {
+contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     ERC20Token private token1;
     ERC20Token private token2;
     LpToken private lpToken;
