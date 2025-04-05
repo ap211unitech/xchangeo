@@ -10,12 +10,12 @@ contract ERC20SwapPool is IERC20SwapPool {
     ERC20Token private token1;
     ERC20Token private token2;
     LpToken private lpToken;
-    uint16 private fee; // if 100, it means 1%
+    uint private fee; // if 100, it means 1%
 
     constructor(
         address _token1,
         address _token2,
-        uint16 _fee,
+        uint _fee,
         string memory _lpTokenName,
         string memory _lpTokenSymbol,
         string memory _lpTokenLogo
@@ -34,5 +34,21 @@ contract ERC20SwapPool is IERC20SwapPool {
         fee = _fee;
 
         lpToken = new LpToken(_lpTokenName, _lpTokenSymbol, _lpTokenLogo);
+    }
+
+    /******************** Getters ********************/
+    function getTokens() public view returns (address, address) {
+        return (address(token1), address(token2));
+    }
+
+    function getReserves() external view returns (uint256, uint256) {
+        return (
+            token1.balanceOf(address(this)),
+            token2.balanceOf(address(this))
+        );
+    }
+
+    function getFee() external view returns (uint) {
+        return fee;
     }
 }
