@@ -4,10 +4,11 @@ pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 import "./IFaucet.sol";
 
-contract ERC20Faucet is IERC20Faucet, Ownable {
+contract ERC20Faucet is IERC20Faucet, Ownable, ReentrancyGuard {
     IERC20 private token;
     uint256 private lockTime;
     uint256 private withdrawalAmount;
@@ -24,7 +25,7 @@ contract ERC20Faucet is IERC20Faucet, Ownable {
         withdrawalAmount = _withdrawalAmount;
     }
 
-    function requestTokens() external returns (bool) {
+    function requestTokens() external nonReentrant returns (bool) {
         if (msg.sender == address(0)) {
             revert Faucet__InvalidSender(
                 address(token),
@@ -67,7 +68,7 @@ contract ERC20Faucet is IERC20Faucet, Ownable {
         return true;
     }
 
-    function withdraw() external onlyOwner returns (bool) {
+    function withdraw() external nonReentrant onlyOwner returns (bool) {
         token.transfer(msg.sender, token.balanceOf(address(this)));
         emit Faucet__Withdraw(
             address(this),
@@ -77,11 +78,13 @@ contract ERC20Faucet is IERC20Faucet, Ownable {
         return true;
     }
 
-    function setWithdrawalAmount(uint256 _withdrawalAmount) external onlyOwner {
+    function setWithdrawalAmount(
+        uint256 _withdrawalAmount
+    ) external nonReentrant onlyOwner {
         withdrawalAmount = _withdrawalAmount;
     }
 
-    function setLockTime(uint256 _lockTime) external onlyOwner {
+    function setLockTime(uint256 _lockTime) external nonReentrant onlyOwner {
         lockTime = _lockTime;
     }
 
