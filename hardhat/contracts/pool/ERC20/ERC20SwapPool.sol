@@ -15,7 +15,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     ERC20Token private immutable token1;
     ERC20Token private immutable token2;
     LpToken private immutable lpToken;
-    uint private fee; // if 100, it means 1%
+    uint private constant fee = 30; // 0.3%
 
     constructor(
         address _token1,
@@ -36,7 +36,6 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
 
         token1 = ERC20Token(_token1);
         token2 = ERC20Token(_token2);
-        fee = _fee;
 
         lpToken = new LpToken(_lpTokenName, _lpTokenSymbol, _lpTokenLogo);
     }
@@ -126,7 +125,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         );
     }
 
-    function getFee() external view returns (uint) {
+    function getFee() external pure returns (uint) {
         return fee;
     }
 }

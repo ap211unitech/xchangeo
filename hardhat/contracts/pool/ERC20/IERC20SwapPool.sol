@@ -35,5 +35,5 @@ interface IERC20SwapPool {
 
     function getReserves() external view returns (uint256, uint256);
 
-    function getFee() external view returns (uint);
+    function getFee() external pure returns (uint);
 }
