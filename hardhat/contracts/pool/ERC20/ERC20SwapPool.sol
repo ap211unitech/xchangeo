@@ -131,13 +131,19 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     function getAmountOut(
         uint256 amountIn,
         address tokenIn
-    ) public view returns (uint256, uint256, uint256, bool) {
+    ) public view returns (address, uint256, uint256, uint256, bool) {
         if (!(address(token1) == tokenIn || address(token2) == tokenIn)) {
             revert ERC20SwapPool__InvalidTokenAddress("Invalid token");
         }
 
         bool isToken1 = address(token1) == tokenIn;
         (uint256 reserve_1, uint256 reserve_2) = getReserves();
+
+        address tokenOut = isToken1 ? address(token2) : address(token1);
+
+        (uint256 resIn, uint256 resOut) = isToken1
+            ? (reserve_1, reserve_2)
+            : (reserve_2, reserve_1);
 
         // xy = k
         // (x + dx.(1-f))(y - dy) = k
@@ -151,15 +157,11 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
 
         uint256 amountInWithFee = (amountIn * (10000 - fee));
 
-        (uint256 resIn, uint256 resOut) = isToken1
-            ? (reserve_1, reserve_2)
-            : (reserve_2, reserve_1);
-
         uint256 numerator = resOut * amountInWithFee;
         uint256 denominator = (10000 * resIn) + amountInWithFee;
         uint256 amountOut = numerator / denominator;
 
-        return (amountOut, resIn, resOut, isToken1);
+        return (tokenOut, amountOut, resIn, resOut, isToken1);
     }
 
     function getTokens() public view returns (address, address) {
