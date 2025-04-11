@@ -11,7 +11,7 @@ interface IERC20SwapPool {
 
     error ERC20SwapPool__InvalidTokenRatio(string description);
 
-    error ERC20SwapPool__MintingLpTokensTooLess(string description);
+    error ERC20SwapPool__ZeroLiquidityToken(string description);
 
     event LiquidityAdded(
         address indexed pool,

@@ -17,6 +17,9 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     LpToken private immutable lpToken;
     uint private constant fee = 30; // 0.3%
 
+    uint256 private reserve1;
+    uint256 private reserve2;
+
     constructor(
         address _token1,
         address _token2,
@@ -38,6 +41,11 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         token2 = ERC20Token(_token2);
 
         lpToken = new LpToken(_lpTokenName, _lpTokenSymbol, _lpTokenLogo);
+    }
+
+    function _updateReserves(uint256 _reserve1, uint256 _reserve2) internal {
+        reserve1 = _reserve1;
+        reserve2 = _reserve2;
     }
 
     function addLiquidity(
@@ -90,13 +98,19 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         }
 
         if (mintingLpTokens == 0) {
-            revert ERC20SwapPool__MintingLpTokensTooLess(
+            revert ERC20SwapPool__ZeroLiquidityToken(
                 "Can not mint 0 LP tokens"
             );
         }
 
         lpToken.mint(msg.sender, mintingLpTokens);
 
+        // Update Reserves/Liquidity
+        uint256 new_reserve1 = reserve_1 + amountToken1;
+        uint256 new_reserve2 = reserve_2 + amountToken2;
+        _updateReserves(new_reserve1, new_reserve2);
+
+        // Emit event
         emit LiquidityAdded(
             address(this),
             address(token1),
@@ -104,8 +118,8 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
             amountToken1,
             amountToken2,
             mintingLpTokens,
-            token1.balanceOf(address(this)),
-            token2.balanceOf(address(this)),
+            new_reserve1,
+            new_reserve2,
             block.timestamp,
             msg.sender
         );
@@ -119,10 +133,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     }
 
     function getReserves() public view returns (uint256, uint256) {
-        return (
-            token1.balanceOf(address(this)),
-            token2.balanceOf(address(this))
-        );
+        return (reserve1, reserve2);
     }
 
     function getFee() external pure returns (uint) {
