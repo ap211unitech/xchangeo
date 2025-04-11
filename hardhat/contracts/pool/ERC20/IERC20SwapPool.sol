@@ -31,6 +31,11 @@ interface IERC20SwapPool {
         uint256 _amountTokenB
     ) external returns (uint256);
 
+    function getAmountOut(
+        uint256 amountIn,
+        address tokenIn
+    ) external view returns (uint256, uint256, uint256, bool);
+
     function getTokens() external view returns (address, address);
 
     function getReserves() external view returns (uint256, uint256);

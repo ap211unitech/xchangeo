@@ -15,7 +15,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     ERC20Token private immutable token1;
     ERC20Token private immutable token2;
     LpToken private immutable lpToken;
-    uint private constant fee = 30; // 0.3%
+    uint private constant fee = 30; // fee is in basis points: 30 = 0.3%, 1000 = 10%
 
     uint256 private reserve1;
     uint256 private reserve2;
@@ -128,6 +128,40 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     }
 
     /******************** Getters ********************/
+    function getAmountOut(
+        uint256 amountIn,
+        address tokenIn
+    ) public view returns (uint256, uint256, uint256, bool) {
+        if (!(address(token1) == tokenIn || address(token2) == tokenIn)) {
+            revert ERC20SwapPool__InvalidTokenAddress("Invalid token");
+        }
+
+        bool isToken1 = address(token1) == tokenIn;
+        (uint256 reserve_1, uint256 reserve_2) = getReserves();
+
+        // xy = k
+        // (x + dx.(1-f))(y - dy) = k
+        // dy = y.dx.(1-f)/(x+dx.(1-f))
+
+        // since fee in basis points
+
+        //                y.dx.(100_00 - f)
+        // so, dy = ------------------------------
+        //           (100_00.x + dx.(100_00 - f))
+
+        uint256 amountInWithFee = (amountIn * (10000 - fee));
+
+        (uint256 resIn, uint256 resOut) = isToken1
+            ? (reserve_1, reserve_2)
+            : (reserve_2, reserve_1);
+
+        uint256 numerator = resOut * amountInWithFee;
+        uint256 denominator = (10000 * resIn) + amountInWithFee;
+        uint256 amountOut = numerator / denominator;
+
+        return (amountOut, resIn, resOut, isToken1);
+    }
+
     function getTokens() public view returns (address, address) {
         return (address(token1), address(token2));
     }
