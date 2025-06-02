@@ -1,9 +1,12 @@
+import { FlatCompat } from "@eslint/eslintrc";
+import nextPlugin from "@next/eslint-plugin-next";
+import importPlugin from "eslint-plugin-import";
+import prettier from "eslint-plugin-prettier";
+import reactHooks from "eslint-plugin-react-hooks";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-import reactHooks from "eslint-plugin-react-hooks";
-import nextPlugin from "@next/eslint-plugin-next";
-import prettier from "eslint-plugin-prettier";
+
 import prettierConfig from "./prettier.config.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,6 +24,9 @@ const eslintConfig = [
       "react-hooks": reactHooks,
       "@next/next": nextPlugin,
       prettier,
+
+      "simple-import-sort": simpleImportSort,
+      import: importPlugin,
     },
     rules: {
       "react-hooks/rules-of-hooks": "error",
@@ -43,6 +49,18 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": "warn",
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "@next/next/no-html-link-for-pages": "error",
+
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+
+      // ✅ Add structured import groups
+      "import/order": [
+        "warn",
+        {
+          groups: [["builtin", "external"], ["internal"], ["parent", "sibling", "index"]],
+          "newlines-between": "always",
+        },
+      ],
     },
   },
 ];
