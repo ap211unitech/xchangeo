@@ -48,10 +48,96 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         reserve2 = _reserve2;
     }
 
+    function swap(
+        address _tokenIn,
+        uint256 amountIn,
+        uint256 minAmountOut
+    ) external nonReentrant returns (bool) {
+        if (amountIn == 0) {
+            revert ERC20SwapPool__InvalidAmount(
+                "Amount must be greater than zero"
+            );
+        }
+
+        (
+            ,
+            uint256 amountOut,
+            uint256 reserveIn,
+            uint256 reserveOut,
+            bool isToken1
+        ) = getAmountOut(amountIn, _tokenIn);
+
+        // Handle Slippage
+        if (amountOut < minAmountOut) {
+            revert ERC20SwapPool__Slippage("Slippage: amountOut too low");
+        }
+
+        if (reserveIn == 0 || reserveOut == 0) {
+            revert ERC20SwapPool__InvalidAmount("Pool is empty");
+        }
+
+        (
+            uint256 new_reserve1,
+            uint new_reserve2,
+            ERC20Token tokenIn,
+            ERC20Token tokenOut
+        ) = isToken1
+                ? (reserveIn + amountIn, reserveOut - amountOut, token1, token2)
+                : (
+                    reserveOut - amountOut,
+                    reserveIn + amountIn,
+                    token2,
+                    token1
+                );
+
+        // Transfer input token amount to pool
+        bool success = tokenIn.transferFrom(
+            msg.sender,
+            address(this),
+            amountIn
+        );
+        if (!success) {
+            revert ERC20SwapPool__TransferFailed(
+                "Swap failed: Can not transfer input amount to pool"
+            );
+        }
+
+        _updateReserves(new_reserve1, new_reserve2);
+
+        // Transfer amountOut to user
+        success = tokenOut.transfer(msg.sender, amountOut);
+        if (!success) {
+            revert ERC20SwapPool__TransferFailed(
+                "Swap failed: Can not transfer output amount to user"
+            );
+        }
+
+        // Emit event
+        emit TokenSwapped(
+            address(this),
+            address(tokenIn),
+            address(tokenOut),
+            amountIn,
+            amountOut,
+            new_reserve1,
+            new_reserve2,
+            block.timestamp,
+            msg.sender
+        );
+
+        return true;
+    }
+
     function addLiquidity(
         uint256 amountToken1,
         uint256 amountToken2
     ) external nonReentrant returns (uint256) {
+        if (amountToken1 == 0 || amountToken2 == 0) {
+            revert ERC20SwapPool__InvalidAmount(
+                "Amount must be greater than zero"
+            );
+        }
+
         (uint256 reserve_1, uint256 reserve_2) = getReserves();
 
         if (reserve_1 > 0 || reserve_2 > 0) {
