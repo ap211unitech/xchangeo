@@ -73,7 +73,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         }
 
         if (reserveIn == 0 || reserveOut == 0) {
-            revert ERC20SwapPool__InvalidAmount("Pool is empty");
+            revert ERC20SwapPool__InsufficientReserves("Pool is empty");
         }
 
         (
@@ -213,6 +213,58 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         return mintingLpTokens;
     }
 
+    function removeLiquidity(
+        uint256 liquidityPoolTokens
+    )
+        external
+        nonReentrant
+        returns (uint256 amountTokenA, uint256 amountTokenB)
+    {
+        if (liquidityPoolTokens == 0) {
+            revert ERC20SwapPool__InvalidAmount("Zero Liquidity Tokens");
+        }
+
+        (amountTokenA, amountTokenB) = getAmountsOnRemovingLiquidity(
+            liquidityPoolTokens
+        );
+
+        (uint256 reserve_1, uint256 reserve_2) = getReserves();
+
+        if (amountTokenA == 0 || amountTokenB == 0) {
+            revert ERC20SwapPool__InvalidAmount("Calculated zero amounts");
+        }
+
+        if (amountTokenA > reserve_1 || amountTokenB > reserve_2) {
+            revert ERC20SwapPool__InsufficientReserves("Insufficient Reserves");
+        }
+
+        // Burn LP tokens from the user
+        lpToken.burnFrom(msg.sender, liquidityPoolTokens);
+
+        // Update reserves after burning
+        uint256 new_reserve1 = reserve_1 - amountTokenA;
+        uint256 new_reserve2 = reserve_2 - amountTokenB;
+        _updateReserves(new_reserve1, new_reserve2);
+
+        // Transfer tokens to user
+        token1.transfer(msg.sender, amountTokenA);
+        token2.transfer(msg.sender, amountTokenB);
+
+        // Emit event
+        emit LiquidityRemoved(
+            address(this),
+            address(token1),
+            address(token2),
+            liquidityPoolTokens,
+            amountTokenA,
+            amountTokenB,
+            new_reserve1,
+            new_reserve2,
+            block.timestamp,
+            msg.sender
+        );
+    }
+
     /******************** Getters ********************/
     function getAmountOut(
         uint256 amountIn,
@@ -248,6 +300,30 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         uint256 amountOut = numerator / denominator;
 
         return (tokenOut, amountOut, resIn, resOut, isToken1);
+    }
+
+    function getAmountsOnRemovingLiquidity(
+        uint256 liquidityPoolTokens
+    ) public view returns (uint256 amountTokenA, uint256 amountTokenB) {
+        if (liquidityPoolTokens == 0) {
+            revert ERC20SwapPool__InvalidAmount("Zero Liquidity Tokens");
+        }
+
+        // t = totalSupply of liquidity pool tokens
+        // s = liquidityPoolTokens
+        // l = liquidity (reserve0 || reserve1)
+        // dl = liquidity to be removed (amount0 || amount1)
+
+        // The change in liquidity/token reserves should be proportional to shares burned
+        //        l.s
+        // dl = -------
+        //         t
+
+        (uint256 reserve_1, uint256 reserve_2) = getReserves();
+        uint256 totalSupply = lpToken.totalSupply();
+
+        amountTokenA = reserve_1.mulDiv(liquidityPoolTokens, totalSupply);
+        amountTokenB = reserve_2.mulDiv(liquidityPoolTokens, totalSupply);
     }
 
     function getTokens() public view returns (address, address) {
