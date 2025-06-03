@@ -322,6 +322,10 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         (uint256 reserve_1, uint256 reserve_2) = getReserves();
         uint256 totalSupply = lpToken.totalSupply();
 
+        if (totalSupply == 0) {
+            revert ERC20SwapPool__InvalidAmount("Zero LP Total Supply");
+        }
+
         amountTokenA = reserve_1.mulDiv(liquidityPoolTokens, totalSupply);
         amountTokenB = reserve_2.mulDiv(liquidityPoolTokens, totalSupply);
     }
