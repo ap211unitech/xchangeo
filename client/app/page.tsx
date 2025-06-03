@@ -1,3 +1,10 @@
+import { XchangeoLogo } from "@/components";
+
 export default function Home() {
-  return <div>Welcome to Xchangeo!</div>;
+  return (
+    <div>
+      <XchangeoLogo isFull />
+      Welcome to Xchangeo!
+    </div>
+  );
 }
