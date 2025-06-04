@@ -6,7 +6,7 @@ module.exports = {
   insertPragma: false,
   jsxSingleQuote: false,
   plugins: ["prettier-plugin-tailwindcss"],
-  printWidth: 200,
+  printWidth: 150,
   proseWrap: "always",
   quoteProps: "as-needed",
   requirePragma: false,
