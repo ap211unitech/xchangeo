@@ -1,10 +1,12 @@
-import { XchangeoLogo } from "@/components";
+import { XchangeoLogo } from "@/components/ui";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div>
+    <>
       <XchangeoLogo isFull />
       Welcome to Xchangeo!
-    </div>
+      <Button>Launch App</Button>
+    </>
   );
 }
