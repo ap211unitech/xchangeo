@@ -1,8 +1,10 @@
-import { Circle, TriangleAlert } from "lucide-react";
+import { Circle } from "lucide-react";
 import { Unbounded } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import NotFoundImage from "@/public/notFound.png";
 
 const font = Unbounded({
   subsets: ["cyrillic-ext"],
@@ -13,7 +15,7 @@ export const NotFound = () => {
   return (
     <div className="flex flex-col items-center justify-center pt-20 md:flex-row md:items-start md:gap-16">
       <div>
-        <TriangleAlert className="stroke-primary h-[18rem] w-[18rem] xl:h-[25rem] xl:w-[25rem]" />
+        <Image placeholder="blur" alt="Not Found" src={NotFoundImage} width={500} height={500} />
       </div>
       <div className="mt-6 flex flex-col items-center space-y-6 md:items-start">
         <h1 className={cn("text-8xl font-semibold tracking-widest", font.className)}>404</h1>
