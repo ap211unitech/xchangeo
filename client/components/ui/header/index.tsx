@@ -24,12 +24,14 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Link href="/">
-              <XchangeoLogo isFull />
+              <XchangeoLogo isFull textClass="hidden md:block" />
             </Link>
             <Navigation />
           </div>
           <div>
-            <Button>Start Trading</Button>
+            <Button className="font-semibold">
+              <Link href="/swap">Start Trading</Link>
+            </Button>
           </div>
         </div>
       </div>
