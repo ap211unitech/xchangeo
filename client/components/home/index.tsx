@@ -1,4 +1,5 @@
 import { ArrowUpRight, BarChart3, ChartSpline, Coins, Shield, Zap } from "lucide-react";
+import Link from "next/link";
 
 import { Button, Card, CardContent } from "@/components/ui";
 
@@ -54,12 +55,14 @@ export const Home = () => {
               Experience seamless AMM-based trading with lightning-fast swaps, deep liquidity, and zero intermediaries
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button className="h-full py-2 text-lg font-semibold">
-                <ChartSpline className="inline-block size-5" />
-                Start Trading
+              <Button className="h-full py-2 text-lg font-semibold" asChild>
+                <Link href="/swap">
+                  <ChartSpline className="inline-block size-5" />
+                  Start Trading
+                </Link>
               </Button>
-              <Button variant="outline" className="h-full py-2 text-lg font-semibold">
-                Browse Tokens
+              <Button variant="outline" className="h-full py-2 text-lg font-semibold" asChild>
+                <Link href="/explore/tokens">Explore Tokens</Link>
               </Button>
             </div>
           </div>
@@ -146,12 +149,14 @@ export const Home = () => {
                 Join thousands of traders who trust Xchangeo for their DeFi trading needs
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
-                <Button className="h-full py-2 text-lg font-semibold">
-                  <ChartSpline className="inline-block size-5" />
-                  Start Trading
+                <Button className="h-full py-2 text-lg font-semibold" asChild>
+                  <Link href="/swap">
+                    <ChartSpline className="inline-block size-5" />
+                    Start Trading
+                  </Link>
                 </Button>
-                <Button variant="outline" className="h-full py-2 text-lg font-semibold">
-                  Browse Tokens
+                <Button variant="outline" className="h-full py-2 text-lg font-semibold" asChild>
+                  <Link href="/explore/tokens">Explore Tokens</Link>
                 </Button>
               </div>
             </CardContent>

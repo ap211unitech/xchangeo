@@ -5,15 +5,11 @@ import { Button, XchangeoLogo } from "@/components/ui";
 
 const links = [
   {
-    href: "#",
-    title: "Privacy",
+    href: "https://github.com/ap211unitech/xchangeo/",
+    title: "Github",
   },
   {
-    href: "#",
-    title: "Terms",
-  },
-  {
-    href: "#",
+    href: "https://arjunporwal.vercel.app/contact",
     title: "Contact",
   },
 ];
@@ -30,14 +26,16 @@ export const Footer = () => {
           </div>
           <div className="[&_a]:text-foreground flex [&_a]:text-base">
             {links.map(({ title, href }) => (
-              <Button key={uuidv4()} variant="link" className="hover:text-primary transition-colors" asChild>
-                <Link href={href}>{title}</Link>
+              <Button key={uuidv4()} variant="link" className="hover:text-primary" asChild>
+                <Link target="_blank" href={href}>
+                  {title}
+                </Link>
               </Button>
             ))}
           </div>
         </div>
         <div className="text-muted-foreground mt-8 border-t border-gray-800 pt-8 text-center">
-          <p>&copy; 2025 Xchangeo. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Xchangeo. All rights reserved.</p>
         </div>
       </div>
     </footer>
