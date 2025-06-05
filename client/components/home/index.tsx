@@ -1,31 +1,31 @@
-import { ArrowUpRight, BarChart3, ChartSpline, Coins, Shield, TrendingUp, Zap } from "lucide-react";
+import { ArrowUpRight, BarChart3, ChartSpline, Coins, Shield, Zap } from "lucide-react";
 
 import { Button, Card, CardContent } from "@/components/ui";
 
-export const Home = () => {
-  const features = [
-    {
-      icon: <Zap className="h-8 w-8" />,
-      title: "Lightning Fast Swaps",
-      description: "Execute trades in milliseconds with our optimized AMM algorithm",
-    },
-    {
-      icon: <Shield className="h-8 w-8" />,
-      title: "Secure & Trustless",
-      description: "Non-custodial trading with smart contract security",
-    },
-    {
-      icon: <BarChart3 className="h-8 w-8" />,
-      title: "Deep Liquidity",
-      description: "Access to deep liquidity pools for minimal slippage",
-    },
-    {
-      icon: <Coins className="h-8 w-8" />,
-      title: "Multi-Asset Support",
-      description: "Trade hundreds of tokens across multiple networks",
-    },
-  ];
+const features = [
+  {
+    icon: <Zap className="h-8 w-8" />,
+    title: "Lightning Fast Swaps",
+    description: "Execute trades in milliseconds with our optimized AMM algorithm",
+  },
+  {
+    icon: <Shield className="h-8 w-8" />,
+    title: "Secure & Trustless",
+    description: "Non-custodial trading with smart contract security",
+  },
+  {
+    icon: <BarChart3 className="h-8 w-8" />,
+    title: "Deep Liquidity",
+    description: "Access to deep liquidity pools for minimal slippage",
+  },
+  {
+    icon: <Coins className="h-8 w-8" />,
+    title: "Multi-Asset Support",
+    description: "Trade hundreds of tokens across multiple networks",
+  },
+];
 
+export const Home = () => {
   return (
     <div className="bg-background text-foreground relative min-h-screen overflow-hidden">
       {/* Animated Background */}
@@ -158,34 +158,6 @@ export const Home = () => {
           </Card>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-gray-800 px-4 py-12 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col items-center justify-between md:flex-row">
-            <div className="mb-4 flex items-center space-x-2 md:mb-0">
-              <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
-                <TrendingUp className="h-5 w-5 text-black" />
-              </div>
-              <span className="text-primary text-2xl font-bold">Xchangeo</span>
-            </div>
-            <div className="flex space-x-6 text-gray-400">
-              <a href="#" className="hover:text-primary transition-colors">
-                Privacy
-              </a>
-              <a href="#" className="hover:text-primary transition-colors">
-                Terms
-              </a>
-              <a href="#" className="hover:text-primary transition-colors">
-                Contact
-              </a>
-            </div>
-          </div>
-          <div className="mt-8 border-t border-gray-800 pt-8 text-center text-gray-500">
-            <p>&copy; 2025 Xchangeo. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
