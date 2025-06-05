@@ -76,7 +76,16 @@ const poolLinks = [
 
 export const Navigation = () => {
   return (
-    <NavigationMenu delayDuration={0} viewport={false}>
+    <>
+      <NavigationDesktopView />
+      <NavigationMobileView />
+    </>
+  );
+};
+
+const NavigationDesktopView = () => {
+  return (
+    <NavigationMenu className="hidden md:flex" delayDuration={0} viewport={false}>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent text-base">Explore</NavigationMenuTrigger>
@@ -127,6 +136,52 @@ export const Navigation = () => {
                 ))}
               </li>
             </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+};
+
+const NavigationMobileView = () => {
+  return (
+    <NavigationMenu className="md:hidden" delayDuration={0}>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger className="bg-transparent text-base">Menu</NavigationMenuTrigger>
+          <NavigationMenuContent className="space-y-2 px-4">
+            <div className="w-40">
+              <h2 className="text-primary text-lg font-semibold">Explore</h2>
+              {exploreLinks.map(({ title, href }) => (
+                <NavigationMenuLink className="pl-4" key={uuidv4()} asChild>
+                  <Link href={href} className="font-medium">
+                    {title}
+                  </Link>
+                </NavigationMenuLink>
+              ))}
+            </div>
+
+            <div className="w-40">
+              <h2 className="text-primary text-lg font-semibold">Trade</h2>
+              {tradeLinks.map(({ title, href }) => (
+                <NavigationMenuLink className="pl-4" key={uuidv4()} asChild>
+                  <Link href={href} className="font-medium">
+                    {title}
+                  </Link>
+                </NavigationMenuLink>
+              ))}
+            </div>
+
+            <div className="w-40">
+              <h2 className="text-primary text-lg font-semibold">Pools</h2>
+              {poolLinks.map(({ title, href }) => (
+                <NavigationMenuLink className="pl-4" key={uuidv4()} asChild>
+                  <Link href={href} className="font-medium">
+                    {title}
+                  </Link>
+                </NavigationMenuLink>
+              ))}
+            </div>
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>
