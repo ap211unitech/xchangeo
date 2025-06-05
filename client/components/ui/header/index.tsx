@@ -29,7 +29,7 @@ export const Header = () => {
             <Navigation />
           </div>
           <div>
-            <Button>Launch App</Button>
+            <Button>Start Trading</Button>
           </div>
         </div>
       </div>

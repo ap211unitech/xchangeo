@@ -1,4 +1,3 @@
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 
@@ -27,6 +26,52 @@ const exploreLinks = [
     description: "View faucet transaction history.",
     href: "/explore/transactions",
   },
+  {
+    title: "All Pools",
+    description: "Explore available liquidity pools.",
+    href: "/explore/pools",
+  },
+];
+
+const tradeLinks = [
+  {
+    title: "Swap",
+    description: "Exchange tokens instantly.",
+    href: "/swap",
+  },
+  {
+    title: "Send",
+    description: "Transfer tokens.",
+    href: "/send",
+  },
+  {
+    title: "Transactions",
+    description: "View recent transactions.",
+    href: "/trade/history",
+  },
+];
+
+const poolLinks = [
+  {
+    title: "All Pools",
+    description: "Explore available liquidity pools.",
+    href: "/explore/pools",
+  },
+  {
+    title: "Add Liquidity",
+    description: "Deposit tokens to pool",
+    href: "/pools/add",
+  },
+  {
+    title: "Remove Liquidity",
+    description: "Withdraw tokens from pool",
+    href: "/pools/remove",
+  },
+  {
+    title: "My Positions",
+    description: "Manage your liquidity positions.",
+    href: "/pools/positions",
+  },
 ];
 
 export const Navigation = () => {
@@ -51,28 +96,35 @@ export const Navigation = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent text-base">With Icon</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-transparent text-base">Trade</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
+            <ul className="grid w-[250px] gap-4">
               <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleHelpIcon />
-                    Backlog
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleIcon />
-                    To Do
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleCheckIcon />
-                    Done
-                  </Link>
-                </NavigationMenuLink>
+                {tradeLinks.map(({ title, description, href }) => (
+                  <NavigationMenuLink key={uuidv4()} asChild>
+                    <Link href={href}>
+                      <div className="flex items-center gap-2 font-medium">{title}</div>
+                      <div className="text-muted-foreground">{description}</div>
+                    </Link>
+                  </NavigationMenuLink>
+                ))}
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger className="bg-transparent text-base">Pools</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[250px] gap-4">
+              <li>
+                {poolLinks.map(({ title, description, href }) => (
+                  <NavigationMenuLink key={uuidv4()} asChild>
+                    <Link href={href}>
+                      <div className="font-medium">{title}</div>
+                      <div className="text-muted-foreground">{description}</div>
+                    </Link>
+                  </NavigationMenuLink>
+                ))}
               </li>
             </ul>
           </NavigationMenuContent>
