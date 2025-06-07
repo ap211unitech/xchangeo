@@ -6,6 +6,7 @@ export * from "./header";
 export * from "./imageComponent";
 export * from "./input";
 export * from "./label";
+export * from "./loading";
 export * from "./logo";
 export * from "./navigation-menu";
 export * from "./select";
