@@ -20,7 +20,7 @@ export const TokensList = () => {
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="overflow-hidden rounded-xl border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
