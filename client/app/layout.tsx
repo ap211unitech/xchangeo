@@ -28,7 +28,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} antialiased`}>
         <AppProvider>
           <Header />
-          <main className="mx-auto min-h-[60vh] max-w-[88rem] px-4 pt-8 sm:px-6 lg:px-8">{children}</main>
+          <main className="mx-auto min-h-[60vh] max-w-[88rem] px-4 pt-8 pb-12 sm:px-6 lg:px-8">{children}</main>
           <Footer />
         </AppProvider>
       </body>
