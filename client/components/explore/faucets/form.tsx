@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -58,7 +57,7 @@ export const FaucetForm = () => {
     console.log(values);
   };
 
-  const selectedTokenInfo = useMemo(() => availableTokens.find(({ contractAddress }) => form.watch("token") === contractAddress), [form]);
+  const selectedTokenInfo = availableTokens.find(({ contractAddress }) => form.watch("token") === contractAddress);
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -126,7 +125,7 @@ export const FaucetForm = () => {
           </div>
           <div className="flex items-center">
             <div className="mr-2 h-2 w-2 rounded-full bg-blue-400"></div>
-            <span>Amount: 5 {selectedTokenInfo?.ticker}</span>
+            <span>Amount: 5 {selectedTokenInfo?.ticker || "Units"}</span>
           </div>
         </div>
         <div className="pt-2">
