@@ -1,5 +1,7 @@
 import { Bitcoin } from "lucide-react";
 
+import { TokensList } from "./tokens";
+
 export const Tokens = () => {
   return (
     <section className="space-y-10">
@@ -15,6 +17,9 @@ export const Tokens = () => {
           View all available tokens along with your current balances. Stay on top of your assets in one place.
         </p>
       </div>
+
+      {/* Tokens list */}
+      <TokensList />
     </section>
   );
 };
