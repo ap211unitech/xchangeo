@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -57,6 +58,8 @@ export const FaucetForm = () => {
     console.log(values);
   };
 
+  const selectedTokenInfo = useMemo(() => availableTokens.find(({ contractAddress }) => form.watch("token") === contractAddress), [form]);
+
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
       <CardContent>
@@ -75,7 +78,7 @@ export const FaucetForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {testTokens.map(({ logo, name, contractAddress, ticker }) => (
+                      {availableTokens.map(({ logo, name, contractAddress, ticker }) => (
                         <SelectItem key={contractAddress} value={contractAddress}>
                           <div className="relative h-6 w-6">
                             <ImageComponent fill alt={name} src={logo} />
@@ -115,18 +118,30 @@ export const FaucetForm = () => {
           </form>
         </Form>
       </CardContent>
-      <CardFooter>
-        <span className="mr-1">Got your tokens?</span>
-        <Button variant="link" className="px-0" asChild>
-          <Link href="/swap">Start swapping.</Link>
-        </Button>
+      <CardFooter className="flex-col">
+        <div className="flex w-full items-center justify-between border-b pb-4 text-xs">
+          <div className="mr-4 flex items-center">
+            <div className="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
+            <span>Rate limit: 1 request per minute</span>
+          </div>
+          <div className="flex items-center">
+            <div className="mr-2 h-2 w-2 rounded-full bg-blue-400"></div>
+            <span>Amount: 5 {selectedTokenInfo?.ticker}</span>
+          </div>
+        </div>
+        <div className="pt-2">
+          <span className="mr-1">Got your tokens?</span>
+          <Button variant="link" className="px-0" asChild>
+            <Link href="/swap">Start swapping.</Link>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
 };
 
 // Sample Data
-export const testTokens = [
+export const availableTokens = [
   {
     name: "Dai Stablecoin",
     ticker: "DAI",
