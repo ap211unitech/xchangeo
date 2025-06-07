@@ -90,7 +90,7 @@ export const Home = () => {
                     </div>
                     <div className="flex justify-center">
                       <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-full">
-                        <ArrowUpRight className="text-foreground h-5 w-5" />
+                        <ArrowUpRight className="text-primary-foreground h-5 w-5" />
                       </div>
                     </div>
                     <div className="bg-input rounded-lg p-4">
