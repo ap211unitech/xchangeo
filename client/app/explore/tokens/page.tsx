@@ -1,5 +1,7 @@
-const Tokens = () => {
-  return <div>Tokens</div>;
+import { Tokens } from "@/components/explore/tokens";
+
+const TokensPage = () => {
+  return <Tokens />;
 };
 
-export default Tokens;
+export default TokensPage;
