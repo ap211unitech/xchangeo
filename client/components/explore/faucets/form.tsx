@@ -80,7 +80,7 @@ export const FaucetForm = () => {
                     <SelectContent>
                       {availableTokens.map(({ logo, name, contractAddress, ticker }) => (
                         <SelectItem key={contractAddress} value={contractAddress}>
-                          <div className="relative h-6 w-6">
+                          <div className="relative h-6 w-6 overflow-hidden rounded-full">
                             <ImageComponent fill alt={name} src={logo} />
                           </div>
                           {name} ({ticker})

@@ -36,7 +36,7 @@ export const TokensList = () => {
 
                 return (
                   <TableHead
-                    className={cn("text-base", isActionTab && "cursor-pointer")}
+                    className={cn("px-4 text-base", isActionTab && "cursor-pointer")}
                     {...(isActionTab && { onClick: handleSort })}
                     key={header.id}
                   >
@@ -56,7 +56,11 @@ export const TokensList = () => {
             table.getRowModel().rows.map((row, index) => (
               <TableRow key={row.id} className={cn("cursor-pointer", index % 2 && "bg-muted/50")}>
                 {row.getVisibleCells().map(cell => {
-                  return <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>;
+                  return (
+                    <TableCell className="px-4" key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  );
                 })}
               </TableRow>
             ))
