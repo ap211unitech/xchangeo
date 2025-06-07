@@ -29,16 +29,14 @@ import {
 
 const formSchema = z.object({
   token: z
-    .string({
-      required_error: "Please select a token",
-    })
+    .string()
+    .nonempty("Please select a token")
     .refine(val => isAddress(val), {
       message: "Invalid contract address",
     }),
   recipientAddress: z
-    .string({
-      required_error: "Please enter a wallet address",
-    })
+    .string()
+    .nonempty("Please enter a wallet address")
     .refine(val => isAddress(val), {
       message: "Invalid Ethereum address",
     }),
@@ -60,7 +58,7 @@ export const FaucetForm = () => {
   };
 
   return (
-    <Card className="md:mx-auto md:max-w-3/4">
+    <Card className="shadow-md md:mx-auto md:max-w-3/4">
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
