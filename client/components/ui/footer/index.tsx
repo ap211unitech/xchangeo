@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 
-import { Button, XchangeoLogo } from "@/components/ui";
+import { Button, Theme, XchangeoLogo } from "@/components/ui";
 
 const links = [
   {
@@ -24,7 +24,7 @@ export const Footer = () => {
               <XchangeoLogo isFull />
             </Link>
           </div>
-          <div className="[&_a]:text-foreground flex [&_a]:text-base">
+          <div className="[&_a]:text-foreground flex items-center [&_a]:text-base">
             {links.map(({ title, href }) => (
               <Button key={uuidv4()} variant="link" className="hover:text-primary" asChild>
                 <Link target="_blank" href={href}>
@@ -32,6 +32,7 @@ export const Footer = () => {
                 </Link>
               </Button>
             ))}
+            <Theme />
           </div>
         </div>
         <div className="text-muted-foreground mt-8 border-t border-gray-800 pt-8 text-center">

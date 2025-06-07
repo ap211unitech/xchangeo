@@ -9,3 +9,4 @@ export * from "./label";
 export * from "./logo";
 export * from "./navigation-menu";
 export * from "./select";
+export * from "./theme";

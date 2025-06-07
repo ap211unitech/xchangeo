@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { Button, XchangeoLogo } from "@/components/ui";
+import { Button, Theme, XchangeoLogo } from "@/components/ui";
 
 import { Navigation } from "./navigation";
 
@@ -28,7 +28,8 @@ export const Header = () => {
             </Link>
             <Navigation />
           </div>
-          <div>
+          <div className="flex items-center gap-3">
+            <Theme />
             <Button className="font-semibold">
               <Link href="/swap">Start Trading</Link>
             </Button>
