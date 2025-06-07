@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui";
+import availableTokens from "@/public/tokens.json";
 
 const formSchema = z.object({
   token: z
@@ -138,37 +139,3 @@ export const FaucetForm = () => {
     </Card>
   );
 };
-
-// Sample Data
-export const availableTokens = [
-  {
-    name: "Dai Stablecoin",
-    ticker: "DAI",
-    contractAddress: "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa", // Goerli
-    logo: "https://img.freepik.com/premium-psd/dai-coin-logo-cryptocurrency-high-resolution-3d-render-transparant_513203-249.jpg",
-  },
-  {
-    name: "USD Coin",
-    ticker: "USDC",
-    contractAddress: "0x07865c6e87b9f70255377e024ace6630c1eaa37f", // Goerli
-    logo: "https://cryptologos.cc/logos/usd-coin-usdc-logo.png",
-  },
-  {
-    name: "Wrapped Ether",
-    ticker: "WETH",
-    contractAddress: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6", // Goerli
-    logo: "https://cryptologos.cc/logos/weth-weth-logo.png",
-  },
-  {
-    name: "Tether USD",
-    ticker: "USDT",
-    contractAddress: "0x509Ee0d083DdF8AC028f2a56731412edD63223B9", // Goerli
-    logo: "https://cryptologos.cc/logos/tether-usdt-logo.png",
-  },
-  {
-    name: "Xchangeo Token",
-    ticker: "XGO",
-    contractAddress: "0x0000000000000000000000000000000000001234", // Replace with real
-    logo: "/logos/xgo.png", // Local asset or hosted URL
-  },
-];
