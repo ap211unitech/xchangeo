@@ -117,7 +117,7 @@ export const FaucetForm = () => {
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex-col">
+      <CardFooter className="-mb-2 flex-col">
         <div className="flex w-full items-center justify-between border-b pb-4 text-xs">
           <div className="mr-4 flex items-center">
             <div className="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
