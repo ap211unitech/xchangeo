@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const sleep = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
+
 export const trimString = (account?: string, chars: number = 8): string => {
   if (!account) return "";
 

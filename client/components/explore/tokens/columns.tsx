@@ -24,9 +24,12 @@ export const columns = [
     id: "tokenInfo",
     header: () => <span>Token Info</span>,
     cell: info => {
-      const { name, ticker, logo } = info.getValue();
+      const { name, ticker, logo, contractAddress } = info.getValue();
       return (
-        <div className="flex items-center gap-2">
+        <div
+          className="hover:text-primary flex items-center gap-2"
+          onClick={() => window.open(`https://sepolia.etherscan.io/address/${contractAddress}`)}
+        >
           <div className="relative h-8 w-8 overflow-hidden rounded-full">
             <ImageComponent fill alt={name} src={logo} />
           </div>
