@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -44,12 +45,15 @@ const formSchema = z.object({
 });
 
 export const FaucetForm = () => {
+  const searchParams = useSearchParams();
+  const preSelectedToken = searchParams.get("token") as string;
+
   const isPending = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      token: "",
+      token: availableTokens.some(({ contractAddress }) => contractAddress === preSelectedToken) ? preSelectedToken : "",
       recipientAddress: "",
     },
   });

@@ -65,13 +65,13 @@ export const columns = [
   columnHelper.accessor(row => row, {
     id: "actions",
     header: () => <div>Actions</div>,
-    cell: () => (
+    cell: info => (
       <div className="flex items-center gap-2 text-right">
         <Button variant="secondary" size="sm">
           Add to Wallet
         </Button>
         <Button size="sm" asChild>
-          <Link href="/explore/faucets">Get Tokens</Link>
+          <Link href={`/explore/faucets?token=${info.getValue().contractAddress}`}>Get Tokens</Link>
         </Button>
       </div>
     ),
