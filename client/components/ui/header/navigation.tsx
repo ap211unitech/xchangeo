@@ -22,9 +22,9 @@ const exploreLinks = [
     href: "/explore/faucets",
   },
   {
-    title: "Transactions",
+    title: "Faucet Transactions",
     description: "View faucet transaction history.",
-    href: "/explore/transactions",
+    href: "/explore/faucet-history",
   },
   {
     title: "All Pools",

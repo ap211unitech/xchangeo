@@ -1,4 +1,4 @@
-import { Tokens } from "@/components/explore/tokens";
+import { Tokens } from "@/components/explore";
 
 const TokensPage = () => {
   return <Tokens />;
