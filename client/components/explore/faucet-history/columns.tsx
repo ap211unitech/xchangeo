@@ -32,7 +32,7 @@ export const columns = [
   }),
   columnHelper.accessor(row => row, {
     id: "tokenInfo",
-    header: () => <span>Token Info</span>,
+    header: () => <span>Token</span>,
     cell: info => {
       const { name, ticker, logo, contractAddress } = info.getValue();
       return (
@@ -59,7 +59,7 @@ export const columns = [
   }),
   columnHelper.accessor(row => row, {
     id: "amount",
-    header: () => <span>Balance</span>,
+    header: () => <span>Amount</span>,
     cell: info => (
       <span>
         {info.getValue().amount} {info.getValue().ticker}
