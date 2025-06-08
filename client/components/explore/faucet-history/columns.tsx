@@ -5,16 +5,7 @@ import Link from "next/link";
 import { Button, ImageComponent } from "@/components/ui";
 import { formatTimestamp, trimString } from "@/lib/utils";
 
-type FaucetTransaction = {
-  name: string;
-  ticker: string;
-  contractAddress: string;
-  recipientAddress: string;
-  transactionHash: string;
-  logo: string;
-  amount: number;
-  timestamp: string;
-};
+import { FaucetTransaction } from "../types";
 
 const columnHelper = createColumnHelper<FaucetTransaction>();
 

@@ -3,13 +3,7 @@ import Link from "next/link";
 
 import { Button, ImageComponent } from "@/components/ui";
 
-type Token = {
-  name: string;
-  ticker: string;
-  contractAddress: string;
-  logo: string;
-  balance: number;
-};
+import { Token } from "../types";
 
 const columnHelper = createColumnHelper<Token>();
 
