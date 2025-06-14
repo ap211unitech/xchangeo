@@ -47,7 +47,7 @@ const tradeLinks = [
   {
     title: "Transactions",
     description: "View recent transactions.",
-    href: "/trade/history",
+    href: "/swap/history",
   },
 ];
 
