@@ -64,6 +64,9 @@ export const columns = [
         <Button variant="secondary" size="sm">
           Add to Wallet
         </Button>
+        <Button variant="secondary" size="sm" asChild>
+          <Link href={`/send?token=${info.getValue().contractAddress}`}>Send</Link>
+        </Button>
         <Button size="sm" asChild>
           <Link href={`/explore/faucets?token=${info.getValue().contractAddress}`}>Get Tokens</Link>
         </Button>
