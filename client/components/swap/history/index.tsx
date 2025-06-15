@@ -1,5 +1,7 @@
 import { History } from "lucide-react";
 
+import { Transactions } from "./transactions";
+
 export const SwapHistory = () => {
   return (
     <section className="space-y-10">
@@ -17,7 +19,7 @@ export const SwapHistory = () => {
       </div>
 
       {/* Swap History */}
-      {/* <Transactions /> */}
+      <Transactions />
     </section>
   );
 };
