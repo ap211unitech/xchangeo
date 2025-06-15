@@ -127,7 +127,12 @@ export const SendTokensForm = () => {
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input placeholder="0.639" {...field} />
+                    <div className="relative flex items-center">
+                      <Input placeholder="0.639" {...field} />
+                      <Button className="absolute right-2 h-6 rounded-sm px-2 text-xs" type="button">
+                        MAX
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
