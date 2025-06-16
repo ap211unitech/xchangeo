@@ -1,5 +1,7 @@
 import { ArrowRightLeft } from "lucide-react";
 
+import { SwapTokensForm } from "./form";
+
 export const Swap = () => {
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
@@ -16,8 +18,8 @@ export const Swap = () => {
         </p>
       </div>
 
-      {/* Main Form */}
-      {/* <FaucetForm /> */}
+      {/* Swap Form */}
+      <SwapTokensForm />
     </section>
   );
 };

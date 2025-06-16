@@ -128,7 +128,16 @@ export const SendTokensForm = () => {
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
                     <div className="relative flex items-center">
-                      <Input placeholder="0.639" {...field} />
+                      <Input
+                        placeholder="0.639"
+                        {...field}
+                        onChange={e => {
+                          const value = e.target.value;
+                          if (/^\d*\.?\d*$/.test(value)) {
+                            field.onChange(value);
+                          }
+                        }}
+                      />
                       <Button className="absolute right-2 h-6 rounded-sm px-2 text-xs" type="button">
                         MAX
                       </Button>
