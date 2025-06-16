@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -52,13 +53,17 @@ const formSchema = z.object({
 });
 
 export const SwapTokensForm = () => {
+  const searchParams = useSearchParams();
+  const sellToken = searchParams.get("sellToken") as string;
+  const buyToken = searchParams.get("buyToken") as string;
+
   const isPending = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sellToken: "",
-      buyToken: "",
+      sellToken: availableTokens.find(({ ticker }) => ticker === sellToken)?.contractAddress || "",
+      buyToken: availableTokens.find(({ ticker }) => ticker === buyToken)?.contractAddress || "",
       sellAmount: "",
       buyAmount: "",
     },
