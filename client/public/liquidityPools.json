@@ -1,0 +1,97 @@
+[
+  {
+    "lpAddress": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+    "tokenA": {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png",
+      "reserve": 12.5,
+      "volume": 4.2
+    },
+    "tokenB": {
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+      "reserve": 24000,
+      "volume": 8300
+    },
+    "feeTier": 30,
+    "userSharePercent": 2.1
+  },
+  {
+    "lpAddress": "0xcbcdf9626bc03e24f779434178a73a0b4bad62ed",
+    "tokenA": {
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png",
+      "reserve": 3.2,
+      "volume": 0.9
+    },
+    "tokenB": {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png",
+      "reserve": 45.6,
+      "volume": 18.7
+    },
+    "feeTier": 5,
+    "userSharePercent": 0.0
+  },
+  {
+    "lpAddress": "0x06da0fd433C1A5d7a4faa01111c044910A184553",
+    "tokenA": {
+      "symbol": "DOT",
+      "name": "Polkadot",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polkadot/info/logo.png",
+      "reserve": 10000,
+      "volume": 3200
+    },
+    "tokenB": {
+      "symbol": "USDT",
+      "name": "Tether",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png",
+      "reserve": 19500,
+      "volume": 10400
+    },
+    "feeTier": 10,
+    "userSharePercent": 5.6
+  },
+  {
+    "lpAddress": "0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
+    "tokenA": {
+      "symbol": "SOL",
+      "name": "Solana",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png",
+      "reserve": 750,
+      "volume": 280
+    },
+    "tokenB": {
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+      "reserve": 13500,
+      "volume": 5100
+    },
+    "feeTier": 30,
+    "userSharePercent": 1.2
+  },
+  {
+    "lpAddress": "0x9f65d5b41a8f2b5fa6b4a1030e067aa06fa47ee6",
+    "tokenA": {
+      "symbol": "AVAX",
+      "name": "Avalanche",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/avalanche/info/logo.png",
+      "reserve": 900,
+      "volume": 150
+    },
+    "tokenB": {
+      "symbol": "DAI",
+      "name": "Dai Stablecoin",
+      "icon": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png",
+      "reserve": 18000,
+      "volume": 4000
+    },
+    "feeTier": 15,
+    "userSharePercent": 3.4
+  }
+]
