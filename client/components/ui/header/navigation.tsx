@@ -60,12 +60,12 @@ const poolLinks = [
   {
     title: "Add Liquidity",
     description: "Deposit tokens to pool",
-    href: "/pools/add",
+    href: "/pools/addLiquidity",
   },
   {
     title: "Remove Liquidity",
     description: "Withdraw tokens from pool",
-    href: "/pools/remove",
+    href: "/pools/removeLiquidity",
   },
   {
     title: "My Positions",
