@@ -18,7 +18,7 @@ export const Pools = () => {
             <h1 className="text-foreground text-4xl font-bold">Liquidity Pools</h1>
           </div>
           <p className="text-muted-foreground max-w-2xl text-lg">
-            Explore all available liquidity pools on the AMM-based DEX. View pool details, token pairs, and your current positions in one place.
+            Explore all available liquidity pools. View pool details, token pairs, and your current positions in one place.
           </p>
         </div>
         <Button asChild>
