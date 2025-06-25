@@ -15,7 +15,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     ERC20Token private immutable token1;
     ERC20Token private immutable token2;
     LpToken private immutable lpToken;
-    uint private constant fee = 30; // fee is in basis points: 30 = 0.3%, 1000 = 10%
+    uint private fee = 30; // fee is in basis points: 30 = 0.3%, 1000 = 10%
 
     uint256 private reserve1;
     uint256 private reserve2;
@@ -37,6 +37,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
                 "Fee cannot be more than 2%"
             );
 
+        fee = _fee;
         token1 = ERC20Token(_token1);
         token2 = ERC20Token(_token2);
 
@@ -334,11 +335,15 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         return (address(token1), address(token2));
     }
 
+    function getLpToken() public view returns (address) {
+        return address(lpToken);
+    }
+
     function getReserves() public view returns (uint256, uint256) {
         return (reserve1, reserve2);
     }
 
-    function getFee() external pure returns (uint) {
+    function getFee() external view returns (uint) {
         return fee;
     }
 }

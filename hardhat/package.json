@@ -2,7 +2,7 @@
   "name": "xchangeo",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.19",
+    "hardhat": "^2.25.0",
     "typescript": "^5.8.2"
   },
   "dependencies": {

@@ -176,6 +176,10 @@ interface IERC20SwapPool {
     /// @return tokenB The address of token B
     function getTokens() external view returns (address tokenA, address tokenB);
 
+    /// @notice Returns the address of the LP token
+    /// @return lpToken The address of LP token
+    function getLpToken() external view returns (address);
+
     /// @notice Returns the current reserves of token A and token B in the pool
     /// @return reserveA The reserve amount of token A
     /// @return reserveB The reserve amount of token B
@@ -185,7 +189,6 @@ interface IERC20SwapPool {
         returns (uint256 reserveA, uint256 reserveB);
 
     /// @notice Returns the swap fee applied on each trade in the pool
-    /// @dev This is a constant value and does not require storage lookup
     /// @return fee The fee value as a percentage (e.g., 30 for 0.3%)
-    function getFee() external pure returns (uint);
+    function getFee() external view returns (uint);
 }

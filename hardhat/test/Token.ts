@@ -4,7 +4,7 @@ import { AddressLike, ContractTransactionResponse, Typed } from "ethers";
 
 import { ERC20Token } from "../typechain-types";
 import { formatUnits, parseUnits } from "../utils";
-import { deployERC20TokenContract, TOKEN } from "./consts";
+import { deployERC20TokenContract, TOKEN_1 as TOKEN } from "./consts";
 
 describe("ERC20Token contract", () => {
   // global vars
