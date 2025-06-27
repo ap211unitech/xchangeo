@@ -1,5 +1,8 @@
 import hre from "hardhat";
+import { ContractTransactionResponse } from "ethers";
+
 import { parseUnits } from "../utils";
+import { ERC20SwapPool } from "../typechain-types";
 
 export const TOKEN_1 = {
   name: "Tether USD",
@@ -47,7 +50,15 @@ export const deployERC20TokenFaucetContract = async (tokenAddress: string) => {
   );
 };
 
-export const deployERC20PoolContract = async () => {
+export const deployERC20PoolContract = async (): Promise<
+  [
+    string,
+    string,
+    ERC20SwapPool & {
+      deploymentTransaction(): ContractTransactionResponse;
+    }
+  ]
+> => {
   const Token = await hre.ethers.getContractFactory("ERC20Token");
 
   const [token1, token2] = await Promise.all([
@@ -71,7 +82,7 @@ export const deployERC20PoolContract = async () => {
 
   const ERC20SwapPool = await hre.ethers.getContractFactory("ERC20SwapPool");
 
-  return await ERC20SwapPool.deploy(
+  const pool = await ERC20SwapPool.deploy(
     token1,
     token2,
     30,
@@ -79,4 +90,6 @@ export const deployERC20PoolContract = async () => {
     LP_TOKEN.symbol,
     LP_TOKEN.logoIpfsCid
   );
+
+  return [token1, token2, pool];
 };
