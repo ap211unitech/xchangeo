@@ -155,6 +155,8 @@ describe("ERC20/ERC20 Pool Contract", () => {
       );
     });
 
+    // ----------------------------------------- Integration Tests ---------------------------------------------- //
+
     it("Should allow multiple users to add liquidity", async () => {
       // Bootstrap Liquidity
       await token1.approve(pool, 1000);
@@ -177,6 +179,31 @@ describe("ERC20/ERC20 Pool Contract", () => {
       expect(reserve2).to.equal(6000);
 
       expect(await lpToken.balanceOf(other.address)).to.be.equal(1000);
+    });
+
+    it("Should track LP token balances across users correctly", async () => {
+      const [, user1, user2] = await hre.ethers.getSigners();
+
+      await token1.approve(pool, 800);
+      await token2.approve(pool, 2400);
+      await pool.addLiquidity(800, 2400); // signer gets LP
+
+      await token1.transfer(user1.address, 400);
+      await token2.transfer(user1.address, 1200);
+      await token1.transfer(user2.address, 400);
+      await token2.transfer(user2.address, 1200);
+
+      await token1.connect(user1).approve(pool, 400);
+      await token2.connect(user1).approve(pool, 1200);
+      await token1.connect(user2).approve(pool, 400);
+      await token2.connect(user2).approve(pool, 1200);
+
+      await pool.connect(user1).addLiquidity(400, 1200);
+      await pool.connect(user2).addLiquidity(400, 1200);
+
+      expect(await lpToken.balanceOf(signer.address)).to.equal(1385);
+      expect(await lpToken.balanceOf(user1.address)).to.equal(692);
+      expect(await lpToken.balanceOf(user2.address)).to.equal(692);
     });
   });
 });

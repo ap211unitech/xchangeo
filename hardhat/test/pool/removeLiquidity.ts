@@ -113,7 +113,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
       expect(r2).to.equal(0);
     });
 
-    // ---------------------------------------------------------------------------------------------------------------- //
+    // ----------------------------------------- Integration Tests ---------------------------------------------- //
 
     it("Should allow multiple users to remove liquidity proportionally", async () => {
       const [, userB] = await hre.ethers.getSigners();
