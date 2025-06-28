@@ -39,6 +39,16 @@ describe("ERC20/ERC20 Pool Contract", () => {
       );
     });
 
+    it("Should revert if allowance is not enough", async () => {
+      await token1.approve(pool, 10);
+      await token2.approve(pool, 5); // not sufficient allowance
+
+      await expect(pool.addLiquidity(10, 10)).to.be.revertedWithCustomError(
+        token2,
+        "ERC20InsufficientAllowance"
+      );
+    });
+
     it("Should add initial liquidity and mint LP tokens", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 4000);
