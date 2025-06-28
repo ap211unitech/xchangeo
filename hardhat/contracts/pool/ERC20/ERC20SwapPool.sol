@@ -69,12 +69,18 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         ) = getAmountOut(amountIn, _tokenIn);
 
         // Handle Slippage
-        if (amountOut < minAmountOut) {
+        if (amountOut < minAmountOut || amountOut == 0) {
             revert ERC20SwapPool__Slippage("Slippage: amountOut too low");
         }
 
         if (reserveIn == 0 || reserveOut == 0) {
             revert ERC20SwapPool__InsufficientReserves("Pool is empty");
+        }
+
+        if (amountOut > reserveOut) {
+            revert ERC20SwapPool__InsufficientReserves(
+                "Swap amount exceeds reserve"
+            );
         }
 
         (
