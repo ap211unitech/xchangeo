@@ -225,6 +225,11 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
             revert ERC20SwapPool__InvalidAmount("Zero Liquidity Tokens");
         }
 
+        uint256 senderLpTokenBalance = lpToken.balanceOf(msg.sender);
+        if (senderLpTokenBalance < liquidityPoolTokens) {
+            revert ERC20SwapPool__InvalidAmount("Not enough liquidity tokens");
+        }
+
         (amountTokenA, amountTokenB) = getAmountsOnRemovingLiquidity(
             liquidityPoolTokens
         );
