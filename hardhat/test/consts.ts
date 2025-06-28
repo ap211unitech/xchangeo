@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { ContractTransactionResponse } from "ethers";
 
 import { parseUnits } from "../utils";
-import { ERC20SwapPool } from "../typechain-types";
+import { ERC20SwapPool, ERC20Token } from "../typechain-types";
 
 export const TOKEN_1 = {
   name: "Tether USD",
@@ -52,8 +52,8 @@ export const deployERC20TokenFaucetContract = async (tokenAddress: string) => {
 
 export const deployERC20PoolContract = async (): Promise<
   [
-    string,
-    string,
+    ERC20Token,
+    ERC20Token,
     ERC20SwapPool & {
       deploymentTransaction(): ContractTransactionResponse;
     }
@@ -62,22 +62,18 @@ export const deployERC20PoolContract = async (): Promise<
   const Token = await hre.ethers.getContractFactory("ERC20Token");
 
   const [token1, token2] = await Promise.all([
-    await (
-      await Token.deploy(
-        TOKEN_1.name,
-        TOKEN_1.symbol,
-        TOKEN_1.logoIpfsCid,
-        TOKEN_1.maximumCap
-      )
-    ).getAddress(),
-    await (
-      await Token.deploy(
-        TOKEN_2.name,
-        TOKEN_2.symbol,
-        TOKEN_2.logoIpfsCid,
-        TOKEN_2.maximumCap
-      )
-    ).getAddress(),
+    await Token.deploy(
+      TOKEN_1.name,
+      TOKEN_1.symbol,
+      TOKEN_1.logoIpfsCid,
+      TOKEN_1.maximumCap
+    ),
+    await Token.deploy(
+      TOKEN_2.name,
+      TOKEN_2.symbol,
+      TOKEN_2.logoIpfsCid,
+      TOKEN_2.maximumCap
+    ),
   ]);
 
   const ERC20SwapPool = await hre.ethers.getContractFactory("ERC20SwapPool");
