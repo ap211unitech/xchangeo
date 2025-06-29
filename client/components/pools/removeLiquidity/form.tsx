@@ -70,7 +70,7 @@ export const RemoveLiquidityForm = () => {
                   <FormControl>
                     <div className="relative flex items-center">
                       <Input
-                        className="h-44 rounded-3xl pb-6 text-center font-semibold md:text-3xl"
+                        className="h-44 rounded-3xl pb-6 text-center text-2xl font-semibold md:text-3xl"
                         placeholder="10%"
                         {...field}
                         value={field.value !== "" ? `${field.value}%` : ""}
@@ -109,7 +109,7 @@ export const RemoveLiquidityForm = () => {
                           input.setSelectionRange(pos, pos);
                         }}
                       />
-                      <div className="absolute bottom-4 left-0 flex w-full flex-wrap items-center justify-center gap-3">
+                      <div className="absolute bottom-4 left-0 flex w-full items-center justify-center gap-3">
                         {[25, 50, 75, 100].map(val => {
                           return (
                             <Button
@@ -118,7 +118,7 @@ export const RemoveLiquidityForm = () => {
                               type="button"
                               onClick={() => form.setValue("share", val.toString())}
                               variant="outline"
-                              className="bg-muted hover:bg-muted/70 dark:bg-background/50 dark:hover:bg-background/30 rounded-full px-4"
+                              className="bg-muted hover:bg-muted/70 dark:bg-background/50 dark:hover:bg-background/30 rounded-full px-4 first:hidden first:[@media(min-width:400px)]:inline-flex"
                             >
                               {val === 100 ? "MAX" : `${val}%`}
                             </Button>
