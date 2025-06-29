@@ -20,9 +20,16 @@ export type FaucetTransaction = {
 export type PoolTokenInfo = {
   symbol: string;
   name: string;
-  icon: string; // URL to token icon
+  logo: string; // URL to token icon
   reserve: number; // amount of token in the pool
   volume: number; // volume traded (daily or all-time)
+};
+
+export type LpToken = {
+  name: string;
+  symbol: string;
+  logo: string;
+  amount: number;
 };
 
 export type LiquidityPool = {
@@ -31,4 +38,5 @@ export type LiquidityPool = {
   tokenB: PoolTokenInfo;
   feeTier: number; // in basis points, e.g., 30 = 0.3%
   userSharePercent: number; // user's share of the pool in %
+  lpToken: LpToken;
 };

@@ -27,10 +27,10 @@ export const columns = [
       return (
         <div className="hover:text-primary flex w-fit items-center" onClick={() => window.open(`https://sepolia.etherscan.io/address/${lpAddress}`)}>
           <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <ImageComponent fill alt={tokenA.name} src={tokenA.icon} />
+            <ImageComponent fill alt={tokenA.name} src={tokenA.logo} />
           </div>
           <div className="relative -left-2 h-8 w-8 overflow-hidden rounded-full">
-            <ImageComponent fill alt={tokenB.name} src={tokenB.icon} />
+            <ImageComponent fill alt={tokenB.name} src={tokenB.logo} />
           </div>
           <p className="flex items-center gap-1 text-base tracking-wide">
             {tokenA.symbol}/{tokenB.symbol}
