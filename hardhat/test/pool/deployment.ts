@@ -44,7 +44,6 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should have correct LpToken", async () => {
       expect(await lpToken.name()).to.be.equal(LP_TOKEN.name);
       expect(await lpToken.symbol()).to.be.equal(LP_TOKEN.symbol);
-      expect(await lpToken.logo()).to.be.equal(LP_TOKEN.logoIpfsCid);
     });
   });
 });

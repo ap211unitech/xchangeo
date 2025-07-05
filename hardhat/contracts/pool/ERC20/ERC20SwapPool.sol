@@ -25,8 +25,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         address _token2,
         uint _fee,
         string memory _lpTokenName,
-        string memory _lpTokenSymbol,
-        string memory _lpTokenLogo
+        string memory _lpTokenSymbol
     ) {
         if (_token1 == address(0) || _token2 == address(0))
             revert ERC20SwapPool__InvalidTokenAddress("Invalid Token Address");
@@ -41,7 +40,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         token1 = ERC20Token(_token1);
         token2 = ERC20Token(_token2);
 
-        lpToken = new LpToken(_lpTokenName, _lpTokenSymbol, _lpTokenLogo);
+        lpToken = new LpToken(_lpTokenName, _lpTokenSymbol);
     }
 
     function _updateReserves(uint256 _reserve1, uint256 _reserve2) internal {

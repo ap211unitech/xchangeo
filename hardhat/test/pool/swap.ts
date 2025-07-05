@@ -43,7 +43,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
     it("Should revert if token is not in the pool", async () => {
       const Token = await hre.ethers.getContractFactory("ERC20Token");
-      const fakeToken = await Token.deploy("Fake", "FAKE", "cid", 10_000);
+      const fakeToken = await Token.deploy("Fake", "FAKE", 10_000);
 
       await expect(pool.swap(fakeToken, 10, 10)).to.be.revertedWithCustomError(
         pool,

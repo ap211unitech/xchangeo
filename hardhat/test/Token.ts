@@ -31,7 +31,6 @@ describe("ERC20Token contract", () => {
       expect(await usdtToken.name()).to.equal(TOKEN.name);
       expect(await usdtToken.symbol()).to.equal(TOKEN.symbol);
       expect(await usdtToken.decimals()).to.equal(18);
-      expect(await usdtToken.logo()).to.equal(TOKEN.logoIpfsCid);
     });
 
     it("Should assign the initial supply to 10 million", async function () {

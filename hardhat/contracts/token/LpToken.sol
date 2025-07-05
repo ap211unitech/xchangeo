@@ -7,22 +7,10 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract LpToken is ERC20Burnable, Ownable {
-    string private _logoIpfsCid;
-
     constructor(
         string memory tokenName,
-        string memory tokenSymbol,
-        string memory tokenLogo
-    ) ERC20(tokenName, tokenSymbol) Ownable(msg.sender) {
-        _logoIpfsCid = tokenLogo;
-    }
-
-    /**
-     * @dev Returns the logo of the token.
-     */
-    function logo() public view virtual returns (string memory) {
-        return _logoIpfsCid;
-    }
+        string memory tokenSymbol
+    ) ERC20(tokenName, tokenSymbol) Ownable(msg.sender) {}
 
     function mint(
         address account,
