@@ -16,17 +16,13 @@ dataSources:
       apiVersion: 0.0.9
       language: wasm/assemblyscript
       entities:
-        - Approval
-        - OwnershipTransferred
         - Transfer
       abis:
         - name: ERC20Token
           file: ./abis/ERC20Token.json
       eventHandlers:
-        - event: Approval(indexed address,indexed address,uint256)
-          handler: handleApproval
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
+        - event: ERC20TokenCreated(indexed address,string,string)
+          handler: handleERC20TokenCreated
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/erc-20-token.ts

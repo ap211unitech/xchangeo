@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract ERC20Token is ERC20Capped, ERC20Burnable, Ownable {
+    event ERC20TokenCreated(address indexed token, string name, string symbol);
+
     constructor(
         string memory tokenName,
         string memory tokenSymbol,
@@ -19,6 +21,7 @@ contract ERC20Token is ERC20Capped, ERC20Burnable, Ownable {
     {
         uint256 initialSupply = maximumCap / 10;
         _mint(msg.sender, initialSupply * (10 ** decimals()));
+        emit ERC20TokenCreated(address(this), tokenName, tokenSymbol);
     }
 
     function mint(

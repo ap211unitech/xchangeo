@@ -1,37 +1,18 @@
 import {
-  Approval as ApprovalEvent,
-  OwnershipTransferred as OwnershipTransferredEvent,
+  ERC20TokenCreated as ERC20TokenCreatedEvent,
   Transfer as TransferEvent,
 } from "../generated/ERC20Token/ERC20Token";
-import { Approval, OwnershipTransferred, Transfer } from "../generated/schema";
+import { Transfer, ERC20Token } from "../generated/schema";
 
-export function handleApproval(event: ApprovalEvent): void {
-  let entity = new Approval(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.owner = event.params.owner;
-  entity.spender = event.params.spender;
-  entity.value = event.params.value;
+export function handleERC20TokenCreated(event: ERC20TokenCreatedEvent): void {
+  const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
 
+  const entity = new ERC20Token(id);
+  entity.tokenAddress = event.params.token;
+  entity.name = event.params.name;
+  entity.symbol = event.params.symbol;
+  entity.timestamp = event.block.timestamp;
   entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-}
-
-export function handleOwnershipTransferred(
-  event: OwnershipTransferredEvent
-): void {
-  let entity = new OwnershipTransferred(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.previousOwner = event.params.previousOwner;
-  entity.newOwner = event.params.newOwner;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
 
   entity.save();
 }
