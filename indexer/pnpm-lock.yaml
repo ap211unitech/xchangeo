@@ -14,6 +14,9 @@ importers:
       '@graphprotocol/graph-ts':
         specifier: 0.37.0
         version: 0.37.0
+      '@types/node':
+        specifier: ^24.0.10
+        version: 24.0.10
     devDependencies:
       matchstick-as:
         specifier: 0.6.0
@@ -1979,7 +1982,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 12.20.55
+      '@types/node': 24.0.10
 
   '@types/dns-packet@5.6.5':
     dependencies:
@@ -1995,7 +1998,7 @@ snapshots:
 
   '@types/ws@7.4.7':
     dependencies:
-      '@types/node': 12.20.55
+      '@types/node': 24.0.10
 
   '@whatwg-node/disposablestack@0.0.6':
     dependencies:

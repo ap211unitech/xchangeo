@@ -1,6 +1,7 @@
 {
   "name": "indexer",
   "license": "UNLICENSED",
+  "type": "module",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
@@ -15,7 +16,8 @@
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.96.0",
-    "@graphprotocol/graph-ts": "0.37.0"
+    "@graphprotocol/graph-ts": "0.37.0",
+    "@types/node": "^24.0.10"
   },
   "devDependencies": {
     "matchstick-as": "0.6.0"

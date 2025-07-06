@@ -5,10 +5,79 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: ERC20Token
+    name: ERC20Token-0x5FbDB2315678afecb367f032d93F642f64180aa3
     network: sepolia
     source:
       address: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+      abi: ERC20Token
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: ERC20Token
+          file: ./abis/ERC20Token.json
+      eventHandlers:
+        - event: ERC20TokenCreated(indexed address,string,string)
+          handler: handleERC20TokenCreated
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/erc-20-token.ts
+
+  - kind: ethereum
+    name: ERC20Token-0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+    network: sepolia
+    source:
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+      abi: ERC20Token
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: ERC20Token
+          file: ./abis/ERC20Token.json
+      eventHandlers:
+        - event: ERC20TokenCreated(indexed address,string,string)
+          handler: handleERC20TokenCreated
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/erc-20-token.ts
+
+  - kind: ethereum
+    name: ERC20Token-0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+    network: sepolia
+    source:
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+      abi: ERC20Token
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Transfer
+      abis:
+        - name: ERC20Token
+          file: ./abis/ERC20Token.json
+      eventHandlers:
+        - event: ERC20TokenCreated(indexed address,string,string)
+          handler: handleERC20TokenCreated
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/erc-20-token.ts
+
+  - kind: ethereum
+    name: ERC20Token-0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+    network: sepolia
+    source:
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
       abi: ERC20Token
       startBlock: 0
     mapping:
