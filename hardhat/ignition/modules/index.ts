@@ -35,7 +35,7 @@ const TOKENS = [
     maximumCap: 21_000_000,
     faucet: {
       lockTime: 60 * 10,
-      withdrawalAmount: 0.005, // if this is in ETH-style decimals, adjust accordingly
+      withdrawalAmount: 0.005,
     },
   },
 ];
