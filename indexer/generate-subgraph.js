@@ -28,9 +28,9 @@ schema:
 dataSources:${dataSources}
 `;
 
-const dataSourceTemplate = (token) => `
+const dataSourceTemplate = (token, index) => `
   - kind: ethereum
-    name: ERC20Token-${token.address}
+    name: ERC20Token${index === 0 ? "" : "-" + token.address}
     network: sepolia
     source:
       address: "${token.address}"
@@ -53,9 +53,9 @@ const dataSourceTemplate = (token) => `
       file: ./src/erc-20-token.ts
 `;
 
-const tokenDataSources = TOKENS.map((token) => dataSourceTemplate(token)).join(
-  ""
-);
+const tokenDataSources = TOKENS.map((token, index) =>
+  dataSourceTemplate(token, index)
+).join("");
 
 const content = header(tokenDataSources);
 

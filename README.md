@@ -4,6 +4,8 @@ AMM-based Decentralized Exchange (DEX)
 
 ## Run Indexer locally
 
+npx hardhat ignition deploy ./ignition/modules/index.ts --network localhost
+
 pnpm clean
 pnpm ready
 pnpm docker:start
