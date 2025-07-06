@@ -51,7 +51,7 @@ export const Home = () => {
               The Future of
               <span className="text-primary block">Decentralized Trading</span>
             </h1>
-            <p className="text-primary-foreground/70 mx-auto mb-8 max-w-3xl text-xl md:text-2xl">
+            <p className="text-foreground/70 mx-auto mb-8 max-w-3xl text-xl md:text-2xl">
               Experience seamless AMM-based trading with lightning-fast swaps, deep liquidity, and zero intermediaries
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
