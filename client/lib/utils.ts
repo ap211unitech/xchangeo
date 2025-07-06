@@ -2,6 +2,8 @@ import { type ClassValue, clsx } from "clsx";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
+import { CONFIG } from "@/config";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -20,4 +22,21 @@ export const trimString = (account?: string, chars: number = 8): string => {
 
 export const formatTimestamp = (date: string): string => {
   return moment.utc(date).format("MMM D, YYYY, hh:mm:ss A");
+};
+
+export const executeGraphQLQuery = async <T>(key: string, query: string, next?: NextFetchRequestConfig | undefined): Promise<T> => {
+  const res = await fetch(CONFIG.GRAPHQL_API_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+    next,
+  });
+
+  await sleep(0.5);
+
+  if (!res.ok) throw new Error("GraphQL request failed!");
+
+  return (await res.json()).data[key];
 };

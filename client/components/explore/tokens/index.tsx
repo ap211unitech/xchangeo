@@ -1,8 +1,13 @@
 import { Bitcoin } from "lucide-react";
 
+import { Token } from "@/services";
+
 import { TokensList } from "./tokens";
 
-export const Tokens = () => {
+export const Tokens = async () => {
+  const tokens = await new Token().getAllTokens();
+  console.log(tokens);
+
   return (
     <section className="space-y-10">
       {/* Header */}
