@@ -47,6 +47,34 @@ describe("ERC20Token contract", () => {
       const cap = await usdtToken.cap();
       expect(Number(formatUnits(cap))).to.equal(TOKEN.maximumCap);
     });
+
+    it("Should emit ERC20TokenCreated event", async function () {
+      const Token = await hre.ethers.getContractFactory("ERC20Token");
+      await usdtToken.waitForDeployment();
+
+      const txHash = usdtToken.deploymentTransaction()?.hash ?? "";
+      const receipt = await hre.ethers.provider.getTransactionReceipt(txHash);
+
+      const iface = new hre.ethers.Interface([
+        "event ERC20TokenCreated(address indexed token, string name, string symbol)",
+      ]);
+
+      const decodedLogs = receipt?.logs
+        .map((log) => {
+          try {
+            return iface.parseLog(log);
+          } catch {
+            return null;
+          }
+        })
+        .filter((log) => log !== null);
+
+      const event = decodedLogs?.find((e) => e.name === "ERC20TokenCreated");
+      expect(event).to.not.be.undefined;
+      expect(event?.args.token).to.equal(await usdtToken.getAddress());
+      expect(event?.args.name).to.equal("Tether USD");
+      expect(event?.args.symbol).to.equal("USDT");
+    });
   });
 
   describe("Mint", function () {
