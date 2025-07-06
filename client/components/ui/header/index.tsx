@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { Button, Theme, XchangeoLogo } from "@/components/ui";
+import { ConnectWallet, Theme, XchangeoLogo } from "@/components/ui";
 
 import { Navigation } from "./navigation";
 
@@ -30,9 +30,7 @@ export const Header = () => {
           </div>
           <div className="flex items-center gap-3">
             <Theme />
-            <Button className="font-semibold">
-              <Link href="/swap">Start Trading</Link>
-            </Button>
+            <ConnectWallet />
           </div>
         </div>
       </div>
