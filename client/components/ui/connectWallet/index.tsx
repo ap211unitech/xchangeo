@@ -24,7 +24,7 @@ export const ConnectWallet = () => {
   if (!!address && !!walletInfo) {
     return (
       <>
-        <Button onClick={() => open()} variant="secondary" className="flex items-center gap-2">
+        <Button onClick={() => open()} className="bg-primary/60 flex items-center gap-2">
           <div>
             {walletInfo?.icon && walletInfo.name ? (
               <ImageComponent src={walletInfo?.icon} alt={walletInfo?.name} width={18} height={18} />
