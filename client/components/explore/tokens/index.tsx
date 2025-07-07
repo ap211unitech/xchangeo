@@ -1,11 +1,11 @@
 import { Bitcoin } from "lucide-react";
 
-import { Token } from "@/services";
+import { appService } from "@/services";
 
 import { TokensList } from "./tokens";
 
 export const Tokens = async () => {
-  const tokens = await new Token().getAllTokens();
+  const tokens = await appService.tokenService.getAllTokens();
   console.log(tokens);
 
   return (

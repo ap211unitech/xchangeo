@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { ethers } from "ethers";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
@@ -9,6 +10,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const sleep = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
+
+export const parseUnits = (val: number) => {
+  return ethers.parseUnits(val.toString());
+};
+
+export const formatUnits = (val: bigint) => {
+  return Number(ethers.formatUnits(val));
+};
 
 export const trimString = (account?: string, chars: number = 8): string => {
   if (!account) return "";

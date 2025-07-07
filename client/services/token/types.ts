@@ -1,3 +1,5 @@
+import { AddressLike } from "ethers";
+
 export type GetAllTokensResult = {
   name: string;
   ticker: string;
@@ -6,6 +8,9 @@ export type GetAllTokensResult = {
   balance: number;
 };
 
-export interface IToken {
+/* eslint-disable */
+export interface ITokenService {
   getAllTokens: () => Promise<GetAllTokensResult[]>;
+  getBalance: (token: string | null, account: AddressLike) => Promise<number>;
 }
+/* eslint-enable */
