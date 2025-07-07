@@ -1,16 +1,18 @@
 import { AddressLike } from "ethers";
+import { ReactNode } from "react";
 
-export type GetAllTokensResult = {
+import { TokenMetadata } from "../types";
+
+export type GetAllTokensResponse = {
   name: string;
-  ticker: string;
-  contractAddress: string;
-  logo: string;
-  balance: number;
+  symbol: string;
+  tokenAddress: string;
+  logo: ReactNode;
 };
 
 /* eslint-disable */
 export interface ITokenService {
-  getAllTokens: () => Promise<GetAllTokensResult[]>;
+  getAllTokens: () => Promise<TokenMetadata[]>;
   getBalance: (token: string | null, account: AddressLike) => Promise<number>;
 }
 /* eslint-enable */

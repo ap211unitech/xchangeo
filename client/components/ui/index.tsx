@@ -13,3 +13,4 @@ export * from "./navigation-menu";
 export * from "./select";
 export * from "./table";
 export * from "./theme";
+export * from "./tokens";

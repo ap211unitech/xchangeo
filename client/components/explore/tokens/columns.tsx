@@ -1,7 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import Link from "next/link";
 
-import { Button, ImageComponent } from "@/components/ui";
+import { Button, TokenLogo } from "@/components/ui";
 
 import { Token } from "../types";
 
@@ -18,15 +18,13 @@ export const columns = [
     id: "tokenInfo",
     header: () => <span>Token</span>,
     cell: info => {
-      const { name, ticker, logo, contractAddress } = info.getValue();
+      const { name, ticker, contractAddress } = info.getValue();
       return (
         <div
           className="hover:text-primary flex items-center gap-2"
           onClick={() => window.open(`https://sepolia.etherscan.io/address/${contractAddress}`)}
         >
-          <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <ImageComponent fill alt={name} src={logo} />
-          </div>
+          <TokenLogo ticker={ticker} />
           <div className="flex flex-col">
             <span className="text-base font-medium">{name}</span>
             <span className="text-muted-foreground">{ticker}</span>
