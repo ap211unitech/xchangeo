@@ -2,16 +2,26 @@
 
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ChevronsUpDown } from "lucide-react";
+import { useMemo } from "react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
+import { useBalances } from "@/hooks";
 import { cn } from "@/lib/utils";
-import availableTokens from "@/public/tokens.json";
+import { TokenMetadata } from "@/services/types";
 
 import { columns } from "./columns";
+import { Loading } from "./loading";
 
 const actionKeys = ["tokenInfo", "balance"];
 
-export const TokensList = () => {
+type Props = { tokens: TokenMetadata[] };
+
+export const TokensList = ({ tokens }: Props) => {
+  const { data, isPending } = useBalances(tokens);
+  console.log(data, isPending);
+
+  const availableTokens = useMemo(() => [], []);
+
   const table = useReactTable({
     columns,
     data: availableTokens,
@@ -66,8 +76,8 @@ export const TokensList = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+              <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                {isPending ? <Loading /> : <span> No tokens found.</span>}
               </TableCell>
             </TableRow>
           )}

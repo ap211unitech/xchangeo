@@ -6,13 +6,6 @@ import { TokensList } from "./tokens";
 
 export const Tokens = async () => {
   const tokens = await appService.tokenService.getAllTokens();
-  console.log(tokens);
-
-  const balances = await Promise.all(
-    tokens.map(({ contractAddress }) => appService.tokenService.getBalance(contractAddress, "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")),
-  );
-
-  console.log(balances);
 
   return (
     <section className="space-y-10">
@@ -30,7 +23,7 @@ export const Tokens = async () => {
       </div>
 
       {/* Tokens list */}
-      <TokensList />
+      <TokensList tokens={tokens} />
     </section>
   );
 };
