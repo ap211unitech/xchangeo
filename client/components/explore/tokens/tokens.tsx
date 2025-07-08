@@ -2,7 +2,6 @@
 
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ChevronsUpDown } from "lucide-react";
-import { useMemo } from "react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
 import { useBalances } from "@/hooks";
@@ -17,14 +16,11 @@ const actionKeys = ["tokenInfo", "balance"];
 type Props = { tokens: TokenMetadata[] };
 
 export const TokensList = ({ tokens }: Props) => {
-  const { data, isPending } = useBalances(tokens);
-  console.log(data, isPending);
-
-  const availableTokens = useMemo(() => [], []);
+  const { data: tokensWithBalances = [], isPending } = useBalances(tokens);
 
   const table = useReactTable({
     columns,
-    data: availableTokens,
+    data: tokensWithBalances,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
@@ -62,7 +58,13 @@ export const TokensList = ({ tokens }: Props) => {
         </TableHeader>
 
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {isPending ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                <Loading />
+              </TableCell>
+            </TableRow>
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row, index) => (
               <TableRow key={row.id} className={cn("cursor-pointer", index % 2 && "bg-muted/50")}>
                 {row.getVisibleCells().map(cell => {
@@ -77,7 +79,7 @@ export const TokensList = ({ tokens }: Props) => {
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
-                {isPending ? <Loading /> : <span> No tokens found.</span>}
+                No tokens found
               </TableCell>
             </TableRow>
           )}

@@ -2,8 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
-
-import { Token } from "../types";
+import { Token } from "@/types";
 
 const columnHelper = createColumnHelper<Token>();
 
@@ -34,8 +33,8 @@ export const columns = [
     },
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const numA = (rowA.getValue(columnId) as Token).ticker;
-      const numB = (rowB.getValue(columnId) as Token).ticker;
+      const numA = (rowA.getValue(columnId) as Token).name;
+      const numB = (rowB.getValue(columnId) as Token).name;
       return numA > numB ? 1 : -1;
     },
   }),
@@ -57,19 +56,30 @@ export const columns = [
   columnHelper.accessor(row => row, {
     id: "actions",
     header: () => <div>Actions</div>,
-    cell: info => (
-      <div className="flex items-center gap-2 text-right">
-        <Button variant="secondary" size="sm">
-          Add to Wallet
-        </Button>
-        <Button variant="secondary" size="sm" asChild>
-          <Link href={`/send?token=${info.getValue().contractAddress}`}>Send</Link>
-        </Button>
-        <Button size="sm" asChild>
-          <Link href={`/explore/faucets?token=${info.getValue().contractAddress}`}>Get Tokens</Link>
-        </Button>
-      </div>
-    ),
+    cell: info => {
+      const contractAddress = info.getValue().contractAddress;
+
+      return (
+        <div className="flex items-center gap-2 text-right">
+          <Button variant="secondary" size="sm">
+            Add to Wallet
+          </Button>
+          <Button variant="secondary" size="sm" asChild>
+            <Link
+              href={{
+                pathname: "/send",
+                query: contractAddress ? { token: contractAddress } : undefined,
+              }}
+            >
+              Send
+            </Link>
+          </Button>
+          <Button size="sm" asChild>
+            <Link href={`/explore/faucets?token=${info.getValue().contractAddress}`}>Get Tokens</Link>
+          </Button>
+        </div>
+      );
+    },
     footer: e => e.column.id,
   }),
 ];

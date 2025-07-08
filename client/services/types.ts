@@ -1,5 +1,5 @@
 export type TokenMetadata = {
   name: string;
   ticker: string;
-  contractAddress: string;
+  contractAddress: string | null;
 };

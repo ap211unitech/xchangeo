@@ -1,9 +1,3 @@
-import { TokenMetadata } from "@/services/types";
-
-export type Token = TokenMetadata & {
-  balance: number;
-};
-
 export type FaucetTransaction = {
   name: string;
   ticker: string;
