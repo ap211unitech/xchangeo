@@ -33,9 +33,9 @@ describe("ERC20Token contract", () => {
       expect(await usdtToken.decimals()).to.equal(18);
     });
 
-    it("Should assign the initial supply to 10 million", async function () {
+    it("Should assign the initial supply to 1000", async function () {
       const totalSupply = await usdtToken.totalSupply();
-      expect(formatUnits(totalSupply)).to.equal(TOKEN.maximumCap / 10);
+      expect(formatUnits(totalSupply)).to.equal(TOKEN.maximumCap / 100_000);
     });
 
     it("Should assign the initial supply of tokens to the owner", async function () {
