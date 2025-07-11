@@ -2,11 +2,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
-import { Token } from "@/types";
+import { TokenMetadata, TokenWithBalance } from "@/types";
 
-const columnHelper = createColumnHelper<Token>();
+const columnHelper = createColumnHelper<TokenWithBalance>();
 
-export const columns = [
+export const columns = (addTokenToWallet: (_token: TokenMetadata) => void, isAddingTokenToWallet: boolean) => [
   columnHelper.accessor(row => row, {
     id: "#",
     header: () => <span>#</span>,
@@ -23,7 +23,7 @@ export const columns = [
           className="hover:text-primary flex items-center gap-2"
           onClick={() => window.open(`https://sepolia.etherscan.io/address/${contractAddress}`)}
         >
-          <TokenLogo ticker={ticker} />
+          <TokenLogo id={`token-${contractAddress}`} ticker={ticker} />
           <div className="flex flex-col">
             <span className="text-base font-medium">{name}</span>
             <span className="text-muted-foreground">{ticker}</span>
@@ -33,8 +33,8 @@ export const columns = [
     },
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const numA = (rowA.getValue(columnId) as Token).name;
-      const numB = (rowB.getValue(columnId) as Token).name;
+      const numA = (rowA.getValue(columnId) as TokenWithBalance).name;
+      const numB = (rowB.getValue(columnId) as TokenWithBalance).name;
       return numA > numB ? 1 : -1;
     },
   }),
@@ -48,8 +48,8 @@ export const columns = [
     ),
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const numA = (rowA.getValue(columnId) as Token).balance;
-      const numB = (rowB.getValue(columnId) as Token).balance;
+      const numA = (rowA.getValue(columnId) as TokenWithBalance).balance;
+      const numB = (rowB.getValue(columnId) as TokenWithBalance).balance;
       return numA > numB ? 1 : -1;
     },
   }),
@@ -61,7 +61,7 @@ export const columns = [
 
       return (
         <div className="flex items-center gap-2 text-right">
-          <Button variant="secondary" size="sm">
+          <Button disabled={isAddingTokenToWallet} onClick={() => addTokenToWallet(info.getValue())} variant="secondary" size="sm">
             Add to Wallet
           </Button>
           <Button variant="secondary" size="sm" asChild>

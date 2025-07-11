@@ -4,9 +4,9 @@ import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@
 import { ChevronsUpDown } from "lucide-react";
 
 import { ConnectWalletOverlay, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
-import { useBalances } from "@/hooks";
+import { useAddToWallet, useBalances } from "@/hooks";
 import { cn } from "@/lib/utils";
-import { TokenMetadata } from "@/services/types";
+import { TokenMetadata } from "@/types";
 
 import { columns } from "./columns";
 import { Loading } from "./loading";
@@ -16,10 +16,11 @@ const actionKeys = ["tokenInfo", "balance"];
 type Props = { tokens: TokenMetadata[] };
 
 export const TokensList = ({ tokens }: Props) => {
-  const { data: tokensWithBalances = [], isPending } = useBalances(tokens);
+  const { data: tokensWithBalances = [], isPending: isBalancesPending } = useBalances(tokens);
+  const { mutateAsync: addTokenToWallet, isPending: isAddingTokenToWallet } = useAddToWallet();
 
   const table = useReactTable({
-    columns,
+    columns: columns(addTokenToWallet, isAddingTokenToWallet),
     data: tokensWithBalances,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -59,7 +60,7 @@ export const TokensList = ({ tokens }: Props) => {
           </TableHeader>
 
           <TableBody>
-            {isPending ? (
+            {isBalancesPending ? (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
                   <Loading />

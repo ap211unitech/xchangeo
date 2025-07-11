@@ -1,5 +1,9 @@
-import { TokenMetadata } from "@/services/types";
+export type TokenMetadata = {
+  name: string;
+  ticker: string;
+  contractAddress: string | null;
+};
 
-export type Token = TokenMetadata & {
+export type TokenWithBalance = TokenMetadata & {
   balance: number;
 };

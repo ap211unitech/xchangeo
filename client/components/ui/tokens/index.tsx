@@ -7,8 +7,7 @@ import { UNKNOWN } from "./unkn";
 import { USDC } from "./usdc";
 import { USDT } from "./usdt";
 
-// eslint-disable-next-line no-unused-vars
-const ICONS: Record<string, (props: SVGProps<SVGSVGElement>) => ReactElement> = {
+const ICONS: Record<string, (_props: SVGProps<SVGSVGElement>) => ReactElement> = {
   ETH,
   WETH: ETH,
   HETH: ETH,
@@ -19,8 +18,8 @@ const ICONS: Record<string, (props: SVGProps<SVGSVGElement>) => ReactElement> = 
   WBTC: BTC,
 };
 
-export const TokenLogo = ({ ticker }: { ticker: string }) => {
+export const TokenLogo = ({ id, ticker }: { id?: string; ticker: string }) => {
   const Icon = ICONS[ticker] ?? ICONS.UNKNOWN;
 
-  return <Icon className="size-8" />;
+  return <Icon id={id} className="size-8" />;
 };

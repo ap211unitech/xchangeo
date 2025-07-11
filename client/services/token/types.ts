@@ -1,7 +1,7 @@
-import { AddressLike } from "ethers";
+import { AddressLike, Eip1193Provider } from "ethers";
 import { ReactNode } from "react";
 
-import { TokenMetadata } from "../types";
+import { TokenMetadata } from "@/types";
 
 export type GetAllTokensResponse = {
   name: string;
@@ -10,9 +10,8 @@ export type GetAllTokensResponse = {
   logo: ReactNode;
 };
 
-/* eslint-disable */
 export interface ITokenService {
   getAllTokens: () => Promise<TokenMetadata[]>;
-  getBalance: (token: string | null, account: AddressLike) => Promise<number>;
+  getBalance: (_token: string | null, _account: AddressLike) => Promise<number>;
+  addToWallet: (_wallet: Eip1193Provider, _token: TokenMetadata) => Promise<boolean>;
 }
-/* eslint-enable */

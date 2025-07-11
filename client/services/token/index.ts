@@ -1,10 +1,10 @@
-import { AddressLike, Contract } from "ethers";
+import { AddressLike, Contract, Eip1193Provider } from "ethers";
 
 import { ABI, GET_ALL_TOKENS, TAGS } from "@/constants";
 import { executeGraphQLQuery, formatUnits } from "@/lib/utils";
+import { TokenMetadata } from "@/types";
 
 import { rpcProvider } from "..";
-import { TokenMetadata } from "../types";
 import { GetAllTokensResponse, ITokenService } from "./types";
 
 export class TokenService implements ITokenService {
@@ -27,5 +27,30 @@ export class TokenService implements ITokenService {
     const erc20TokenContract = new Contract(token, ABI.ERC20TOKEN, rpcProvider);
     const balance = await erc20TokenContract.balanceOf(account);
     return formatUnits(balance);
+  }
+
+  public async addToWallet(wallet: Eip1193Provider, token: TokenMetadata): Promise<boolean> {
+    const isAdded = await wallet.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: token.contractAddress,
+          symbol: token.ticker,
+          decimals: 18,
+          image: this.changeToBase64(`token-${token.contractAddress}`),
+        },
+      },
+    });
+
+    return isAdded;
+  }
+
+  private changeToBase64(id: string) {
+    const tokenSvgMarkup = document.getElementById(id)?.outerHTML;
+    const utf8Bytes = new TextEncoder().encode(tokenSvgMarkup);
+    const binary = Array.from(utf8Bytes, b => String.fromCharCode(b)).join("");
+    const encoded = btoa(binary);
+    return `data:image/svg+xml;base64,${encoded}`;
   }
 }
