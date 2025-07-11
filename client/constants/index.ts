@@ -1,5 +1,5 @@
 import { CONFIG } from "@/config";
-import { TokenMetadata } from "@/services/types";
+import { TokenMetadata } from "@/types";
 
 export * from "./abi";
 export * from "./graphql";

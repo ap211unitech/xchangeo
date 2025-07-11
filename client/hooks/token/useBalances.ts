@@ -4,13 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { NATIVE_TOKEN } from "@/constants";
 import { QUERY_KEY } from "@/constants/queryKeys";
 import { appService } from "@/services";
-import { TokenMetadata } from "@/services/types";
-import { Token } from "@/types";
+import { TokenMetadata, TokenWithBalance } from "@/types";
 
 export const useBalances = (tokens: TokenMetadata[]) => {
   const { address = "" } = useAppKitAccount();
 
-  return useQuery<Token[]>({
+  return useQuery<TokenWithBalance[]>({
     enabled: !!address,
     queryKey: QUERY_KEY.getBalances(address),
     queryFn: async () => {
