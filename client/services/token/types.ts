@@ -13,5 +13,6 @@ export type GetAllTokensResponse = {
 export interface ITokenService {
   getAllTokens: () => Promise<TokenMetadata[]>;
   getBalance: (_token: string | null, _account: AddressLike) => Promise<number>;
+  getWalletTokens: () => string[];
   addToWallet: (_wallet: Eip1193Provider, _token: TokenMetadata) => Promise<boolean>;
 }

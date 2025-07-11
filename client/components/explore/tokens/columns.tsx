@@ -1,4 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
@@ -6,7 +7,7 @@ import { TokenMetadata, TokenWithBalance } from "@/types";
 
 const columnHelper = createColumnHelper<TokenWithBalance>();
 
-export const columns = (addTokenToWallet: (_token: TokenMetadata) => void, isAddingTokenToWallet: boolean) => [
+export const columns = (walletTokens: string[], addTokenToWallet: (_token: TokenMetadata) => void, isAddingTokenToWallet: boolean) => [
   columnHelper.accessor(row => row, {
     id: "#",
     header: () => <span>#</span>,
@@ -61,9 +62,11 @@ export const columns = (addTokenToWallet: (_token: TokenMetadata) => void, isAdd
 
       return (
         <div className="flex items-center gap-2 text-right">
-          <Button disabled={isAddingTokenToWallet} onClick={() => addTokenToWallet(info.getValue())} variant="secondary" size="sm">
-            Add to Wallet
-          </Button>
+          {!!contractAddress && !walletTokens.includes(contractAddress) && (
+            <Button disabled={isAddingTokenToWallet} onClick={() => addTokenToWallet(info.getValue())} variant="secondary" size="sm">
+              <Plus className="size-4" /> Add to Wallet
+            </Button>
+          )}
           <Button variant="secondary" size="sm" asChild>
             <Link
               href={{

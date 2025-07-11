@@ -4,7 +4,7 @@ import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@
 import { ChevronsUpDown } from "lucide-react";
 
 import { ConnectWalletOverlay, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
-import { useAddToWallet, useBalances } from "@/hooks";
+import { useAddToWallet, useBalances, useWalletTokens } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { TokenMetadata } from "@/types";
 
@@ -16,11 +16,12 @@ const actionKeys = ["tokenInfo", "balance"];
 type Props = { tokens: TokenMetadata[] };
 
 export const TokensList = ({ tokens }: Props) => {
+  const { data: walletTokens = [] } = useWalletTokens();
   const { data: tokensWithBalances = [], isPending: isBalancesPending } = useBalances(tokens);
   const { mutateAsync: addTokenToWallet, isPending: isAddingTokenToWallet } = useAddToWallet();
 
   const table = useReactTable({
-    columns: columns(addTokenToWallet, isAddingTokenToWallet),
+    columns: columns(walletTokens, addTokenToWallet, isAddingTokenToWallet),
     data: tokensWithBalances,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

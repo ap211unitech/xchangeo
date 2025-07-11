@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 import { ThemeProvider } from "./themeProvider";
 import { WalletProvider } from "./walletProvider";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } });
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (

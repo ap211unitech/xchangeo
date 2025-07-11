@@ -1,5 +1,6 @@
-const PREFIX = "@XchangeoService";
+import { PREFIX } from ".";
 
-export const QUERY_KEY = {
+export const QUERY_KEYS = {
   getBalances: (account: string) => [PREFIX, account],
+  getWalletTokens: () => [PREFIX, "getWalletTokens"],
 };
