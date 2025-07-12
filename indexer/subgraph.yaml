@@ -95,3 +95,88 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/erc-20-token.ts
+
+
+  - kind: ethereum
+    name: Faucet
+    network: sepolia
+    source:
+      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+      abi: Faucet
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Faucet
+      abis:
+        - name: Faucet
+          file: ./abis/Faucet.json
+      eventHandlers:
+        - event: Faucet__Created(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleFaucetCreated
+      file: ./src/faucet.ts
+
+  - kind: ethereum
+    name: Faucet-0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+    network: sepolia
+    source:
+      address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+      abi: Faucet
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Faucet
+      abis:
+        - name: Faucet
+          file: ./abis/Faucet.json
+      eventHandlers:
+        - event: Faucet__Created(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleFaucetCreated
+      file: ./src/faucet.ts
+
+  - kind: ethereum
+    name: Faucet-0x0165878A594ca255338adfa4d48449f69242Eb8F
+    network: sepolia
+    source:
+      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+      abi: Faucet
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Faucet
+      abis:
+        - name: Faucet
+          file: ./abis/Faucet.json
+      eventHandlers:
+        - event: Faucet__Created(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleFaucetCreated
+      file: ./src/faucet.ts
+
+  - kind: ethereum
+    name: Faucet-0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
+    network: sepolia
+    source:
+      address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+      abi: Faucet
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Faucet
+      abis:
+        - name: Faucet
+          file: ./abis/Faucet.json
+      eventHandlers:
+        - event: Faucet__Created(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleFaucetCreated
+      file: ./src/faucet.ts

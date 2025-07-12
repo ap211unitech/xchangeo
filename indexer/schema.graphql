@@ -7,6 +7,15 @@ type ERC20Token @entity(immutable: true) {
   blockNumber: BigInt!
 }
 
+type Faucet @entity(immutable: true) {
+  id: ID!
+  tokenAddress: Bytes!
+  faucetAddress: Bytes!
+  lockTime: BigInt!
+  withdrawalAmount: BigInt!
+  timestamp: BigInt!
+}
+
 type Transfer @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
