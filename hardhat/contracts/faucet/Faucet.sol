@@ -23,6 +23,13 @@ contract ERC20Faucet is IERC20Faucet, Ownable, ReentrancyGuard {
         token = IERC20(_tokenAddress);
         lockTime = _lockTime;
         withdrawalAmount = _withdrawalAmount;
+        emit Faucet__Created(
+            address(this),
+            address(token),
+            lockTime,
+            withdrawalAmount,
+            block.timestamp
+        );
     }
 
     function requestTokens() external nonReentrant returns (bool) {

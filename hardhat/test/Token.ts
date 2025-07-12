@@ -49,7 +49,6 @@ describe("ERC20Token contract", () => {
     });
 
     it("Should emit ERC20TokenCreated event", async function () {
-      const Token = await hre.ethers.getContractFactory("ERC20Token");
       await usdtToken.waitForDeployment();
 
       const txHash = usdtToken.deploymentTransaction()?.hash ?? "";

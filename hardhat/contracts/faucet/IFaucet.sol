@@ -39,6 +39,20 @@ interface IERC20Faucet {
         string description
     );
 
+    /// @notice Emitted when a new faucet is created
+    /// @param faucet The address of the faucet contract
+    /// @param token The ERC20 token address associated with the faucet
+    /// @param lockTime The duration (in seconds) a user must wait between withdrawals
+    /// @param withdrawalAmount The fixed amount of tokens dispensed per request
+    /// @param timestamp The timestamp when the faucet was created
+    event Faucet__Created(
+        address indexed faucet,
+        address indexed token,
+        uint256 lockTime,
+        uint256 withdrawalAmount,
+        uint256 timestamp
+    );
+
     /// @notice Emitted when any user requests ERC20 token from Faucet
     /// @param from The faucet account address
     /// @param to The user account address

@@ -57,6 +57,34 @@ describe("ERC20Faucet Contract", () => {
       faucetBalance = await faucet.getBalance();
       expect(faucetBalance).to.be.equal(mintBalance);
     });
+
+    it("Should emit Faucet__Created event", async function () {
+      await faucet.waitForDeployment();
+
+      const txHash = faucet.deploymentTransaction()?.hash ?? "";
+      const receipt = await hre.ethers.provider.getTransactionReceipt(txHash);
+
+      const iface = new hre.ethers.Interface([
+        "event Faucet__Created(address indexed faucet, address indexed token, uint256 lockTime, uint256 withdrawalAmount, uint256 timestamp)",
+      ]);
+
+      const decodedLogs = receipt?.logs
+        .map((log) => {
+          try {
+            return iface.parseLog(log);
+          } catch {
+            return null;
+          }
+        })
+        .filter((log) => log !== null);
+
+      const event = decodedLogs?.find((e) => e.name === "Faucet__Created");
+      expect(event).to.not.be.undefined;
+      expect(event?.args.faucet).to.equal(await faucet.getAddress());
+      expect(event?.args.token).to.equal(await usdtToken.getAddress());
+      expect(event?.args.lockTime).to.equal(FAUCET.lockTime);
+      expect(event?.args.withdrawalAmount).to.equal(FAUCET.withdrawlAmount);
+    });
   });
 
   describe("Request tokens", () => {
