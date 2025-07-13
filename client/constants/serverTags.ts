@@ -2,5 +2,6 @@ const PREFIX = "@XchangeoService";
 
 export const TAGS = {
   getAllTokens: [PREFIX, "getAllTokens"],
-  getFaucetMetadata: (faucetAddress: string) => [PREFIX, "getFaucetMetadata", faucetAddress],
+  getAllFaucetMetadata: () => [PREFIX, "getAllFaucetMetadata"],
+  getFaucetMetadata: (tokenAddress: string) => [PREFIX, "getFaucetMetadata", tokenAddress],
 };

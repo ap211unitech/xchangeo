@@ -5,6 +5,7 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import Link from "next/link";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -48,19 +49,22 @@ const formSchema = z.object({
 
 type Props = {
   availableTokens: TokenMetadata[];
-  faucetMetadata: FaucetMetadata;
+  allFaucetsMetadata: FaucetMetadata[];
 };
 
-export const FaucetForm = ({ availableTokens, faucetMetadata }: Props) => {
+export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { address } = useAppKitAccount();
-  const preSelectedToken = useMemo(() => faucetMetadata.tokenAddress, [faucetMetadata.tokenAddress]);
+
+  const preSelectedToken = searchParams.get("token") ?? availableTokens.at(0)?.contractAddress;
 
   const isPending = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      token: availableTokens.some(({ contractAddress }) => contractAddress === preSelectedToken) ? preSelectedToken : "",
+      token: preSelectedToken ?? "",
       recipientAddress: "",
     },
   });
@@ -69,13 +73,22 @@ export const FaucetForm = ({ availableTokens, faucetMetadata }: Props) => {
     console.log(values);
   };
 
-  const selectedTokenInfo = availableTokens.find(({ contractAddress }) => form.watch("token") === contractAddress);
+  const selectedTokenInfo = useMemo(
+    () => availableTokens.find(({ contractAddress }) => preSelectedToken === contractAddress),
+    [availableTokens, preSelectedToken],
+  );
+
+  const faucetMetadata = useMemo(() => {
+    return allFaucetsMetadata.find(({ tokenAddress }) => tokenAddress === preSelectedToken);
+  }, [allFaucetsMetadata, preSelectedToken]);
 
   useEffect(() => {
     if (address) {
       form.setValue("recipientAddress", address);
     }
   }, [address, form]);
+
+  if (!faucetMetadata) return notFound();
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -88,7 +101,13 @@ export const FaucetForm = ({ availableTokens, faucetMetadata }: Props) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Select token</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={e => {
+                      field.onChange(e);
+                      router.replace(`?token=${e}`);
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Please select a token" />

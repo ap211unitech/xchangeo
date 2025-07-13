@@ -9,6 +9,17 @@ export const GET_ALL_TOKENS = `{
   }
 }`;
 
+export const GET_ALL_FAUCETS_METADATA = `{
+  faucets {
+    id
+    faucetAddress
+    tokenAddress
+    lockTime
+    withdrawalAmount
+    timestamp
+  }
+}`;
+
 export const GET_FAUCET_METADATA = (tokenAddress: string) => `{
   faucets(where: { tokenAddress: "${tokenAddress}" }) {
     id
