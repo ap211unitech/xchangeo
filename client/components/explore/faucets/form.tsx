@@ -5,7 +5,7 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import Link from "next/link";
-import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -79,7 +79,7 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
   );
 
   const faucetMetadata = useMemo(() => {
-    return allFaucetsMetadata.find(({ tokenAddress }) => tokenAddress === preSelectedToken);
+    return allFaucetsMetadata.find(({ tokenAddress }) => tokenAddress === preSelectedToken) as FaucetMetadata;
   }, [allFaucetsMetadata, preSelectedToken]);
 
   useEffect(() => {
@@ -87,8 +87,6 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
       form.setValue("recipientAddress", address);
     }
   }, [address, form]);
-
-  if (!faucetMetadata) return notFound();
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -114,12 +112,19 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {availableTokens.map(({ name, contractAddress, ticker }) => (
-                        <SelectItem key={contractAddress} value={contractAddress!}>
-                          <TokenLogo className="size-6" ticker={ticker} />
-                          {name} ({ticker})
-                        </SelectItem>
-                      ))}
+                      {allFaucetsMetadata.map(({ tokenAddress }) => {
+                        const tokenInfo = availableTokens.find(a => a.contractAddress === tokenAddress);
+                        if (!tokenInfo) return null;
+
+                        const { name, contractAddress, ticker } = tokenInfo;
+
+                        return (
+                          <SelectItem key={contractAddress} value={contractAddress!}>
+                            <TokenLogo className="size-6" ticker={ticker} />
+                            {name} ({ticker})
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                   <FormMessage />
