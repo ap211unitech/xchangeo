@@ -1,12 +1,16 @@
 import { AddressLike } from "ethers";
 
-export type FaucetMetadata = {
-  token: string;
-  lockTime: number;
-  withdrawalAmount: number;
+import { FaucetMetadata } from "@/types";
+
+export type GetFaucetMetadataResponse = {
+  id: string;
+  faucetAddress: string;
+  tokenAddress: string;
+  lockTime: string;
+  withdrawalAmount: string;
 };
 
 export interface IFaucetService {
-  getMetadata: (_faucet: AddressLike) => Promise<FaucetMetadata>;
+  getMetadata: (_tokenAddress: AddressLike) => Promise<FaucetMetadata | undefined>;
   requestTokens: (_faucet: AddressLike, _recipientAddress: AddressLike) => Promise<void>;
 }

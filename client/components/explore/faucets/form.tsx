@@ -1,10 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,15 +20,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  ImageComponent,
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  TokenLogo,
 } from "@/components/ui";
-import availableTokens from "@/public/tokens.json";
+import { formatUnits } from "@/lib/utils";
+import { FaucetMetadata, TokenMetadata } from "@/types";
 
 const formSchema = z.object({
   token: z
@@ -44,9 +46,14 @@ const formSchema = z.object({
     }),
 });
 
-export const FaucetForm = () => {
-  const searchParams = useSearchParams();
-  const preSelectedToken = searchParams.get("token") as string;
+type Props = {
+  availableTokens: TokenMetadata[];
+  faucetMetadata: FaucetMetadata;
+};
+
+export const FaucetForm = ({ availableTokens, faucetMetadata }: Props) => {
+  const { address } = useAppKitAccount();
+  const preSelectedToken = useMemo(() => faucetMetadata.tokenAddress, [faucetMetadata.tokenAddress]);
 
   const isPending = false;
 
@@ -63,6 +70,12 @@ export const FaucetForm = () => {
   };
 
   const selectedTokenInfo = availableTokens.find(({ contractAddress }) => form.watch("token") === contractAddress);
+
+  useEffect(() => {
+    if (address) {
+      form.setValue("recipientAddress", address);
+    }
+  }, [address, form]);
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -82,11 +95,9 @@ export const FaucetForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {availableTokens.map(({ logo, name, contractAddress, ticker }) => (
-                        <SelectItem key={contractAddress} value={contractAddress}>
-                          <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                            <ImageComponent fill alt={name} src={logo} />
-                          </div>
+                      {availableTokens.map(({ name, contractAddress, ticker }) => (
+                        <SelectItem key={contractAddress} value={contractAddress!}>
+                          <TokenLogo className="size-6" ticker={ticker} />
                           {name} ({ticker})
                         </SelectItem>
                       ))}
@@ -126,11 +137,18 @@ export const FaucetForm = () => {
         <div className="flex w-full items-center justify-between border-b pb-4 text-xs">
           <div className="mr-4 flex items-center">
             <div className="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
-            <span>Rate limit: 1 request per minute</span>
+            <span>
+              Rate limit: 1 request /{" "}
+              {faucetMetadata.lockTime >= 60
+                ? `${faucetMetadata.lockTime / 60} minute${faucetMetadata.lockTime / 60 !== 1 ? "s" : ""}`
+                : `${faucetMetadata.lockTime} second${faucetMetadata.lockTime !== 1 ? "s" : ""}`}
+            </span>
           </div>
           <div className="flex items-center">
             <div className="mr-2 h-2 w-2 rounded-full bg-blue-400"></div>
-            <span>Amount: 5 {selectedTokenInfo?.ticker || "Units"}</span>
+            <span>
+              Amount: {formatUnits(BigInt(faucetMetadata.withdrawalAmount))} {selectedTokenInfo?.ticker || "Units"}
+            </span>
           </div>
         </div>
         <div className="pt-2">

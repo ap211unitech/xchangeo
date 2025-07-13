@@ -1,7 +1,8 @@
 import { Faucets } from "@/components/explore";
+import { TSearchParams } from "@/types";
 
-const FaucetsPage = () => {
-  return <Faucets />;
+const FaucetsPage = ({ searchParams }: { searchParams: TSearchParams }) => {
+  return <Faucets searchParams={searchParams} />;
 };
 
 export default FaucetsPage;

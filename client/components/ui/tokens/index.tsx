@@ -1,5 +1,7 @@
 import { ReactElement, SVGProps } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { BTC } from "./btc";
 import { DAI } from "./dai";
 import { ETH } from "./eth";
@@ -18,8 +20,14 @@ const ICONS: Record<string, (_props: SVGProps<SVGSVGElement>) => ReactElement> =
   WBTC: BTC,
 };
 
-export const TokenLogo = ({ id, ticker }: { id?: string; ticker: string }) => {
+type Props = {
+  id?: string;
+  className?: string;
+  ticker: string;
+};
+
+export const TokenLogo = ({ className, id, ticker }: Props) => {
   const Icon = ICONS[ticker] ?? ICONS.UNKNOWN;
 
-  return <Icon id={id} className="size-8" />;
+  return <Icon id={id} className={cn("size-8", className)} />;
 };
