@@ -1,5 +1,6 @@
-import { AddressLike, Contract, ethers } from "ethers";
+import { AddressLike, Contract, ethers, TransactionResponse } from "ethers";
 
+import { CONFIG } from "@/config";
 import { ABI, GET_ALL_FAUCETS_METADATA, GET_FAUCET_METADATA, TAGS } from "@/constants";
 import { executeGraphQLQuery } from "@/lib/utils";
 import { FaucetMetadata } from "@/types";
@@ -38,9 +39,12 @@ export class FaucetService implements IFaucetService {
       : undefined;
   }
 
-  public async requestTokens(faucet: AddressLike, _recipientAddress: AddressLike): Promise<void> {
-    const wallet = new ethers.Wallet("private key", rpcProvider);
+  public async requestTokens(faucet: AddressLike, recipientAddress: AddressLike): Promise<string | undefined> {
+    if (!faucet || !ethers.isAddress(faucet)) throw new Error("Invalid faucet contract address");
+
+    const wallet = new ethers.Wallet(CONFIG.FAUCET_RELAYER_PRIVATE_KEY, rpcProvider);
     const faucetContract = new Contract(faucet as string, ABI.FAUCET, wallet);
-    await faucetContract.requestTokens();
+    const tx: TransactionResponse = await faucetContract.requestTokens(recipientAddress);
+    return (await tx.wait())?.hash;
   }
 }

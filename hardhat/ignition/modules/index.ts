@@ -64,9 +64,16 @@ const DeployModule = buildModule("DeployModule", (m) => {
       }
     );
 
+    // Step 3: Mint tokens to the faucet
+    const mintCall = m.call(tokenContract, "mint", [
+      faucetContract, // or another address
+      parseUnits(token.maximumCap / 1000),
+    ]);
+
     exports[token.symbol] = {
       token: tokenContract,
       faucet: faucetContract,
+      mint: mintCall,
     };
   });
 

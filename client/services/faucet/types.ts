@@ -13,5 +13,5 @@ export type GetFaucetMetadataResponse = {
 export interface IFaucetService {
   getAllFaucetsMetadata: () => Promise<FaucetMetadata[]>;
   getMetadata: (_tokenAddress: AddressLike) => Promise<FaucetMetadata | undefined>;
-  requestTokens: (_faucet: AddressLike, _recipientAddress: AddressLike) => Promise<void>;
+  requestTokens: (_faucet: AddressLike, _recipientAddress: AddressLike) => Promise<string | undefined>;
 }

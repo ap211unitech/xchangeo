@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
-import { ethers } from "ethers";
+import { ethers, Fragment, Interface, JsonFragment } from "ethers";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
@@ -49,3 +49,32 @@ export const executeGraphQLQuery = async <T>(key: string, query: string, next?: 
 
   return (await res.json()).data[key];
 };
+
+export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | JsonFragment>, customMessages?: Record<string, string>): string {
+  try {
+    const iface = new Interface(abi);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const e = error as any;
+
+    const revertData = e?.cause?.error?.data ?? e?.cause?.data ?? e?.error?.data ?? e?.data;
+
+    if (!revertData) {
+      return "Transaction reverted: Unknown reason.";
+    }
+
+    const parsedError = iface.parseError(revertData);
+
+    if (!parsedError) {
+      return `Transaction reverted`;
+    }
+
+    if (customMessages && parsedError.name in customMessages) {
+      return customMessages[parsedError.name];
+    }
+
+    return `Transaction reverted: ${parsedError.name}`;
+  } catch {
+    return "Transaction reverted: Unknown reason.";
+  }
+}

@@ -29,6 +29,7 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
+import { useRequestTokens } from "@/hooks";
 import { formatUnits } from "@/lib/utils";
 import { FaucetMetadata, TokenMetadata } from "@/types";
 
@@ -56,10 +57,9 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { address } = useAppKitAccount();
+  const { isPending, mutateAsync: onRequestTokens } = useRequestTokens();
 
   const preSelectedToken = searchParams.get("token") ?? availableTokens.at(0)?.contractAddress;
-
-  const isPending = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,8 +69,8 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await onRequestTokens({ faucetAddress: faucetMetadata.faucetAddress, recipientAddress: values.recipientAddress });
   };
 
   const selectedTokenInfo = useMemo(
@@ -144,7 +144,7 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isPending} className="flex items-center gap-2">
+            <Button type="submit" disabled={isPending} className="flex w-28 items-center gap-2">
               {isPending ? (
                 <>
                   <Loader className="h-4 w-4 animate-spin" />

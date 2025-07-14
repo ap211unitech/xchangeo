@@ -3,7 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
-import { Footer, Header } from "@/components/ui";
+import { Footer, Header, Toaster } from "@/components/ui";
 import { AppProvider } from "@/provider";
 
 const geistSans = Geist({
@@ -30,6 +30,7 @@ export default function RootLayout({
           <Header />
           <main className="mx-auto min-h-[60vh] max-w-[88rem] px-4 pt-8 pb-12 sm:px-6 lg:px-8">{children}</main>
           <Footer />
+          <Toaster richColors position="top-center" />
         </AppProvider>
       </body>
     </html>
