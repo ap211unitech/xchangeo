@@ -86,7 +86,7 @@ export const FAUCET_ABI = [
       },
       {
         internalType: "address",
-        name: "sender",
+        name: "recipientAddress",
         type: "address",
       },
       {
@@ -95,7 +95,7 @@ export const FAUCET_ABI = [
         type: "string",
       },
     ],
-    name: "Faucet__InvalidSender",
+    name: "Faucet__InvalidAddress",
     type: "error",
   },
   {
@@ -124,6 +124,43 @@ export const FAUCET_ABI = [
     inputs: [],
     name: "ReentrancyGuardReentrantCall",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "faucet",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "lockTime",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "withdrawalAmount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+    ],
+    name: "Faucet__Created",
+    type: "event",
   },
   {
     anonymous: false,
@@ -292,7 +329,13 @@ export const FAUCET_ABI = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "recipientAddress",
+        type: "address",
+      },
+    ],
     name: "requestTokens",
     outputs: [
       {

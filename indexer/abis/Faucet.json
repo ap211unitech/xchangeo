@@ -86,7 +86,7 @@
       },
       {
         "internalType": "address",
-        "name": "sender",
+        "name": "recipientAddress",
         "type": "address"
       },
       {
@@ -95,7 +95,7 @@
         "type": "string"
       }
     ],
-    "name": "Faucet__InvalidSender",
+    "name": "Faucet__InvalidAddress",
     "type": "error"
   },
   {
@@ -329,7 +329,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "recipientAddress",
+        "type": "address"
+      }
+    ],
     "name": "requestTokens",
     "outputs": [
       {
