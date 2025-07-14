@@ -1,6 +1,11 @@
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 import { expect } from "chai";
-import { AddressLike, ContractTransactionResponse, Typed } from "ethers";
+import {
+  AddressLike,
+  ContractTransactionResponse,
+  Typed,
+  ZeroAddress,
+} from "ethers";
 
 import { ERC20Faucet, ERC20Token } from "../typechain-types";
 import {
@@ -18,13 +23,14 @@ describe("ERC20Faucet Contract", () => {
   let faucet: ERC20Faucet & {
     deploymentTransaction(): ContractTransactionResponse;
   };
-  let owner: { address: Typed | AddressLike };
   let addr1: { address: Typed | AddressLike };
   let addr2: { address: Typed | AddressLike };
+  let RECIPIENT_ADDRESS: Typed | AddressLike;
 
   beforeEach(async function () {
     // Get Signers here.
-    [owner, addr1, addr2] = await hre.ethers.getSigners();
+    [, addr1, addr2] = await hre.ethers.getSigners();
+    RECIPIENT_ADDRESS = addr1.address;
 
     usdtToken = await deployERC20TokenContract();
 
@@ -96,8 +102,14 @@ describe("ERC20Faucet Contract", () => {
       await usdtToken.mint(await faucet.getAddress(), mintBalance);
 
       // Request some tokens
-      tx = await faucet.connect(addr1 as any).requestTokens();
+      tx = await faucet.connect(addr1 as any).requestTokens(RECIPIENT_ADDRESS);
       await tx.wait();
+    });
+
+    it("Should throw error for invalid address", async () => {
+      await expect(
+        faucet.requestTokens(ZeroAddress)
+      ).to.be.revertedWithCustomError(faucet, "Faucet__InvalidAddress");
     });
 
     it("Should decrease faucet balance", async () => {
@@ -141,7 +153,7 @@ describe("ERC20Faucet Contract", () => {
     it("Should throw error Insufficient Time Elapsed", async () => {
       // Requesting second time
       await expect(
-        faucet.connect(addr1 as any).requestTokens()
+        faucet.connect(addr1 as any).requestTokens(RECIPIENT_ADDRESS)
       ).to.be.revertedWithCustomError(
         faucet,
         "Faucet__InsufficientTimeElapsed"
@@ -153,7 +165,7 @@ describe("ERC20Faucet Contract", () => {
       await faucet.withdraw();
 
       await expect(
-        faucet.connect(addr1 as any).requestTokens()
+        faucet.connect(addr1 as any).requestTokens(RECIPIENT_ADDRESS)
       ).to.be.revertedWithCustomError(faucet, "Faucet__InsufficientFunds");
     });
   });
@@ -183,12 +195,12 @@ describe("ERC20Faucet Contract", () => {
         await usdtToken.mint(await faucet.getAddress(), mintBalance);
 
         initialFaucetBalance = await faucet.getBalance();
-        await faucet.connect(addr2 as any).requestTokens();
+        await faucet.connect(addr2 as any).requestTokens(RECIPIENT_ADDRESS);
       });
 
       it("Should request tokens after time elapsed according to new lock time", async () => {
         await sleep(newLockTime);
-        await faucet.connect(addr2 as any).requestTokens();
+        await faucet.connect(addr2 as any).requestTokens(RECIPIENT_ADDRESS);
 
         // Should decrease faucet balance
         expect(await faucet.getBalance()).to.be.equal(
@@ -196,7 +208,7 @@ describe("ERC20Faucet Contract", () => {
         );
 
         // Should increase faucet balance
-        expect(await usdtToken.balanceOf(addr2.address)).to.be.equal(
+        expect(await usdtToken.balanceOf(RECIPIENT_ADDRESS)).to.be.equal(
           BigInt(2 * Number(FAUCET.withdrawlAmount))
         );
       });
@@ -230,7 +242,9 @@ describe("ERC20Faucet Contract", () => {
         await usdtToken.mint(await faucet.getAddress(), mintBalance);
 
         initialFaucetBalance = await faucet.getBalance();
-        tx = await faucet.connect(addr2 as any).requestTokens();
+        tx = await faucet
+          .connect(addr2 as any)
+          .requestTokens(RECIPIENT_ADDRESS);
       });
 
       it("Should decrease faucet balance", async () => {
@@ -245,14 +259,16 @@ describe("ERC20Faucet Contract", () => {
 
       it("Should increase user balance", async () => {
         // User Balance should increase by withdrawal amount
-        expect(await usdtToken.balanceOf(addr2.address)).to.be.equal(
+        expect(await usdtToken.balanceOf(RECIPIENT_ADDRESS)).to.be.equal(
           newWithdrawalAmount
         );
       });
 
       it("Should have correct nextAccessTime", async () => {
         const prevAccessTime = BigInt((await tx.getBlock())?.timestamp || 0);
-        const nextAccessTime = await faucet.getNextAccessTime(addr2.address);
+        const nextAccessTime = await faucet.getNextAccessTime(
+          RECIPIENT_ADDRESS
+        );
 
         // Verify nextAccessTime
         expect(nextAccessTime - prevAccessTime).to.be.equal(FAUCET.lockTime);
@@ -263,7 +279,7 @@ describe("ERC20Faucet Contract", () => {
           .to.be.emit(faucet, "Faucet__ReceivedFunds")
           .withArgs(
             await faucet.getAddress(),
-            addr2.address,
+            RECIPIENT_ADDRESS,
             newWithdrawalAmount,
             (
               await tx.getBlock()

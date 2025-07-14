@@ -32,12 +32,14 @@ contract ERC20Faucet is IERC20Faucet, Ownable, ReentrancyGuard {
         );
     }
 
-    function requestTokens() external nonReentrant returns (bool) {
-        if (msg.sender == address(0)) {
-            revert Faucet__InvalidSender(
+    function requestTokens(
+        address recipientAddress
+    ) external nonReentrant returns (bool) {
+        if (recipientAddress == address(0)) {
+            revert Faucet__InvalidAddress(
                 address(token),
-                msg.sender,
-                "Request must not originate from a zero account"
+                recipientAddress,
+                "Recipient must not be a zero account"
             );
         }
 
@@ -52,22 +54,22 @@ contract ERC20Faucet is IERC20Faucet, Ownable, ReentrancyGuard {
             );
         }
 
-        if (nextAccessTime[msg.sender] > block.timestamp) {
+        if (nextAccessTime[recipientAddress] > block.timestamp) {
             revert Faucet__InsufficientTimeElapsed(
                 address(token),
-                nextAccessTime[msg.sender],
+                nextAccessTime[recipientAddress],
                 lockTime,
                 block.timestamp,
                 "Insufficient time elapsed since last withdrawal - try again later."
             );
         }
 
-        nextAccessTime[msg.sender] = block.timestamp + lockTime;
-        token.transfer(msg.sender, withdrawalAmount);
+        nextAccessTime[recipientAddress] = block.timestamp + lockTime;
+        token.transfer(recipientAddress, withdrawalAmount);
 
         emit Faucet__ReceivedFunds(
             address(this),
-            msg.sender,
+            recipientAddress,
             withdrawalAmount,
             block.timestamp
         );

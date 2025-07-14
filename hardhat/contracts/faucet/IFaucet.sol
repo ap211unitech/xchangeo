@@ -5,11 +5,11 @@ pragma solidity ^0.8.28;
 interface IERC20Faucet {
     /// @notice Thrown when an unauthorized sender attempts to request token from faucet
     /// @param tokenAddress The address of the ERC20 token
-    /// @param sender The address of the sender attempting the request
+    /// @param recipientAddress The address of the recipient attempting the request
     /// @param description A message describing the reason for the error
-    error Faucet__InvalidSender(
+    error Faucet__InvalidAddress(
         address tokenAddress,
-        address sender,
+        address recipientAddress,
         string description
     );
 
@@ -77,8 +77,9 @@ interface IERC20Faucet {
 
     /// @notice Allows users to request tokens from the faucet
     /// @dev Users can request tokens if they meet the eligibility criteria, such as lock time restrictions.
+    /// @param recipientAddress The address that will receive the faucet tokens.
     /// @return success A boolean indicating whether the request was successful
-    function requestTokens() external returns (bool);
+    function requestTokens(address recipientAddress) external returns (bool);
 
     /// @notice Allows the owner to withdraw all ERC20 tokens from the faucet
     /// @dev This function can only be called by the contract owner to retrieve any remaining funds. It empties the faucet balance for provided ERC20 token.
