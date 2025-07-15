@@ -8,7 +8,7 @@ on:
 
 jobs:
   setup:
-    name: Setup and Install1
+    name: Setup and Install
     runs-on: ubuntu-latest
 
     steps:
@@ -19,16 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'pnpm'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
+          cache: 'npm'
 
       - name: Install dependencies
         working-directory: client
-        run: pnpm install
+        run: npm ci
 
   lint:
     name: Lint
@@ -43,18 +38,13 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
-
       - name: Install dependencies
         working-directory: client
-        run: pnpm install
+        run: npm ci
 
       - name: Run lint
         working-directory: client
-        run: pnpm lint
+        run: npm run lint
 
   format:
     name: Format Check
@@ -69,18 +59,13 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
-
       - name: Install dependencies
         working-directory: client
-        run: pnpm install
+        run: npm ci
 
-      - name: Format check
+      - name: Run format check
         working-directory: client
-        run: pnpm format --check
+        run: npm run format
 
   build:
     name: Build
@@ -95,15 +80,10 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
-
       - name: Install dependencies
         working-directory: client
-        run: pnpm install
+        run: npm ci
 
       - name: Build project
         working-directory: client
-        run: pnpm build
+        run: npm run build
