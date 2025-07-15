@@ -8,7 +8,7 @@ on:
 
 jobs:
   setup:
-    name: Setup and Install
+    name: Setup and Install1
     runs-on: ubuntu-latest
 
     steps:
