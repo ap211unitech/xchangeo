@@ -28,7 +28,7 @@ describe("ERC20Token contract", () => {
     });
 
     it("Should set the metadata", async function () {
-      expect(await usdtToken.name()).to.equal(TOKEN.name);
+      expect(await usdtToken.name()).to.equal('TOKEN.name');
       expect(await usdtToken.symbol()).to.equal(TOKEN.symbol);
       expect(await usdtToken.decimals()).to.equal(18);
     });

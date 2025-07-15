@@ -36,11 +36,11 @@ export const Home = () => {
         <div
           className="bg-primary/10 absolute right-1/4 bottom-0 h-96 w-96 animate-pulse rounded-full blur-3xl"
           style={{ animationDelay: "1s" }}
-        ></div>
+        />
         <div
           className="bg-primary/5 absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 transform animate-pulse rounded-full blur-3xl"
           style={{ animationDelay: "2s" }}
-        ></div>
+        />
       </div>
 
       {/* Hero Section */}
