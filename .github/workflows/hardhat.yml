@@ -1,0 +1,33 @@
+name: Hardhat
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'hardhat/**'
+
+jobs:
+  test:
+    name: Run Hardhat Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: hardhat
+        run: npm ci
+
+      - name: Compile contracts
+        working-directory: hardhat
+        run: npx hardhat compile
+
+      - name: Run tests
+        working-directory: hardhat
+        run: npx hardhat test
