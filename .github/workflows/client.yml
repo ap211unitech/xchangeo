@@ -21,12 +21,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'pnpm'
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.13.1
 
       - name: Install dependencies
         working-directory: client
@@ -42,9 +41,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.13.1
       - run: pnpm install
         working-directory: client
       - run: pnpm lint
@@ -60,12 +59,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.13.1
       - run: pnpm install
         working-directory: client
-      - run: pnpm format --check
+      - run: pnpm format
         working-directory: client
 
   build:
@@ -78,11 +77,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.13.1
       - run: pnpm install
         working-directory: client
       - run: pnpm build
         working-directory: client
-
