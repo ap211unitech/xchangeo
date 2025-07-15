@@ -21,7 +21,6 @@ export const LP_TOKEN = {
   symbol: "DAIUSDT-LP",
 };
 
-
 export const deployERC20TokenContract = async () => {
   const Token = await hre.ethers.getContractFactory("ERC20Token");
 
