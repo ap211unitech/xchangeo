@@ -33,10 +33,7 @@ export const Home = () => {
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,oklch(0.645_0.246_5.439_/_0.1),transparent_50%)]"></div>
         <div className="bg-primary/15 absolute top-0 left-1/4 h-96 w-96 animate-pulse rounded-full blur-3xl"></div>
-        <div
-          className="bg-primary/10 absolute right-1/4 bottom-0 h-96 w-96 animate-pulse rounded-full blur-3xl"
-          style={{ animationDelay: "1s" }}
-        />
+        <div className="bg-primary/10 absolute right-1/4 bottom-0 h-96 w-96 animate-pulse rounded-full blur-3xl" style={{ animationDelay: "1s" }} />
         <div
           className="bg-primary/5 absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 transform animate-pulse rounded-full blur-3xl"
           style={{ animationDelay: "2s" }}
