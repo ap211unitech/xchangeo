@@ -10,8 +10,6 @@ jobs:
   setup:
     name: Setup and Install
     runs-on: ubuntu-latest
-    outputs:
-      cache-hit: ${{ steps.cache.outputs.cache-hit }}
 
     steps:
       - name: Checkout code
@@ -26,7 +24,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 10
+          version: 8
 
       - name: Install dependencies
         working-directory: client
@@ -39,16 +37,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - uses: pnpm/action-setup@v2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
-          version: 10
-      - run: pnpm install
+          version: 8
+
+      - name: Install dependencies
         working-directory: client
-      - run: pnpm lint
+        run: pnpm install
+
+      - name: Run lint
         working-directory: client
+        run: pnpm lint
 
   format:
     name: Format Check
@@ -57,16 +63,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - uses: pnpm/action-setup@v2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
-          version: 10
-      - run: pnpm install
+          version: 8
+
+      - name: Install dependencies
         working-directory: client
-      - run: pnpm format --check
+        run: pnpm install
+
+      - name: Format check
         working-directory: client
+        run: pnpm format --check
 
   build:
     name: Build
@@ -75,14 +89,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 10
-      - run: pnpm install
-        working-directory: client
-      - run: pnpm build
-        working-directory: client
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        working-directory: client
+        run: pnpm install
+
+      - name: Build project
+        working-directory: client
+        run: pnpm build
