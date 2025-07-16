@@ -23,11 +23,13 @@ export function handleTransfer(event: TransferEvent): void {
   );
   entity.from = event.params.from;
   entity.to = event.params.to;
-  entity.value = event.params.value;
+  entity.token = event.address; // ERC20 Token Address
+  entity.amount = event.params.value;
 
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
+  entity.timestamp = event.block.timestamp;
   entity.transactionHash = event.transaction.hash;
+
+  entity.eventType = "ERC20";
 
   entity.save();
 }

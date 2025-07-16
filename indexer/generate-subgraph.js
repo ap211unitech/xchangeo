@@ -92,6 +92,8 @@ const faucetDataSourceTemplate = (faucet, index) => `
       eventHandlers:
         - event: Faucet__Created(indexed address,indexed address,uint256,uint256,uint256)
           handler: handleFaucetCreated
+        - event: Faucet__ReceivedFunds(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleFaucetRequestedFunds
       file: ./src/faucet.ts
 `;
 
