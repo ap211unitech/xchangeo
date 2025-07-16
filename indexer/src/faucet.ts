@@ -27,7 +27,7 @@ export function handleFaucetRequestedFunds(
   if (faucet) {
     entity.from = event.params.from;
     entity.to = event.params.to;
-    entity.token = faucet.tokenAddress;
+    entity.token = faucet.tokenAddress.toHex();
     entity.amount = event.params.amount;
 
     entity.timestamp = event.block.timestamp;

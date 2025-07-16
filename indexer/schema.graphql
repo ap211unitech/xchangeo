@@ -4,7 +4,7 @@ type ERC20Token @entity(immutable: true) {
   name: String!
   symbol: String!
   timestamp: BigInt!
-  blockNumber: BigInt!
+  transactionHash: Bytes!
 }
 
 type Faucet @entity(immutable: true) {
@@ -20,7 +20,7 @@ type Transfer @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
   to: Bytes! # address
-  token: Bytes!  # address of the token, zero for native tokens
+  token: ERC20Token  # address of the token, zero for native tokens
   amount: BigInt! # uint256
   timestamp: BigInt!
   transactionHash: Bytes!

@@ -5,14 +5,14 @@ import {
 import { Transfer, ERC20Token } from "../generated/schema";
 
 export function handleERC20TokenCreated(event: ERC20TokenCreatedEvent): void {
-  const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
+  const id = event.params.token.toHex();
 
   const entity = new ERC20Token(id);
   entity.tokenAddress = event.params.token;
   entity.name = event.params.name;
   entity.symbol = event.params.symbol;
   entity.timestamp = event.block.timestamp;
-  entity.blockNumber = event.block.number;
+  entity.transactionHash = event.transaction.hash;
 
   entity.save();
 }
@@ -23,7 +23,7 @@ export function handleTransfer(event: TransferEvent): void {
   );
   entity.from = event.params.from;
   entity.to = event.params.to;
-  entity.token = event.address; // ERC20 Token Address
+  entity.token = event.address.toHex(); // ERC20 Token Address
   entity.amount = event.params.value;
 
   entity.timestamp = event.block.timestamp;
