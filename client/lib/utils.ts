@@ -73,7 +73,8 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
       return customMessages[parsedError.name];
     }
 
-    return `Transaction reverted: ${parsedError.name}`;
+    const reason = parsedError.args?.description || "Unknown reason";
+    return `${parsedError.name}: ${reason}`;
   } catch {
     return "Transaction reverted: Unknown reason.";
   }

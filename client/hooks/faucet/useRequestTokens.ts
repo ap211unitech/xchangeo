@@ -24,9 +24,6 @@ export const useRequestTokens = () => {
           onClick: () => window.open(`https://sepolia.etherscan.io/tx/${txHash}`, "_blank"),
         },
       }),
-    onError: error => {
-      const message = parseRevertError(error, ABI.FAUCET);
-      toast.error(`Failed to send tokens: ${message}`);
-    },
+    onError: error => toast.error(parseRevertError(error, ABI.FAUCET)),
   });
 };
