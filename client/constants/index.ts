@@ -4,6 +4,7 @@ import { TokenMetadata } from "@/types";
 export * from "./abi";
 export * from "./graphql";
 export * from "./serverTags";
+export * from "./utils";
 
 export const PREFIX = "@Xchangeo";
 

@@ -1,6 +1,6 @@
 import { AddressLike } from "ethers";
 
-import { FaucetMetadata } from "@/types";
+import { FaucetMetadata, FaucetTransactionHistory } from "@/types";
 
 export type GetFaucetMetadataResponse = {
   id: string;
@@ -10,8 +10,24 @@ export type GetFaucetMetadataResponse = {
   withdrawalAmount: string;
 };
 
+export type GetFaucetTransactionHistoryResponse = {
+  amount: string;
+  eventType: string;
+  from: string;
+  id: string;
+  timestamp: string;
+  to: string;
+  transactionHash: string;
+  token: {
+    name: string;
+    symbol: string;
+    tokenAddress: string;
+  };
+};
+
 export interface IFaucetService {
   getAllFaucetsMetadata: () => Promise<FaucetMetadata[]>;
+  getFaucetTransactionsHistory: () => Promise<FaucetTransactionHistory[]>;
   getMetadata: (_tokenAddress: AddressLike) => Promise<FaucetMetadata | undefined>;
   requestTokens: (_faucet: AddressLike, _recipientAddress: AddressLike) => Promise<string | undefined>;
 }

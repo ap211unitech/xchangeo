@@ -5,13 +5,17 @@ import { ChevronsUpDown } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import faucetTransactionsHistory from "@/public/faucet-transactions.json";
+import { FaucetTransactionHistory } from "@/types";
 
 import { columns } from "./columns";
 
 const actionKeys = ["tokenInfo", "amount", "timestamp"];
 
-export const Transactions = () => {
+type Props = {
+  faucetTransactionsHistory: FaucetTransactionHistory[];
+};
+
+export const Transactions = ({ faucetTransactionsHistory }: Props) => {
   const table = useReactTable({
     columns,
     data: faucetTransactionsHistory,

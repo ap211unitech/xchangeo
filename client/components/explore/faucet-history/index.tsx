@@ -1,8 +1,12 @@
 import { History } from "lucide-react";
 
+import { appService } from "@/services";
+
 import { Transactions } from "./transactions";
 
-export const FaucetHistory = () => {
+export const FaucetHistory = async () => {
+  const faucetTransactionsHistory = await appService.faucetService.getFaucetTransactionsHistory();
+
   return (
     <section className="space-y-10">
       {/* Header */}
@@ -19,7 +23,7 @@ export const FaucetHistory = () => {
       </div>
 
       {/* Faucet Transactions History */}
-      <Transactions />
+      <Transactions faucetTransactionsHistory={faucetTransactionsHistory} />
     </section>
   );
 };

@@ -1,14 +1,3 @@
-export type FaucetTransaction = {
-  name: string;
-  ticker: string;
-  contractAddress: string;
-  recipientAddress: string;
-  transactionHash: string;
-  logo: string;
-  amount: number;
-  timestamp: string;
-};
-
 export type PoolTokenInfo = {
   symbol: string;
   name: string;

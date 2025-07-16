@@ -1,17 +1,17 @@
 import { AddressLike, Contract, ethers, TransactionResponse } from "ethers";
 
 import { CONFIG } from "@/config";
-import { ABI, GET_ALL_FAUCETS_METADATA, GET_FAUCET_METADATA, TAGS } from "@/constants";
-import { executeGraphQLQuery } from "@/lib/utils";
-import { FaucetMetadata } from "@/types";
+import { ABI, GET_ALL_FAUCETS_METADATA, GET_FAUCET_METADATA, GET_FAUCET_TRANSACTIONS, TAGS } from "@/constants";
+import { executeGraphQLQuery, formatUnits } from "@/lib/utils";
+import { FaucetMetadata, FaucetTransactionHistory } from "@/types";
 
 import { rpcProvider } from "..";
-import { GetFaucetMetadataResponse, IFaucetService } from "./types";
+import { GetFaucetMetadataResponse, GetFaucetTransactionHistoryResponse, IFaucetService } from "./types";
 
 export class FaucetService implements IFaucetService {
   public async getAllFaucetsMetadata(): Promise<FaucetMetadata[]> {
     const res = await executeGraphQLQuery<GetFaucetMetadataResponse[]>("faucets", GET_ALL_FAUCETS_METADATA, {
-      tags: TAGS.getAllFaucetMetadata(),
+      tags: [TAGS.getAllFaucetMetadata()],
     });
 
     return res.map(faucet => ({
@@ -22,10 +22,25 @@ export class FaucetService implements IFaucetService {
     }));
   }
 
+  public async getFaucetTransactionsHistory(): Promise<FaucetTransactionHistory[]> {
+    const res = await executeGraphQLQuery<GetFaucetTransactionHistoryResponse[]>("transfers", GET_FAUCET_TRANSACTIONS, {
+      tags: [TAGS.getFaucetTransactionsHistory()],
+    });
+
+    return res.map(
+      (tx): FaucetTransactionHistory => ({
+        ...tx,
+        amount: formatUnits(BigInt(tx.amount)),
+        timestamp: +tx.timestamp,
+        token: { ...tx.token, ticker: tx.token.symbol },
+      }),
+    );
+  }
+
   public async getMetadata(tokenAddress: AddressLike): Promise<FaucetMetadata | undefined> {
     const res = (
       await executeGraphQLQuery<GetFaucetMetadataResponse[]>("faucets", GET_FAUCET_METADATA(tokenAddress as string), {
-        tags: TAGS.getFaucetMetadata(tokenAddress as string),
+        tags: [TAGS.getFaucetMetadata(tokenAddress as string)],
       })
     ).at(0);
 

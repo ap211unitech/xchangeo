@@ -5,7 +5,7 @@ export const GET_ALL_TOKENS = `{
     symbol
     timestamp
     tokenAddress
-    blockNumber
+    transactionHash
   }
 }`;
 
@@ -28,5 +28,27 @@ export const GET_FAUCET_METADATA = (tokenAddress: string) => `{
     lockTime
     withdrawalAmount
     timestamp
+  }
+}`;
+
+export const GET_FAUCET_TRANSACTIONS = `{
+  transfers(
+    orderBy: timestamp
+    where: {eventType: "Faucet"}
+    orderDirection: desc
+    first: 10
+  ) {
+    amount
+    eventType
+    from
+    id
+    timestamp
+    to
+    transactionHash
+    token {
+      name
+      symbol
+      tokenAddress
+    }
   }
 }`;

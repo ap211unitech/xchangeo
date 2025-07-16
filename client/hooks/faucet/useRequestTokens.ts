@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { ABI } from "@/constants";
+import { ABI, revalidate, TAGS } from "@/constants";
 import { parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
 
@@ -25,5 +25,6 @@ export const useRequestTokens = () => {
         },
       }),
     onError: error => toast.error(parseRevertError(error, ABI.FAUCET)),
+    onSettled: () => revalidate(TAGS.getFaucetTransactionsHistory()),
   });
 };

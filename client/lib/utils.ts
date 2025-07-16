@@ -29,8 +29,8 @@ export const trimString = (account?: string, chars: number = 8): string => {
   return account.slice(0, keepChars) + "...." + account.slice(-keepChars);
 };
 
-export const formatTimestamp = (date: string): string => {
-  return moment.utc(date).format("MMM D, YYYY, hh:mm:ss A");
+export const formatTimestamp = (date: string | number): string => {
+  return moment(date).format("MMM D, YYYY, hh:mm:ss A");
 };
 
 export const executeGraphQLQuery = async <T>(key: string, query: string, next?: NextFetchRequestConfig | undefined): Promise<T> => {

@@ -9,7 +9,7 @@ import { GetAllTokensResponse, ITokenService } from "./types";
 
 export class TokenService implements ITokenService {
   public async getAllTokens(): Promise<TokenMetadata[]> {
-    const res = await executeGraphQLQuery<GetAllTokensResponse[]>("erc20Tokens", GET_ALL_TOKENS, { tags: TAGS.getAllTokens });
+    const res = await executeGraphQLQuery<GetAllTokensResponse[]>("erc20Tokens", GET_ALL_TOKENS, { tags: [TAGS.getAllTokens] });
     return res.map(({ tokenAddress, name, symbol }) => ({
       name: name,
       ticker: symbol,

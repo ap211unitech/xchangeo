@@ -2,12 +2,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ExternalLink, Eye } from "lucide-react";
 import Link from "next/link";
 
-import { Button, ImageComponent } from "@/components/ui";
+import { Button, TokenLogo } from "@/components/ui";
 import { formatTimestamp, trimString } from "@/lib/utils";
+import { FaucetTransactionHistory } from "@/types";
 
-import { FaucetTransaction } from "../types";
-
-const columnHelper = createColumnHelper<FaucetTransaction>();
+const columnHelper = createColumnHelper<FaucetTransactionHistory>();
 
 export const columns = [
   columnHelper.accessor(row => row, {
@@ -21,12 +20,12 @@ export const columns = [
     header: () => <span>Timestamp</span>,
     cell: info => {
       const { timestamp } = info.getValue();
-      return <span>{formatTimestamp(timestamp)}</span>;
+      return <span>{formatTimestamp(timestamp * 1000)}</span>;
     },
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const dateA = new Date((rowA.getValue(columnId) as FaucetTransaction).timestamp);
-      const dateB = new Date((rowB.getValue(columnId) as FaucetTransaction).timestamp);
+      const dateA = new Date((rowA.getValue(columnId) as FaucetTransactionHistory).timestamp);
+      const dateB = new Date((rowB.getValue(columnId) as FaucetTransactionHistory).timestamp);
       return dateA.getTime() - dateB.getTime();
     },
   }),
@@ -34,15 +33,15 @@ export const columns = [
     id: "tokenInfo",
     header: () => <span>Token</span>,
     cell: info => {
-      const { name, ticker, logo, contractAddress } = info.getValue();
+      const {
+        token: { name, ticker, tokenAddress },
+      } = info.getValue();
       return (
         <div
           className="hover:text-primary flex items-center gap-2"
-          onClick={() => window.open(`https://sepolia.etherscan.io/address/${contractAddress}`)}
+          onClick={() => window.open(`https://sepolia.etherscan.io/address/${tokenAddress}`)}
         >
-          <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <ImageComponent fill alt={name} src={logo} />
-          </div>
+          <TokenLogo ticker={ticker} />
           <div className="flex flex-col">
             <span className="text-base font-medium">{name}</span>
             <span className="text-muted-foreground">{ticker}</span>
@@ -52,8 +51,8 @@ export const columns = [
     },
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const numA = (rowA.getValue(columnId) as FaucetTransaction).ticker;
-      const numB = (rowB.getValue(columnId) as FaucetTransaction).ticker;
+      const numA = (rowA.getValue(columnId) as FaucetTransactionHistory).token.name;
+      const numB = (rowB.getValue(columnId) as FaucetTransactionHistory).token.name;
       return numA > numB ? 1 : -1;
     },
   }),
@@ -62,13 +61,13 @@ export const columns = [
     header: () => <span>Amount</span>,
     cell: info => (
       <span>
-        {info.getValue().amount} {info.getValue().ticker}
+        {info.getValue().amount} {info.getValue().token.ticker}
       </span>
     ),
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const numA = (rowA.getValue(columnId) as FaucetTransaction).amount;
-      const numB = (rowB.getValue(columnId) as FaucetTransaction).amount;
+      const numA = (rowA.getValue(columnId) as FaucetTransactionHistory).amount;
+      const numB = (rowB.getValue(columnId) as FaucetTransactionHistory).amount;
       return numA > numB ? 1 : -1;
     },
   }),
@@ -76,7 +75,7 @@ export const columns = [
     id: "recipient",
     header: () => <span>Recipient</span>,
     cell: info => {
-      const { recipientAddress } = info.getValue();
+      const { to: recipientAddress } = info.getValue();
 
       return (
         <Link
