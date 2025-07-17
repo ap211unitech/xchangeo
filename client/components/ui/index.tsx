@@ -11,6 +11,7 @@ export * from "./label";
 export * from "./loading";
 export * from "./logo";
 export * from "./navigation-menu";
+export * from "./refresh";
 export * from "./select";
 export * from "./sonner";
 export * from "./table";
