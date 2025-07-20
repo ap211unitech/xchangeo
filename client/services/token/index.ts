@@ -1,4 +1,4 @@
-import { AddressLike, Contract, Eip1193Provider, isAddress } from "ethers";
+import { AddressLike, Contract, Eip1193Provider, isAddress, ZeroAddress } from "ethers";
 
 import { ABI, GET_ALL_TOKENS, LOCALSTORAGE, TAGS } from "@/constants";
 import { executeGraphQLQuery, formatUnits } from "@/lib/utils";
@@ -18,7 +18,7 @@ export class TokenService implements ITokenService {
   }
 
   public async getBalance(token: string | null, account: AddressLike): Promise<number> {
-    if (!token) {
+    if (!token || token === ZeroAddress) {
       // Native token balance
       const balance = await rpcProvider.getBalance(account);
       return formatUnits(balance);

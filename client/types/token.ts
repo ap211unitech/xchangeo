@@ -1,7 +1,7 @@
 export type TokenMetadata = {
   name: string;
   ticker: string;
-  contractAddress: string | null;
+  contractAddress: string;
 };
 
 export type TokenWithBalance = TokenMetadata & {
