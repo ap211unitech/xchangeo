@@ -1,9 +1,10 @@
-import { useAppKitProvider } from "@reown/appkit/react";
-import { useMutation } from "@tanstack/react-query";
+import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Eip1193Provider } from "ethers";
 import { toast } from "sonner";
 
 import { ABI } from "@/constants";
+import { QUERY_KEYS } from "@/constants/queryKeys";
 import { parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
 
@@ -14,10 +15,14 @@ type TransferTokenProps = {
 };
 
 export const useTransferTokens = () => {
+  const queryClient = useQueryClient();
+  const { address } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider("eip155");
 
   return useMutation({
     mutationFn: async ({ recipientAddress, token, amount }: TransferTokenProps) => {
+      if (!address || !walletProvider) throw new Error("Please connect your wallet");
+
       const tx = await appService.tokenService.transfer(walletProvider as Eip1193Provider, token, recipientAddress, amount);
       const txHash = (await tx.wait())?.hash;
       if (!txHash) throw new Error("Could not transfer tokens!");
@@ -31,5 +36,6 @@ export const useTransferTokens = () => {
         },
       }),
     onError: error => toast.error(parseRevertError(error, ABI.ERC20TOKEN)),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) }),
   });
 };
