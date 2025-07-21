@@ -1,8 +1,12 @@
 import { SendIcon } from "lucide-react";
 
+import { appService } from "@/services";
+
 import { SendTokensForm } from "./form";
 
-export const Send = () => {
+export const Send = async () => {
+  const tokens = await appService.tokenService.getAllTokens();
+
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
       {/* Header */}
@@ -17,7 +21,7 @@ export const Send = () => {
       </div>
 
       {/* Main Form */}
-      <SendTokensForm />
+      <SendTokensForm tokens={tokens} />
     </section>
   );
 };

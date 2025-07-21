@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isAddress } from "ethers";
+import { isAddress, ZeroAddress } from "ethers";
 import { Loader } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,16 +18,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  ImageComponent,
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  TokenLogo,
 } from "@/components/ui";
+import { useBalances, useTransferTokens } from "@/hooks";
 import { cn } from "@/lib/utils";
-import availableTokens from "@/public/tokens.json";
+import { TokenMetadata } from "@/types";
+
+import { Loading } from "./loading";
 
 const formSchema = z.object({
   token: z
@@ -48,27 +52,35 @@ const formSchema = z.object({
     .refine(a => (a.split(".").at(1)?.length || 0) <= 18, "Max 18 digits allowed after decimal"),
 });
 
-export const SendTokensForm = () => {
-  const searchParams = useSearchParams();
-  const preSelectedToken = searchParams.get("token") as string;
+type Props = { tokens: TokenMetadata[] };
 
-  const balance = 0.5;
-  const isPending = false;
+export const SendTokensForm = ({ tokens }: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
+  const { mutateAsync: onTransferTokens, isPending: isTransferPending } = useTransferTokens();
+
+  const preSelectedToken = searchParams.get("token") ?? ZeroAddress;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      token: availableTokens.some(({ contractAddress }) => contractAddress === preSelectedToken) ? preSelectedToken : "",
+      token: preSelectedToken,
       recipientAddress: "",
       amount: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await onTransferTokens({ ...values, amount: +values.amount });
   };
 
-  const selectedTokenInfo = availableTokens.find(({ contractAddress }) => form.watch("token") === contractAddress);
+  const selectedTokenInfo = useMemo(
+    () => availableTokens.find(({ contractAddress }) => preSelectedToken === contractAddress),
+    [availableTokens, preSelectedToken],
+  );
+
+  if (isBalancesPending) return <Loading />;
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -81,19 +93,24 @@ export const SendTokensForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Select token</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={e => {
+                      field.onChange(e);
+                      if (e === ZeroAddress) router.replace(`?`);
+                      else router.replace(`?token=${e}`);
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className="relative w-full">
                         <SelectValue placeholder="Please select a token" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {availableTokens.map(({ logo, name, contractAddress, ticker }) => (
+                      {availableTokens.map(({ name, contractAddress, ticker, balance }) => (
                         <SelectItem key={contractAddress} value={contractAddress}>
                           <div className="flex items-center justify-between gap-2">
-                            <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                              <ImageComponent fill alt={name} src={logo} />
-                            </div>
+                            <TokenLogo className="size-6" ticker={ticker} />
                             {name} ({ticker})
                           </div>
                           <div className={cn("text-muted-foreground absolute", selectedTokenInfo?.ticker === ticker ? "right-8" : "right-2")}>
@@ -147,8 +164,8 @@ export const SendTokensForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isPending} className="flex items-center gap-2">
-              {isPending ? (
+            <Button type="submit" disabled={isTransferPending} className="flex items-center gap-2">
+              {isTransferPending ? (
                 <>
                   <Loader className="h-4 w-4 animate-spin" />
                   Sending...

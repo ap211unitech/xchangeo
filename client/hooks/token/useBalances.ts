@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { NATIVE_TOKEN } from "@/constants";
 import { QUERY_KEYS } from "@/constants/queryKeys";
+import { formatBalance } from "@/lib/utils";
 import { appService } from "@/services";
 import { TokenMetadata, TokenWithBalance } from "@/types";
 
@@ -14,15 +15,15 @@ export const useBalances = (tokens: TokenMetadata[]) => {
     queryKey: QUERY_KEYS.getBalances(address),
     queryFn: async () => {
       const balances: number[] = await Promise.all([
-        appService.tokenService.getBalance(null, address), // Native Token Balance
+        appService.tokenService.getBalance(NATIVE_TOKEN.contractAddress, address), // Native Token Balance
         ...tokens.map(({ contractAddress }) => appService.tokenService.getBalance(contractAddress, address)),
       ]);
 
       return [
-        { ...NATIVE_TOKEN, balance: balances.at(0) ?? 0 },
+        { ...NATIVE_TOKEN, balance: formatBalance(balances.at(0) ?? 0) },
         ...tokens.map((token, index) => ({
           ...token,
-          balance: balances.at(index + 1) ?? 0,
+          balance: formatBalance(balances.at(index + 1) ?? 0),
         })),
       ];
     },

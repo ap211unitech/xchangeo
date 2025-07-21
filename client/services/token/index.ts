@@ -1,7 +1,7 @@
-import { AddressLike, Contract, Eip1193Provider, isAddress, ZeroAddress } from "ethers";
+import { AddressLike, Contract, Eip1193Provider, isAddress, TransactionResponse, ZeroAddress } from "ethers";
 
 import { ABI, GET_ALL_TOKENS, LOCALSTORAGE, TAGS } from "@/constants";
-import { executeGraphQLQuery, formatUnits } from "@/lib/utils";
+import { executeGraphQLQuery, formatUnits, getSigner, parseUnits } from "@/lib/utils";
 import { TokenMetadata } from "@/types";
 
 import { rpcProvider } from "..";
@@ -67,6 +67,21 @@ export class TokenService implements ITokenService {
     localStorage.setItem(LOCALSTORAGE.WALLET_TOKENS, JSON.stringify([...walletTokens, token.contractAddress]));
 
     return !!isAdded;
+  }
+
+  public async transfer(wallet: Eip1193Provider, token: AddressLike, recipientAddress: AddressLike, amount: number): Promise<TransactionResponse> {
+    const signer = await getSigner(wallet);
+
+    if (token === ZeroAddress) {
+      return signer.sendTransaction({
+        to: recipientAddress,
+        value: parseUnits(amount),
+      });
+    }
+
+    const erc20TokenContract = new Contract(await token, ABI.ERC20TOKEN, signer);
+    const tx: TransactionResponse = await erc20TokenContract.transfer(recipientAddress, parseUnits(amount));
+    return tx;
   }
 
   private changeToBase64(id: string) {

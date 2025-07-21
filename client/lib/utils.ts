@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
-import { ethers, Fragment, Interface, JsonFragment } from "ethers";
+import { BrowserProvider, Eip1193Provider, ethers, Fragment, Interface, JsonFragment } from "ethers";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
@@ -29,8 +29,26 @@ export const trimString = (account?: string, chars: number = 8): string => {
   return account.slice(0, keepChars) + "...." + account.slice(-keepChars);
 };
 
+export const formatBalance = (value: number | string): number => {
+  const [intPart, decimalPart = ""] = value.toString().split(".");
+
+  // Take only the first 4 digits after decimal
+  const trimmedDecimal = decimalPart.slice(0, 4);
+
+  // Remove trailing zeros
+  const trimmedWithoutTrailingZeros = trimmedDecimal.replace(/0+$/, "");
+
+  return trimmedWithoutTrailingZeros ? Number(`${intPart}.${trimmedWithoutTrailingZeros}`) : Number(intPart);
+};
+
 export const formatTimestamp = (date: string | number): string => {
   return moment(date).format("MMM D, YYYY, hh:mm:ss A");
+};
+
+export const getSigner = async (walletProvider: Eip1193Provider) => {
+  const provider = new BrowserProvider(walletProvider);
+  const signer = await provider.getSigner();
+  return signer;
 };
 
 export const executeGraphQLQuery = async <T>(key: string, query: string, next?: NextFetchRequestConfig | undefined): Promise<T> => {
