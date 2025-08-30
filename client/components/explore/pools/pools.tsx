@@ -66,8 +66,8 @@ export const PoolsList = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+              <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                No pools found.
               </TableCell>
             </TableRow>
           )}

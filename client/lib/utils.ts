@@ -69,13 +69,12 @@ export const executeGraphQLQuery = async <T>(key: string, query: string, next?: 
 };
 
 export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | JsonFragment>, customMessages?: Record<string, string>): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const e = error as any;
+  const revertData = e?.cause?.error?.data ?? e?.cause?.data ?? e?.error?.data ?? e?.data ?? e?.message;
+
   try {
     const iface = new Interface(abi);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const e = error as any;
-
-    const revertData = e?.cause?.error?.data ?? e?.cause?.data ?? e?.error?.data ?? e?.data;
 
     if (!revertData) {
       return "Transaction reverted: Unknown reason.";
@@ -94,6 +93,6 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
     const reason = parsedError.args?.description || "Unknown reason";
     return `${parsedError.name}: ${reason}`;
   } catch {
-    return "Transaction reverted: Unknown reason.";
+    return revertData ?? "Transaction reverted: Unknown reason.";
   }
 }
