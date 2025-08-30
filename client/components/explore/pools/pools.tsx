@@ -56,7 +56,7 @@ export const PoolsList = ({ allLiquidityPools }: Props) => {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row, index) => (
-              <TableRow key={row.id} className={cn("cursor-pointer", index % 2 && "bg-muted/50")}>
+              <TableRow key={row.id} className={cn("h-20 cursor-pointer", index % 2 && "bg-muted/50")}>
                 {row.getVisibleCells().map(cell => {
                   return (
                     <TableCell className="px-4" key={cell.id}>

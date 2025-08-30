@@ -60,12 +60,11 @@ export const columns = [
     cell: info => {
       const { tokenA, tokenB } = info.getValue();
       return (
-        <div className="flex items-center gap-1">
-          <span>
-            {getFormattedVolume(tokenA.allTimeVolume)} {tokenA.ticker}
+        <div className="flex flex-col gap-2 justify-self-start">
+          <span className="text-base font-semibold">
+            {getFormattedVolume(tokenA.allTimeVolume)} {tokenA.ticker} /
           </span>
-          <span>/</span>
-          <span>
+          <span className="text-muted-foreground">
             {getFormattedVolume(tokenB.allTimeVolume)} {tokenB.ticker}
           </span>
         </div>
@@ -79,12 +78,11 @@ export const columns = [
     cell: info => {
       const { tokenA, tokenB } = info.getValue();
       return (
-        <div className="flex items-center gap-1">
-          <span>
-            {getFormattedVolume(tokenA.reserve)} {tokenA.ticker}
+        <div className="flex flex-col gap-2 justify-self-start">
+          <span className="text-base font-semibold">
+            {getFormattedVolume(tokenA.reserve)} {tokenA.ticker} /
           </span>
-          <span>/</span>
-          <span>
+          <span className="text-muted-foreground">
             {getFormattedVolume(tokenB.reserve)} {tokenB.ticker}
           </span>
         </div>
