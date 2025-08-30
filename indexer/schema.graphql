@@ -20,9 +20,21 @@ type Transfer @entity(immutable: true) {
   id: Bytes!
   from: Bytes! # address
   to: Bytes! # address
-  token: ERC20Token  # address of the token, zero for native tokens
+  token: ERC20Token # address of the token, zero for native tokens
   amount: BigInt! # uint256
   timestamp: BigInt!
   transactionHash: Bytes!
   eventType: String!
+}
+
+type Pool @entity(immutable: true) {
+  id: ID!
+  pool: Bytes!
+  tokenA: ERC20Token
+  tokenB: ERC20Token
+  lpToken: ERC20Token # address of the lp token
+  fee: BigInt!
+  reserveA: BigInt!
+  reserveB: BigInt!
+  timestamp: BigInt!
 }

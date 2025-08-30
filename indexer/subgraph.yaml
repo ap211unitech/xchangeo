@@ -188,3 +188,67 @@ dataSources:
         - event: Faucet__ReceivedFunds(indexed address,indexed address,indexed uint256,uint256)
           handler: handleFaucetRequestedFunds
       file: ./src/faucet.ts
+
+
+  - kind: ethereum
+    name: ERC20SwapPool
+    network: sepolia
+    source:
+      address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+      abi: ERC20SwapPool
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Pool
+      abis:
+        - name: ERC20SwapPool
+          file: ./abis/ERC20SwapPool.json
+      eventHandlers:
+        - event: Pool__Created(indexed address,indexed address,indexed address,address,string,string,uint256)
+          handler: handlePoolCreated
+      file: ./src/erc20-swap-pool.ts
+
+  - kind: ethereum
+    name: ERC20SwapPool-0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
+    network: sepolia
+    source:
+      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
+      abi: ERC20SwapPool
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Pool
+      abis:
+        - name: ERC20SwapPool
+          file: ./abis/ERC20SwapPool.json
+      eventHandlers:
+        - event: Pool__Created(indexed address,indexed address,indexed address,address,string,string,uint256)
+          handler: handlePoolCreated
+      file: ./src/erc20-swap-pool.ts
+
+  - kind: ethereum
+    name: ERC20SwapPool-0x610178dA211FEF7D417bC0e6FeD39F05609AD788
+    network: sepolia
+    source:
+      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788"
+      abi: ERC20SwapPool
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Pool
+      abis:
+        - name: ERC20SwapPool
+          file: ./abis/ERC20SwapPool.json
+      eventHandlers:
+        - event: Pool__Created(indexed address,indexed address,indexed address,address,string,string,uint256)
+          handler: handlePoolCreated
+      file: ./src/erc20-swap-pool.ts

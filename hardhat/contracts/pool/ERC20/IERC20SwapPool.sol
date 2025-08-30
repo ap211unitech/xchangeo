@@ -39,6 +39,24 @@ interface IERC20SwapPool {
     /// @param description A descriptive message explaining the context of the insufficient reserves
     error ERC20SwapPool__InsufficientReserves(string description);
 
+    /// @notice Emitted when a new pool is created
+    /// @param pool The address of the pool contract
+    /// @param token1 The address of the first ERC20 token in the pool
+    /// @param token2 The address of the second ERC20 token in the pool
+    /// @param lpToken The address of the LP token contract
+    /// @param lpTokenName The name of the LP token
+    /// @param lpTokenSymbol The symbol of the LP token
+    /// @param fee The swap fee for the pool
+    event Pool__Created(
+        address indexed pool,
+        address indexed token1,
+        address indexed token2,
+        address lpToken,
+        string lpTokenName,
+        string lpTokenSymbol,
+        uint256 fee
+    );
+
     /// @notice Emitted when liquidity is successfully added to the swap pool
     /// @param pool The address of the swap pool
     /// @param token1 The address of the first ERC20 token

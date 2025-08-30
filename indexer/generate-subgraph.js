@@ -38,6 +38,21 @@ const FAUCETS = [
   },
 ];
 
+const POOLS = [
+  {
+    address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    startBlock: 0,
+  },
+  {
+    address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+    startBlock: 0,
+  },
+  {
+    address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+    startBlock: 0,
+  },
+];
+
 const header = (dataSources) => `
 specVersion: 1.2.0
 indexerHints:
@@ -97,6 +112,29 @@ const faucetDataSourceTemplate = (faucet, index) => `
       file: ./src/faucet.ts
 `;
 
+const liquidityPoolsDataSourceTemplate = (pool, index) => `
+  - kind: ethereum
+    name: ERC20SwapPool${index === 0 ? "" : "-" + pool.address}
+    network: sepolia
+    source:
+      address: "${pool.address}"
+      abi: ERC20SwapPool
+      startBlock: ${pool.startBlock}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Pool
+      abis:
+        - name: ERC20SwapPool
+          file: ./abis/ERC20SwapPool.json
+      eventHandlers:
+        - event: Pool__Created(indexed address,indexed address,indexed address,address,string,string,uint256)
+          handler: handlePoolCreated
+      file: ./src/erc20-swap-pool.ts
+`;
+
 const tokenDataSources = TOKENS.map((token, index) =>
   tokenDataSourceTemplate(token, index)
 ).join("");
@@ -105,7 +143,13 @@ const faucetDataSources = FAUCETS.map((faucet, index) =>
   faucetDataSourceTemplate(faucet, index)
 ).join("");
 
-const content = header([tokenDataSources, faucetDataSources].join("\n"));
+const poolDataSources = POOLS.map((pool, index) =>
+  liquidityPoolsDataSourceTemplate(pool, index)
+).join("");
+
+const content = header(
+  [tokenDataSources, faucetDataSources, poolDataSources].join("\n")
+);
 
 fs.writeFileSync("subgraph.yaml", content.trim() + "\n");
 

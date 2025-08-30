@@ -41,6 +41,16 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         token2 = ERC20Token(_token2);
 
         lpToken = new LpToken(_lpTokenName, _lpTokenSymbol);
+
+        emit Pool__Created(
+            address(this),
+            address(token1),
+            address(token2),
+            address(lpToken),
+            _lpTokenName,
+            _lpTokenSymbol,
+            fee
+        );
     }
 
     function _updateReserves(uint256 _reserve1, uint256 _reserve2) internal {
