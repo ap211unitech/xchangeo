@@ -40,13 +40,21 @@ const TOKENS = [
   },
 ];
 
+const POOLS = [
+  { tokenA: "USDT", tokenB: "USDC", fee: 5 }, // 0.05% fee for stable pairs
+  { tokenA: "USDC", tokenB: "DAI", fee: 5 }, // 0.05% fee for stable pairs
+  { tokenA: "USDT", tokenB: "WBTC", fee: 30 }, // 0.3% fee for a more volatile pair
+];
+
 const DeployModule = buildModule("DeployModule", (m) => {
-  const exports: Record<string, any> = {};
+  // Use maps to store the contract deployments for easy access
+  const tokenContracts: Record<string, any> = {};
+  const faucetContracts: Record<string, any> = {};
+  const mintCalls: Record<string, any> = {};
+  const poolContracts: Record<string, any> = {};
 
+  // Step 1: Deploy tokens
   TOKENS.forEach((token) => {
-    const { lockTime, withdrawalAmount } = token.faucet;
-
-    // Step 1: Deploy tokens
     const tokenContract = m.contract(
       "ERC20Token",
       [token.name, token.symbol, token.maximumCap],
@@ -55,29 +63,72 @@ const DeployModule = buildModule("DeployModule", (m) => {
       }
     );
 
-    // Step 2: Deploy faucets, using token addresses as constructor args
+    tokenContracts[token.symbol] = tokenContract;
+  });
+
+  // STEP 2: Deploy faucets and mint balance to them
+  TOKENS.forEach((token) => {
+    const { lockTime, withdrawalAmount } = token.faucet;
+    const tokenContract = tokenContracts[token.symbol];
+
     const faucetContract = m.contract(
       "ERC20Faucet",
       [tokenContract, lockTime, parseUnits(withdrawalAmount)],
       {
         id: `Faucet_${token.symbol}`,
+        after: [tokenContract],
       }
     );
 
     // Step 3: Mint tokens to the faucet
-    const mintCall = m.call(tokenContract, "mint", [
-      faucetContract, // or another address
-      parseUnits(token.maximumCap / 1000),
-    ]);
+    const mintCall = m.call(
+      tokenContract,
+      "mint",
+      [
+        faucetContract, // or another address
+        parseUnits(token.maximumCap / 1000),
+      ],
+      {
+        id: `Mint_${token.symbol}`,
+        after: [faucetContract], // Mint only after faucet is deployed
+      }
+    );
 
-    exports[token.symbol] = {
-      token: tokenContract,
-      faucet: faucetContract,
-      mint: mintCall,
-    };
+    faucetContracts[token.symbol] = faucetContract;
+    mintCalls[token.symbol] = mintCall;
   });
 
-  return exports;
+  // STEP 3: Deploy the swap pools using the token contracts
+  POOLS.forEach((pool) => {
+    const { tokenA, tokenB, fee } = pool;
+    const tokenAContract = tokenContracts[tokenA];
+    const tokenBContract = tokenContracts[tokenB];
+
+    // Create a unique name and symbol for the Liquidity Provider (LP) token
+    const lpTokenName = `${tokenA}/${tokenB} LP Token`;
+    const lpTokenSymbol = `${tokenA}-${tokenB}-LP`;
+
+    const poolId = `ERC20SwapPool_${tokenA}_${tokenB}`;
+
+    const poolContract = m.contract(
+      "ERC20SwapPool",
+      [tokenAContract, tokenBContract, fee, lpTokenName, lpTokenSymbol],
+      {
+        id: poolId,
+        // This pool can only be deployed after its underlying tokens are deployed
+        after: [tokenAContract, tokenBContract],
+      }
+    );
+
+    poolContracts[poolId] = poolContract;
+  });
+
+  return {
+    tokens: tokenContracts,
+    faucets: faucetContracts,
+    pools: poolContracts,
+    mints: mintCalls,
+  } as Record<any, any>;
 });
 
 export default DeployModule;
