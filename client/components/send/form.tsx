@@ -26,6 +26,7 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
+import { NATIVE_TOKEN } from "@/constants";
 import { useBalances, useTransferTokens } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { TokenMetadata } from "@/types";
@@ -73,6 +74,18 @@ export const SendTokensForm = ({ tokens }: Props) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await onTransferTokens({ ...values, amount: +values.amount });
+  };
+
+  const onMax = () => {
+    // Selected token is ETH
+    if (selectedTokenInfo?.contractAddress === NATIVE_TOKEN.contractAddress) {
+      const nativeTokenBalance = availableTokens.find(token => token.contractAddress === NATIVE_TOKEN.contractAddress)?.balance ?? 0;
+      const gasBuffer = 0.01;
+      const maxAmount = Math.max(0, nativeTokenBalance - gasBuffer);
+      form.setValue("amount", String(maxAmount));
+    } else {
+      form.setValue("amount", String(availableTokens.find(token => token.contractAddress === selectedTokenInfo?.contractAddress)?.balance ?? 0));
+    }
   };
 
   const selectedTokenInfo = useMemo(
@@ -155,7 +168,7 @@ export const SendTokensForm = ({ tokens }: Props) => {
                           }
                         }}
                       />
-                      <Button className="absolute right-2 h-6 rounded-sm px-2 text-xs" type="button">
+                      <Button onClick={onMax} className="absolute right-2 h-6 rounded-sm px-2 text-xs" type="button">
                         MAX
                       </Button>
                     </div>
