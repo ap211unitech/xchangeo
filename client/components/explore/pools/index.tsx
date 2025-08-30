@@ -2,10 +2,13 @@ import { GlassWater, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui";
+import { appService } from "@/services";
 
 import { PoolsList } from "./pools";
 
-export const Pools = () => {
+export const Pools = async () => {
+  const allLiquidityPools = await appService.poolService.getAllPools();
+
   return (
     <section className="space-y-10">
       <div className="flex items-center justify-between">
@@ -29,7 +32,7 @@ export const Pools = () => {
       </div>
 
       {/* Pools list */}
-      <PoolsList />
+      <PoolsList allLiquidityPools={allLiquidityPools} />
     </section>
   );
 };

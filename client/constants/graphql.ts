@@ -52,3 +52,31 @@ export const GET_FAUCET_TRANSACTIONS = `{
     }
   }
 }`;
+
+export const GET_ALL_POOLS = `{
+  pools {
+    fee
+    id
+    pool
+    reserveA
+    reserveB
+    lpToken {
+      id
+      name
+      symbol
+      tokenAddress
+    }
+    tokenA {
+      id
+      name
+      symbol
+      tokenAddress
+    }
+    tokenB {
+      id
+      name
+      symbol
+      tokenAddress
+    }
+  }
+}`;

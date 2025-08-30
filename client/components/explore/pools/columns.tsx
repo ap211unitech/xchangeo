@@ -1,10 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
-import { ImageComponent } from "@/components/ui";
+import { TokenLogo } from "@/components/ui";
+import { PoolInfo } from "@/types";
 
-import { LiquidityPool } from "../types";
-
-const columnHelper = createColumnHelper<LiquidityPool>();
+const columnHelper = createColumnHelper<PoolInfo>();
 
 const getFormattedVolume = (volume: number) =>
   new Intl.NumberFormat("en-US", {
@@ -23,17 +22,21 @@ export const columns = [
     id: "pool",
     header: () => <span>Pool</span>,
     cell: info => {
-      const { tokenA, tokenB, lpAddress } = info.getValue();
+      const { poolAddress, tokenA, tokenB } = info.getValue();
       return (
-        <div className="hover:text-primary flex w-fit items-center" onClick={() => window.open(`https://sepolia.etherscan.io/address/${lpAddress}`)}>
+        <div
+          className="hover:text-primary flex w-fit items-center"
+          onClick={() => window.open(`https://sepolia.etherscan.io/address/${poolAddress}`)}
+        >
           <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <ImageComponent fill alt={tokenA.name} src={tokenA.logo} />
+            <TokenLogo ticker={tokenA.ticker} />
           </div>
+
           <div className="relative -left-2 h-8 w-8 overflow-hidden rounded-full">
-            <ImageComponent fill alt={tokenB.name} src={tokenB.logo} />
+            <TokenLogo ticker={tokenB.ticker} />
           </div>
           <p className="flex items-center gap-1 text-base tracking-wide">
-            {tokenA.symbol}/{tokenB.symbol}
+            {tokenA.ticker}/{tokenB.ticker}
           </p>
         </div>
       );
@@ -46,8 +49,8 @@ export const columns = [
     cell: info => <span>{info.getValue().feeTier / 100}%</span>,
     footer: e => e.column.id,
     sortingFn: (rowA, rowB, columnId) => {
-      const numA = (rowA.getValue(columnId) as LiquidityPool).feeTier;
-      const numB = (rowB.getValue(columnId) as LiquidityPool).feeTier;
+      const numA = (rowA.getValue(columnId) as PoolInfo).feeTier;
+      const numB = (rowB.getValue(columnId) as PoolInfo).feeTier;
       return numA > numB ? 1 : -1;
     },
   }),
@@ -59,11 +62,11 @@ export const columns = [
       return (
         <div className="flex items-center gap-1">
           <span>
-            {getFormattedVolume(tokenA.volume)} {tokenA.symbol}
+            {getFormattedVolume(tokenA.allTimeVolume)} {tokenA.ticker}
           </span>
           <span>/</span>
           <span>
-            {getFormattedVolume(tokenB.volume)} {tokenB.symbol}
+            {getFormattedVolume(tokenB.allTimeVolume)} {tokenB.ticker}
           </span>
         </div>
       );
@@ -78,11 +81,11 @@ export const columns = [
       return (
         <div className="flex items-center gap-1">
           <span>
-            {getFormattedVolume(tokenA.reserve)} {tokenA.symbol}
+            {getFormattedVolume(tokenA.reserve)} {tokenA.ticker}
           </span>
           <span>/</span>
           <span>
-            {getFormattedVolume(tokenB.reserve)} {tokenB.symbol}
+            {getFormattedVolume(tokenB.reserve)} {tokenB.ticker}
           </span>
         </div>
       );
@@ -92,7 +95,7 @@ export const columns = [
   columnHelper.accessor(row => row, {
     id: "userSharePercent",
     header: () => <span>Your share</span>,
-    cell: info => <span>{info.getValue().userSharePercent}%</span>,
+    cell: info => <span>{info.getValue().userSharePercent ?? 0}%</span>,
     footer: e => e.column.id,
   }),
 ];

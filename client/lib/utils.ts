@@ -51,7 +51,12 @@ export const getSigner = async (walletProvider: Eip1193Provider) => {
   return signer;
 };
 
-export const executeGraphQLQuery = async <T>(key: string, query: string, next?: NextFetchRequestConfig | undefined): Promise<T> => {
+export const executeGraphQLQuery = async <T>(
+  key: string,
+  query: string,
+  next?: NextFetchRequestConfig | undefined,
+  cache?: RequestCache | undefined,
+): Promise<T> => {
   const res = await fetch(CONFIG.GRAPHQL_API_ENDPOINT, {
     method: "POST",
     headers: {
@@ -59,6 +64,7 @@ export const executeGraphQLQuery = async <T>(key: string, query: string, next?: 
     },
     body: JSON.stringify({ query }),
     next,
+    cache,
   });
 
   await sleep(0.5);

@@ -5,16 +5,18 @@ import { ChevronsUpDown } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import liquidityPools from "@/public/liquidityPools.json";
+import { PoolInfo } from "@/types";
 
 import { columns } from "./columns";
 
 const actionKeys = ["feeTier"];
 
-export const PoolsList = () => {
+type Props = { allLiquidityPools: PoolInfo[] };
+
+export const PoolsList = ({ allLiquidityPools }: Props) => {
   const table = useReactTable({
     columns,
-    data: liquidityPools,
+    data: allLiquidityPools,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
