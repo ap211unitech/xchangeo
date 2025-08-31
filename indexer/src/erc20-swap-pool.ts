@@ -2,6 +2,7 @@ import { BigInt } from "@graphprotocol/graph-ts";
 import {
   Pool__Created as Pool__CreatedEvent,
   LiquidityAdded as LiquidityAddedEvent,
+  LiquidityRemoved as LiquidityRemovedEvent,
 } from "../generated/ERC20SwapPool/ERC20SwapPool";
 import { Pool, ERC20Token, PoolTransaction } from "../generated/schema";
 
@@ -54,6 +55,31 @@ export function handleLiquidityAdded(event: LiquidityAddedEvent): void {
     poolTransactionEntity.amountB = event.params.tokenAmount2;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "AddLiquidity";
+
+    poolTransactionEntity.save();
+  }
+}
+
+export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
+  const poolEntity = new Pool(event.params.pool.toHex());
+
+  if (poolEntity) {
+    poolEntity.reserveA = event.params.reserveToken1;
+    poolEntity.reserveB = event.params.reserveToken2;
+
+    poolEntity.save();
+
+    const id = event.transaction.hash.toHex();
+    const poolTransactionEntity = new PoolTransaction(id);
+
+    poolTransactionEntity.pool = event.params.pool.toHex();
+    poolTransactionEntity.tokenA = event.params.token1.toHex();
+    poolTransactionEntity.tokenB = event.params.token2.toHex();
+    poolTransactionEntity.sender = event.params.sender;
+    poolTransactionEntity.amountA = event.params.tokenAmount1;
+    poolTransactionEntity.amountB = event.params.tokenAmount2;
+    poolTransactionEntity.timestamp = event.block.timestamp;
+    poolTransactionEntity.eventType = "RemoveLiquidity";
 
     poolTransactionEntity.save();
   }
