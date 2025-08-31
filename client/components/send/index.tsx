@@ -1,5 +1,6 @@
 import { SendIcon } from "lucide-react";
 
+import { ConnectWalletOverlay } from "@/components/ui";
 import { appService } from "@/services";
 
 import { SendTokensForm } from "./form";
@@ -21,7 +22,9 @@ export const Send = async () => {
       </div>
 
       {/* Main Form */}
-      <SendTokensForm tokens={tokens} />
+      <ConnectWalletOverlay className="md:mx-auto md:max-w-3/4">
+        <SendTokensForm tokens={tokens} />
+      </ConnectWalletOverlay>
     </section>
   );
 };
