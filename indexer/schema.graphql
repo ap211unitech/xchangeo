@@ -38,3 +38,15 @@ type Pool @entity(immutable: true) {
   reserveB: BigInt!
   timestamp: BigInt!
 }
+
+type PoolTransaction @entity(immutable: true) {
+  id: ID!
+  pool: Pool!
+  tokenA: ERC20Token!
+  tokenB: ERC20Token!
+  sender: Bytes!
+  amountA: BigInt!
+  amountB: BigInt!
+  timestamp: BigInt!
+  eventType: String!
+}

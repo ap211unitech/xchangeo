@@ -132,6 +132,8 @@ const liquidityPoolsDataSourceTemplate = (pool, index) => `
       eventHandlers:
         - event: Pool__Created(indexed address,indexed address,indexed address,address,string,string,uint256)
           handler: handlePoolCreated
+        - event: LiquidityAdded(indexed address,indexed address,indexed address,uint256,uint256,uint256,uint256,uint256,uint256,address)
+          handler: handleLiquidityAdded
       file: ./src/erc20-swap-pool.ts
 `;
 
