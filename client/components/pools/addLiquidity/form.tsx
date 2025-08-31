@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -45,13 +46,21 @@ const formSchema = z.object({
     .refine(a => (a.split(".").at(1)?.length || 0) <= 18, "Max 18 digits allowed after decimal"),
 });
 
+const isPending = false;
+
 export const AddLiquidityForm = () => {
-  const isPending = false;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Make sure given pool address exists in available pools
+  const preSelectedPool = liquidityPools.find(lp => lp.lpAddress === searchParams.get("pool"))
+    ? searchParams.get("pool")
+    : liquidityPools.at(0)?.lpAddress;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      pool: liquidityPools[0].lpAddress,
+      pool: preSelectedPool ?? "",
       amountTokenA: "",
       amountTokenB: "",
     },
@@ -74,7 +83,13 @@ export const AddLiquidityForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base">Choose Pool</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={e => {
+                      field.onChange(e);
+                      router.replace(`?pool=${e}`);
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger className="relative w-full py-5 font-medium">
                         <SelectValue placeholder="Please select pool" />

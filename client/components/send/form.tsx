@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isAddress, ZeroAddress } from "ethers";
+import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
@@ -61,12 +61,15 @@ export const SendTokensForm = ({ tokens }: Props) => {
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
   const { mutateAsync: onTransferTokens, isPending: isTransferPending } = useTransferTokens();
 
-  const preSelectedToken = searchParams.get("token") ?? ZeroAddress;
+  // Make sure given token address exists in available tokens
+  const preSelectedToken = tokens.find(token => token.contractAddress === searchParams.get("token"))
+    ? searchParams.get("token")
+    : NATIVE_TOKEN.contractAddress;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      token: preSelectedToken,
+      token: preSelectedToken ?? NATIVE_TOKEN.contractAddress,
       recipientAddress: "",
       amount: "",
     },
@@ -109,7 +112,7 @@ export const SendTokensForm = ({ tokens }: Props) => {
                   <Select
                     onValueChange={e => {
                       field.onChange(e);
-                      if (e === ZeroAddress) router.replace(`?`);
+                      if (e === NATIVE_TOKEN.contractAddress) router.replace(`?`);
                       else router.replace(`?token=${e}`);
                     }}
                     defaultValue={field.value}

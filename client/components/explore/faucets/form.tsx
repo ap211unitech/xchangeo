@@ -59,7 +59,10 @@ export const FaucetForm = ({ availableTokens, allFaucetsMetadata }: Props) => {
   const { address } = useAppKitAccount();
   const { isPending, mutateAsync: onRequestTokens } = useRequestTokens();
 
-  const preSelectedToken = searchParams.get("token") ?? availableTokens.at(0)?.contractAddress;
+  // Make sure given token address exists in available tokens
+  const preSelectedToken = availableTokens.find(token => token.contractAddress === searchParams.get("token"))
+    ? searchParams.get("token")
+    : availableTokens.at(0)?.contractAddress;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
