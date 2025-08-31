@@ -45,9 +45,9 @@ const tradeLinks = [
     href: "/send",
   },
   {
-    title: "Swap Transactions",
-    description: "View recent swap transactions.",
-    href: "/swap/history",
+    title: "Pool Activity",
+    description: "View recent pool activity.",
+    href: "/pools/history",
   },
 ];
 
