@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppKitAccount } from "@reown/appkit/react";
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ChevronsUpDown } from "lucide-react";
 
@@ -14,8 +15,10 @@ const actionKeys = ["feeTier"];
 type Props = { allLiquidityPools: PoolInfo[] };
 
 export const PoolsList = ({ allLiquidityPools }: Props) => {
+  const { address } = useAppKitAccount();
+
   const table = useReactTable({
-    columns,
+    columns: columns(!!address),
     data: allLiquidityPools,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
