@@ -1,8 +1,12 @@
 import { Droplet } from "lucide-react";
 
+import { appService } from "@/services";
+
 import { AddLiquidityForm } from "./form";
 
-export const AddLiquidity = () => {
+export const AddLiquidity = async () => {
+  const allLiquidityPools = await appService.poolService.getAllPools();
+
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
       {/* Header */}
@@ -17,7 +21,7 @@ export const AddLiquidity = () => {
       </div>
 
       {/* Main Form */}
-      <AddLiquidityForm />
+      <AddLiquidityForm allLiquidityPools={allLiquidityPools} />
     </section>
   );
 };

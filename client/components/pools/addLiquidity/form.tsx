@@ -17,15 +17,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  ImageComponent,
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  TokenLogo,
 } from "@/components/ui";
-import liquidityPools from "@/public/liquidityPools.json";
+import { PoolInfo } from "@/types";
 
 const formSchema = z.object({
   pool: z
@@ -48,14 +48,16 @@ const formSchema = z.object({
 
 const isPending = false;
 
-export const AddLiquidityForm = () => {
+type Props = { allLiquidityPools: PoolInfo[] };
+
+export const AddLiquidityForm = ({ allLiquidityPools }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Make sure given pool address exists in available pools
-  const preSelectedPool = liquidityPools.find(lp => lp.lpAddress === searchParams.get("pool"))
+  const preSelectedPool = allLiquidityPools.find(lp => lp.poolAddress === searchParams.get("pool"))
     ? searchParams.get("pool")
-    : liquidityPools.at(0)?.lpAddress;
+    : allLiquidityPools.at(0)?.poolAddress;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,7 +68,7 @@ export const AddLiquidityForm = () => {
     },
   });
 
-  const selectedPoolInfo = liquidityPools.find(lp => lp.lpAddress === form.watch("pool")) as unknown as (typeof liquidityPools)[0];
+  const selectedPoolInfo = allLiquidityPools.find(lp => lp.poolAddress === form.watch("pool")) as PoolInfo;
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
@@ -91,22 +93,18 @@ export const AddLiquidityForm = () => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="relative w-full py-5 font-medium">
+                      <SelectTrigger className="relative w-full py-6 font-medium">
                         <SelectValue placeholder="Please select pool" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {liquidityPools.map(({ tokenA, tokenB, lpAddress }) => (
-                        <SelectItem key={lpAddress} value={lpAddress} className="py-2">
+                      {allLiquidityPools.map(({ tokenA, tokenB, poolAddress }) => (
+                        <SelectItem key={poolAddress} value={poolAddress} className="py-2 font-medium">
                           <div className="flex w-fit items-center">
-                            <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                              <ImageComponent fill alt={tokenA.name} src={tokenA.logo} />
-                            </div>
-                            <div className="relative -left-2 h-6 w-6 overflow-hidden rounded-full">
-                              <ImageComponent fill alt={tokenB.name} src={tokenB.logo} />
-                            </div>
+                            <TokenLogo ticker={tokenA.ticker} />
+                            <TokenLogo className="relative -left-2" ticker={tokenB.ticker} />
                             <p className="flex items-center gap-1 tracking-wide">
-                              {tokenA.symbol}/{tokenB.symbol}
+                              {tokenA.ticker}/{tokenB.ticker}
                             </p>
                           </div>
                         </SelectItem>
@@ -128,13 +126,11 @@ export const AddLiquidityForm = () => {
                     <div className="relative flex items-center">
                       <Input className="h-20 text-2xl font-semibold md:text-3xl" placeholder="0" {...field} />
                       <div className="absolute right-4 flex flex-col items-end gap-2">
-                        <div className="flex items-center">
-                          <div className="relative -left-2 size-6 overflow-hidden rounded-full">
-                            <ImageComponent fill alt={selectedPoolInfo.tokenA.name} src={selectedPoolInfo.tokenA.logo} />
-                          </div>
-                          <p className="font-semibold">{selectedPoolInfo.tokenA.symbol}</p>
+                        <div className="flex items-center gap-2">
+                          <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
+                          <p className="font-semibold">{selectedPoolInfo.tokenA.ticker}</p>
                         </div>
-                        <div className="text-muted-foreground text-sm">0 {selectedPoolInfo.tokenA.symbol}</div>
+                        <div className="text-muted-foreground text-sm">0 {selectedPoolInfo.tokenA.ticker}</div>
                       </div>
                     </div>
                   </FormControl>
@@ -152,13 +148,11 @@ export const AddLiquidityForm = () => {
                     <div className="relative flex items-center">
                       <Input className="h-20 text-2xl font-semibold md:text-3xl" placeholder="0" {...field} />
                       <div className="absolute right-4 flex flex-col items-end gap-2">
-                        <div className="flex items-center">
-                          <div className="relative -left-2 size-6 overflow-hidden rounded-full">
-                            <ImageComponent fill alt={selectedPoolInfo.tokenB.name} src={selectedPoolInfo.tokenB.logo} />
-                          </div>
-                          <p className="font-semibold">{selectedPoolInfo.tokenB.symbol}</p>
+                        <div className="flex items-center gap-2">
+                          <TokenLogo ticker={selectedPoolInfo.tokenB.ticker} />
+                          <p className="font-semibold">{selectedPoolInfo.tokenB.ticker}</p>
                         </div>
-                        <div className="text-muted-foreground text-sm">0 {selectedPoolInfo.tokenB.symbol}</div>
+                        <div className="text-muted-foreground text-sm">0 {selectedPoolInfo.tokenB.ticker}</div>
                       </div>
                     </div>
                   </FormControl>
