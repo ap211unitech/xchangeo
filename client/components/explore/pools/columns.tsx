@@ -1,6 +1,8 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
-import { TokenLogo } from "@/components/ui";
+import { Button, TokenLogo } from "@/components/ui";
 import { PoolInfo } from "@/types";
 
 const columnHelper = createColumnHelper<PoolInfo>();
@@ -94,6 +96,29 @@ export const columns = [
     id: "userSharePercent",
     header: () => <span>Your share</span>,
     cell: info => <span>{info.getValue().userSharePercent ?? 0}%</span>,
+    footer: e => e.column.id,
+  }),
+  columnHelper.accessor(row => row, {
+    id: "actions",
+    header: () => <div>Actions</div>,
+    cell: info => {
+      const poolAddress = info.getValue().poolAddress;
+
+      return (
+        <div className="flex items-center gap-2 text-right">
+          <Button variant="secondary" size="sm" asChild>
+            <Link
+              href={{
+                pathname: "/pools/addLiquidity",
+                query: { pool: poolAddress },
+              }}
+            >
+              <Plus className="size-4" /> Add Liquidity
+            </Link>
+          </Button>
+        </div>
+      );
+    },
     footer: e => e.column.id,
   }),
 ];

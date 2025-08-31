@@ -26,7 +26,7 @@ export const Pools = async () => {
         </div>
         <Button asChild>
           <Link href="/pools/addLiquidity">
-            <Plus /> Add Liquidity
+            <Plus className="size-4" /> Add Liquidity
           </Link>
         </Button>
       </div>
