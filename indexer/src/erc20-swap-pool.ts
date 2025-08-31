@@ -3,6 +3,7 @@ import {
   Pool__Created as Pool__CreatedEvent,
   LiquidityAdded as LiquidityAddedEvent,
   LiquidityRemoved as LiquidityRemovedEvent,
+  TokenSwapped as TokenSwappedEvent,
 } from "../generated/ERC20SwapPool/ERC20SwapPool";
 import { Pool, ERC20Token, PoolTransaction } from "../generated/schema";
 
@@ -80,6 +81,31 @@ export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
     poolTransactionEntity.amountB = event.params.tokenAmount2;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "RemoveLiquidity";
+
+    poolTransactionEntity.save();
+  }
+}
+
+export function handleTokenSwapped(event: TokenSwappedEvent): void {
+  const poolEntity = new Pool(event.params.pool.toHex());
+
+  if (poolEntity) {
+    poolEntity.reserveA = event.params.reserveToken1;
+    poolEntity.reserveB = event.params.reserveToken2;
+
+    poolEntity.save();
+
+    const id = event.transaction.hash.toHex();
+    const poolTransactionEntity = new PoolTransaction(id);
+
+    poolTransactionEntity.pool = event.params.pool.toHex();
+    poolTransactionEntity.tokenA = event.params.tokenIn.toHex();
+    poolTransactionEntity.tokenB = event.params.tokenOut.toHex();
+    poolTransactionEntity.sender = event.params.sender;
+    poolTransactionEntity.amountA = event.params.amountIn;
+    poolTransactionEntity.amountB = event.params.amountOut;
+    poolTransactionEntity.timestamp = event.block.timestamp;
+    poolTransactionEntity.eventType = "Swap";
 
     poolTransactionEntity.save();
   }
