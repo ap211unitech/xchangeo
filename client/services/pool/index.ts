@@ -1,5 +1,7 @@
-import { GET_ALL_POOLS, TAGS } from "@/constants";
-import { executeGraphQLQuery } from "@/lib/utils";
+import { AddressLike, Contract, Eip1193Provider, TransactionResponse } from "ethers";
+
+import { ABI, GET_ALL_POOLS, TAGS } from "@/constants";
+import { executeGraphQLQuery, getSigner, parseUnits } from "@/lib/utils";
 import { PoolInfo } from "@/types";
 
 import { GetAllPoolsResponse, IPoolService } from "./types";
@@ -42,5 +44,20 @@ export class PoolService implements IPoolService {
         },
       };
     });
+  }
+
+  public async addLiquidity(
+    wallet: Eip1193Provider,
+    poolAddress: AddressLike,
+    tokenA: AddressLike,
+    tokenB: AddressLike,
+    amountTokenA: number,
+    amountTokenB: number,
+  ): Promise<TransactionResponse> {
+    const signer = await getSigner(wallet);
+
+    const poolContract = new Contract(await poolAddress, ABI.ERC20_SWAP, signer);
+    const tx: TransactionResponse = await poolContract.addLiquidity(parseUnits(amountTokenA), parseUnits(amountTokenB));
+    return tx;
   }
 }

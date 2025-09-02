@@ -1,12 +1,12 @@
 import { Droplet } from "lucide-react";
 
+import { ConnectWalletOverlay } from "@/components/ui";
 import { appService } from "@/services";
 
 import { AddLiquidityForm } from "./form";
 
 export const AddLiquidity = async () => {
-  const allLiquidityPools = await appService.poolService.getAllPools();
-
+  const [allLiquidityPools, tokens] = await Promise.all([await appService.poolService.getAllPools(), await appService.tokenService.getAllTokens()]);
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
       {/* Header */}
@@ -21,7 +21,9 @@ export const AddLiquidity = async () => {
       </div>
 
       {/* Main Form */}
-      <AddLiquidityForm allLiquidityPools={allLiquidityPools} />
+      <ConnectWalletOverlay className="h-72 md:mx-auto md:max-w-3/4">
+        <AddLiquidityForm tokens={tokens} allLiquidityPools={allLiquidityPools} />
+      </ConnectWalletOverlay>
     </section>
   );
 };

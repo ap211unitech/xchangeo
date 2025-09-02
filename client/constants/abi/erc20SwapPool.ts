@@ -1,0 +1,588 @@
+export const ERC20_SWAP_ABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_token1",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_token2",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_fee",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "_lpTokenName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_lpTokenSymbol",
+        type: "string",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__FeeMoreThanThreshold",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__InsufficientReserves",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__InvalidAmount",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__InvalidTokenAddress",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__InvalidTokenRatio",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__OverflowInRatioCheck",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__Slippage",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__TransferFailed",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "description",
+        type: "string",
+      },
+    ],
+    name: "ERC20SwapPool__ZeroLiquidityToken",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ReentrancyGuardReentrantCall",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token1",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token2",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenAmount1",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenAmount2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "mintedLpTokens",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveToken1",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveToken2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "LiquidityAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token1",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token2",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "liquidityPoolTokens",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenAmount1",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenAmount2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveToken1",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveToken2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "LiquidityRemoved",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token1",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token2",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "lpToken",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "lpTokenName",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "lpTokenSymbol",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "fee",
+        type: "uint256",
+      },
+    ],
+    name: "Pool__Created",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "tokenIn",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "tokenOut",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountIn",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountOut",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveToken1",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reserveToken2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "TokenSwapped",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amountToken1",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountToken2",
+        type: "uint256",
+      },
+    ],
+    name: "addLiquidity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amountIn",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "tokenIn",
+        type: "address",
+      },
+    ],
+    name: "getAmountOut",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "liquidityPoolTokens",
+        type: "uint256",
+      },
+    ],
+    name: "getAmountsOnRemovingLiquidity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "amountTokenA",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountTokenB",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getLpToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getReserves",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTokens",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "liquidityPoolTokens",
+        type: "uint256",
+      },
+    ],
+    name: "removeLiquidity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "amountTokenA",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountTokenB",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_tokenIn",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountIn",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "minAmountOut",
+        type: "uint256",
+      },
+    ],
+    name: "swap",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];

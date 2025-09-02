@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -25,7 +26,10 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
-import { PoolInfo } from "@/types";
+import { useAddLiquidity, useBalances } from "@/hooks";
+import { PoolInfo, TokenMetadata } from "@/types";
+
+import { Loading } from "./loading";
 
 const formSchema = z.object({
   pool: z
@@ -46,13 +50,16 @@ const formSchema = z.object({
     .refine(a => (a.split(".").at(1)?.length || 0) <= 18, "Max 18 digits allowed after decimal"),
 });
 
-const isPending = false;
+type Props = {
+  allLiquidityPools: PoolInfo[];
+  tokens: TokenMetadata[];
+};
 
-type Props = { allLiquidityPools: PoolInfo[] };
-
-export const AddLiquidityForm = ({ allLiquidityPools }: Props) => {
+export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
+  const { mutateAsync: onAddLiquidity, isPending } = useAddLiquidity();
 
   // Make sure given pool address exists in available pools
   const preSelectedPool = allLiquidityPools.find(lp => lp.poolAddress === searchParams.get("pool"))
@@ -70,9 +77,24 @@ export const AddLiquidityForm = ({ allLiquidityPools }: Props) => {
 
   const selectedPoolInfo = allLiquidityPools.find(lp => lp.poolAddress === form.watch("pool")) as PoolInfo;
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const [balanceTokenA, balanceTokenB] = useMemo(() => {
+    return [
+      availableTokens.find(token => token.contractAddress === selectedPoolInfo.tokenA.contractAddress)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === selectedPoolInfo.tokenB.contractAddress)?.balance ?? 0,
+    ];
+  }, [availableTokens, selectedPoolInfo.tokenA.contractAddress, selectedPoolInfo.tokenB.contractAddress]);
+
+  const onSubmit = async ({ amountTokenA, amountTokenB, pool }: z.infer<typeof formSchema>) => {
+    await onAddLiquidity({
+      poolAddress: pool,
+      tokenA: selectedPoolInfo.tokenA.contractAddress,
+      tokenB: selectedPoolInfo.tokenB.contractAddress,
+      amountTokenA: +amountTokenA,
+      amountTokenB: +amountTokenB,
+    });
   };
+
+  if (isBalancesPending) return <Loading />;
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -130,7 +152,9 @@ export const AddLiquidityForm = ({ allLiquidityPools }: Props) => {
                           <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
                           <p className="font-semibold">{selectedPoolInfo.tokenA.ticker}</p>
                         </div>
-                        <div className="text-muted-foreground text-sm">0 {selectedPoolInfo.tokenA.ticker}</div>
+                        <div className="text-muted-foreground text-sm">
+                          {balanceTokenA} {selectedPoolInfo.tokenA.ticker}
+                        </div>
                       </div>
                     </div>
                   </FormControl>
@@ -152,7 +176,9 @@ export const AddLiquidityForm = ({ allLiquidityPools }: Props) => {
                           <TokenLogo ticker={selectedPoolInfo.tokenB.ticker} />
                           <p className="font-semibold">{selectedPoolInfo.tokenB.ticker}</p>
                         </div>
-                        <div className="text-muted-foreground text-sm">0 {selectedPoolInfo.tokenB.ticker}</div>
+                        <div className="text-muted-foreground text-sm">
+                          {balanceTokenB} {selectedPoolInfo.tokenB.ticker}
+                        </div>
                       </div>
                     </div>
                   </FormControl>
