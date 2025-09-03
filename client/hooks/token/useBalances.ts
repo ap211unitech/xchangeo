@@ -27,5 +27,6 @@ export const useBalances = (tokens: TokenMetadata[]) => {
         })),
       ];
     },
+    refetchInterval: 12 * 1000,
   });
 };

@@ -1,9 +1,10 @@
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddressLike, Eip1193Provider } from "ethers";
 import { toast } from "sonner";
 
 import { ABI } from "@/constants";
+import { QUERY_KEYS } from "@/constants/queryKeys";
 import { parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
 
@@ -16,6 +17,7 @@ type AddLiquidityProps = {
 };
 
 export const useAddLiquidity = () => {
+  const queryClient = useQueryClient();
   const { address } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider("eip155");
 
@@ -43,5 +45,6 @@ export const useAddLiquidity = () => {
         },
       }),
     onError: error => toast.error(parseRevertError(error, ABI.ERC20_SWAP)),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) }),
   });
 };

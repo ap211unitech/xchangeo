@@ -42,7 +42,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
 
         lpToken = new LpToken(_lpTokenName, _lpTokenSymbol);
 
-        emit Pool__Created(
+        emit PoolCreated(
             address(this),
             address(token1),
             address(token2),

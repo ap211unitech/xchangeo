@@ -130,7 +130,7 @@ const liquidityPoolsDataSourceTemplate = (pool, index) => `
         - name: ERC20SwapPool
           file: ./abis/ERC20SwapPool.json
       eventHandlers:
-        - event: Pool__Created(indexed address,indexed address,indexed address,address,string,string,uint256)
+        - event: PoolCreated(indexed address,indexed address,indexed address,address,string,string,uint256)
           handler: handlePoolCreated
         - event: LiquidityAdded(indexed address,indexed address,indexed address,uint256,uint256,uint256,uint256,uint256,uint256,address)
           handler: handleLiquidityAdded

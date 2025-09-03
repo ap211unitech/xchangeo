@@ -314,7 +314,7 @@ export const ERC20_SWAP_ABI = [
         type: "uint256",
       },
     ],
-    name: "Pool__Created",
+    name: "PoolCreated",
     type: "event",
   },
   {

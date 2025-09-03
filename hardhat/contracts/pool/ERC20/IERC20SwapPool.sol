@@ -47,7 +47,7 @@ interface IERC20SwapPool {
     /// @param lpTokenName The name of the LP token
     /// @param lpTokenSymbol The symbol of the LP token
     /// @param fee The swap fee for the pool
-    event Pool__Created(
+    event PoolCreated(
         address indexed pool,
         address indexed token1,
         address indexed token2,

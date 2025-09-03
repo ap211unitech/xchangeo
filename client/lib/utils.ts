@@ -102,3 +102,17 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
     return revertData ?? "Transaction reverted: Unknown reason.";
   }
 }
+
+export const getAmountOnAddingLiquidity = (reserveA: BigNumber, reserveB: BigNumber, amountA: BigNumber, amountB: BigNumber, isTokenA: boolean) => {
+  if (reserveA.toNumber() > 0 || reserveB.toNumber() > 0) {
+    if (isTokenA) {
+      const expectedAmountB = amountA.multipliedBy(reserveB).div(reserveA);
+      return expectedAmountB;
+    } else {
+      const expectedAmountA = amountB.multipliedBy(reserveA).div(reserveB);
+      return expectedAmountA;
+    }
+  }
+
+  return isTokenA ? amountB : amountA;
+};

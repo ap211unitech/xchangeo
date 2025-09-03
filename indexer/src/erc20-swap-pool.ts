@@ -1,14 +1,14 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
-  Pool__Created as Pool__CreatedEvent,
+  PoolCreated as PoolCreatedEvent,
   LiquidityAdded as LiquidityAddedEvent,
   LiquidityRemoved as LiquidityRemovedEvent,
   TokenSwapped as TokenSwappedEvent,
 } from "../generated/ERC20SwapPool/ERC20SwapPool";
 import { Pool, ERC20Token, PoolTransaction } from "../generated/schema";
 
-export function handlePoolCreated(event: Pool__CreatedEvent): void {
-  const id = event.address.toHex();
+export function handlePoolCreated(event: PoolCreatedEvent): void {
+  const id = event.params.pool.toHex();
 
   let lpToken = ERC20Token.load(event.params.lpToken.toHex());
 
@@ -24,7 +24,7 @@ export function handlePoolCreated(event: Pool__CreatedEvent): void {
   }
 
   const entity = new Pool(id);
-  entity.pool = event.address;
+  entity.pool = event.params.pool;
   entity.tokenA = event.params.token1.toHex();
   entity.tokenB = event.params.token2.toHex();
   entity.lpToken = event.params.lpToken.toHex();
@@ -38,14 +38,15 @@ export function handlePoolCreated(event: Pool__CreatedEvent): void {
 }
 
 export function handleLiquidityAdded(event: LiquidityAddedEvent): void {
-  const poolEntity = new Pool(event.params.pool.toHex());
+  const poolEntity = Pool.load(event.params.pool.toHex());
+
   if (poolEntity) {
     poolEntity.reserveA = event.params.reserveToken1;
     poolEntity.reserveB = event.params.reserveToken2;
 
     poolEntity.save();
 
-    const id = event.transaction.hash.toHex();
+    const id = event.transaction.hash.toHex() + "-" + event.logIndex.toString();
     const poolTransactionEntity = new PoolTransaction(id);
 
     poolTransactionEntity.pool = event.params.pool.toHex();
@@ -62,7 +63,7 @@ export function handleLiquidityAdded(event: LiquidityAddedEvent): void {
 }
 
 export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
-  const poolEntity = new Pool(event.params.pool.toHex());
+  const poolEntity = Pool.load(event.params.pool.toHex());
 
   if (poolEntity) {
     poolEntity.reserveA = event.params.reserveToken1;
@@ -87,7 +88,7 @@ export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
 }
 
 export function handleTokenSwapped(event: TokenSwappedEvent): void {
-  const poolEntity = new Pool(event.params.pool.toHex());
+  const poolEntity = Pool.load(event.params.pool.toHex());
 
   if (poolEntity) {
     poolEntity.reserveA = event.params.reserveToken1;

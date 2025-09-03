@@ -27,7 +27,7 @@ type Transfer @entity(immutable: true) {
   eventType: String!
 }
 
-type Pool @entity(immutable: true) {
+type Pool @entity {
   id: ID!
   pool: Bytes!
   tokenA: ERC20Token

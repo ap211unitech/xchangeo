@@ -1,7 +1,8 @@
+import BN from "bignumber.js";
 import { AddressLike, Contract, Eip1193Provider, TransactionResponse } from "ethers";
 
 import { ABI, GET_ALL_POOLS, TAGS } from "@/constants";
-import { executeGraphQLQuery, getSigner, parseUnits } from "@/lib/utils";
+import { executeGraphQLQuery, formatUnits, getAmountOnAddingLiquidity, getSigner, parseUnits } from "@/lib/utils";
 import { PoolInfo } from "@/types";
 
 import { GetAllPoolsResponse, IPoolService } from "./types";
@@ -32,7 +33,7 @@ export class PoolService implements IPoolService {
           contractAddress: pool.tokenA.tokenAddress,
           // TODO: Add this later
           allTimeVolume: 0,
-          reserve: +pool.reserveA,
+          reserve: formatUnits(BigInt(pool.reserveA)),
         },
         tokenB: {
           name: pool.tokenB.name,
@@ -40,7 +41,7 @@ export class PoolService implements IPoolService {
           contractAddress: pool.tokenB.tokenAddress,
           // TODO: Add this later
           allTimeVolume: 0,
-          reserve: +pool.reserveB,
+          reserve: formatUnits(BigInt(pool.reserveB)),
         },
       };
     });
@@ -56,8 +57,22 @@ export class PoolService implements IPoolService {
   ): Promise<TransactionResponse> {
     const signer = await getSigner(wallet);
 
+    const [formattedAmountA, formattedAmountB] = [new BN(parseUnits(amountTokenA)), new BN(parseUnits(amountTokenB))];
+
     const poolContract = new Contract(await poolAddress, ABI.ERC20_SWAP, signer);
-    const tx: TransactionResponse = await poolContract.addLiquidity(parseUnits(amountTokenA), parseUnits(amountTokenB));
+    const tokenAContract = new Contract(await tokenA, ABI.ERC20TOKEN, signer);
+    const tokenBContract = new Contract(await tokenB, ABI.ERC20TOKEN, signer);
+
+    let [reserveA, reserveB] = await poolContract.getReserves();
+    [reserveA, reserveB] = [new BN(reserveA), new BN(reserveB)];
+
+    const derivedAmountTokenA = formattedAmountA;
+    const derivedAmountTokenB = getAmountOnAddingLiquidity(reserveA, reserveB, formattedAmountA, formattedAmountB, true);
+
+    await tokenAContract.approve(poolAddress, derivedAmountTokenA.toString());
+    await tokenBContract.approve(poolAddress, derivedAmountTokenB.toString());
+
+    const tx: TransactionResponse = await poolContract.addLiquidity(derivedAmountTokenA.toString(), derivedAmountTokenB.toString());
     return tx;
   }
 }
