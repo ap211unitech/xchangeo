@@ -1,10 +1,10 @@
 "use client";
 
-import { useAppKitAccount } from "@reown/appkit/react";
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ChevronsUpDown } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
+import { useUserShare } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { PoolInfo } from "@/types";
 
@@ -15,10 +15,10 @@ const actionKeys = ["feeTier"];
 type Props = { allLiquidityPools: PoolInfo[] };
 
 export const PoolsList = ({ allLiquidityPools }: Props) => {
-  const { address } = useAppKitAccount();
+  const { data: userShares = [] } = useUserShare(allLiquidityPools);
 
   const table = useReactTable({
-    columns: columns(!!address),
+    columns: columns(userShares),
     data: allLiquidityPools,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -71,7 +71,7 @@ export const PoolsList = ({ allLiquidityPools }: Props) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+              <TableCell colSpan={6} className="h-40 space-y-2 text-center">
                 No pools found.
               </TableCell>
             </TableRow>

@@ -1,6 +1,6 @@
-import { AddressLike, Eip1193Provider, TransactionResponse } from "ethers";
+import { AddressLike, JsonRpcSigner, TransactionResponse } from "ethers";
 
-import { PoolInfo } from "@/types";
+import { PoolInfo, UserShare } from "@/types";
 
 interface TokenInfo {
   id: string;
@@ -22,8 +22,9 @@ export type GetAllPoolsResponse = {
 
 export interface IPoolService {
   getAllPools: () => Promise<PoolInfo[]>;
+  getUserShare: (_poolsInfo: PoolInfo[], _address: string) => Promise<UserShare[]>;
   addLiquidity: (
-    _wallet: Eip1193Provider,
+    _signer: JsonRpcSigner,
     _poolAddress: AddressLike,
     _tokenA: AddressLike,
     _tokenB: AddressLike,

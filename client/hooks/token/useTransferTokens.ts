@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { ABI } from "@/constants";
 import { QUERY_KEYS } from "@/constants/queryKeys";
-import { parseRevertError } from "@/lib/utils";
+import { getSigner, parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
 
 type TransferTokenProps = {
@@ -23,7 +23,9 @@ export const useTransferTokens = () => {
     mutationFn: async ({ recipientAddress, token, amount }: TransferTokenProps) => {
       if (!address || !walletProvider) throw new Error("Please connect your wallet");
 
-      const tx = await appService.tokenService.transfer(walletProvider as Eip1193Provider, token, recipientAddress, amount);
+      const signer = await getSigner(walletProvider as Eip1193Provider, address);
+
+      const tx = await appService.tokenService.transfer(signer, token, recipientAddress, amount);
       const txHash = (await tx.wait())?.hash;
       if (!txHash) throw new Error("Could not transfer tokens!");
       return txHash;

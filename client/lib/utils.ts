@@ -45,9 +45,9 @@ export const formatTimestamp = (date: string | number): string => {
   return moment(date).format("MMM D, YYYY, hh:mm:ss A");
 };
 
-export const getSigner = async (walletProvider: Eip1193Provider) => {
+export const getSigner = async (walletProvider: Eip1193Provider, address?: string) => {
   const provider = new BrowserProvider(walletProvider);
-  const signer = await provider.getSigner();
+  const signer = await provider.getSigner(address);
   return signer;
 };
 

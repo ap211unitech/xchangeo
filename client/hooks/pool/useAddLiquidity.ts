@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { ABI } from "@/constants";
 import { QUERY_KEYS } from "@/constants/queryKeys";
-import { parseRevertError } from "@/lib/utils";
+import { getSigner, parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
 
 type AddLiquidityProps = {
@@ -25,16 +25,11 @@ export const useAddLiquidity = () => {
     mutationFn: async ({ poolAddress, tokenA, tokenB, amountTokenA, amountTokenB }: AddLiquidityProps) => {
       if (!address || !walletProvider) throw new Error("Please connect your wallet");
 
-      const tx = await appService.poolService.addLiquidity(
-        walletProvider as Eip1193Provider,
-        poolAddress,
-        tokenA,
-        tokenB,
-        amountTokenA,
-        amountTokenB,
-      );
+      const signer = await getSigner(walletProvider as Eip1193Provider, address);
+
+      const tx = await appService.poolService.addLiquidity(signer, poolAddress, tokenA, tokenB, amountTokenA, amountTokenB);
       const txHash = (await tx.wait())?.hash;
-      if (!txHash) throw new Error("Could not transfer tokens!");
+      if (!txHash) throw new Error("Could not add liquidity!");
       return txHash;
     },
     onSuccess: txHash =>

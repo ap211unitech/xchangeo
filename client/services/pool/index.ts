@@ -1,10 +1,11 @@
 import BN from "bignumber.js";
-import { AddressLike, Contract, Eip1193Provider, TransactionResponse } from "ethers";
+import { AddressLike, Contract, JsonRpcSigner, TransactionResponse } from "ethers";
 
 import { ABI, GET_ALL_POOLS, TAGS } from "@/constants";
-import { executeGraphQLQuery, formatUnits, getAmountOnAddingLiquidity, getSigner, parseUnits } from "@/lib/utils";
-import { PoolInfo } from "@/types";
+import { executeGraphQLQuery, formatUnits, parseUnits } from "@/lib/utils";
+import { PoolInfo, UserShare } from "@/types";
 
+import { rpcProvider } from "..";
 import { GetAllPoolsResponse, IPoolService } from "./types";
 
 export class PoolService implements IPoolService {
@@ -47,32 +48,38 @@ export class PoolService implements IPoolService {
     });
   }
 
+  public async getUserShare(poolsInfo: PoolInfo[], address: string): Promise<UserShare[]> {
+    return Promise.all(
+      poolsInfo.map(async pool => {
+        const lpTokenContract = new Contract(pool.lpToken.contractAddress, ABI.ERC20TOKEN, rpcProvider);
+        const [totalSupply, userBalance] = await Promise.all([await lpTokenContract.totalSupply(), await lpTokenContract.balanceOf(address)]);
+
+        return {
+          poolAddress: pool.poolAddress,
+          userShare: totalSupply === BigInt(0) ? 0 : new BN(userBalance).dividedBy(new BN(totalSupply)).multipliedBy(100).toNumber(),
+        };
+      }),
+    );
+  }
+
   public async addLiquidity(
-    wallet: Eip1193Provider,
+    signer: JsonRpcSigner,
     poolAddress: AddressLike,
     tokenA: AddressLike,
     tokenB: AddressLike,
     amountTokenA: number,
     amountTokenB: number,
   ): Promise<TransactionResponse> {
-    const signer = await getSigner(wallet);
-
-    const [formattedAmountA, formattedAmountB] = [new BN(parseUnits(amountTokenA)), new BN(parseUnits(amountTokenB))];
+    const [formattedAmountA, formattedAmountB] = [parseUnits(amountTokenA), parseUnits(amountTokenB)];
 
     const poolContract = new Contract(await poolAddress, ABI.ERC20_SWAP, signer);
     const tokenAContract = new Contract(await tokenA, ABI.ERC20TOKEN, signer);
     const tokenBContract = new Contract(await tokenB, ABI.ERC20TOKEN, signer);
 
-    let [reserveA, reserveB] = await poolContract.getReserves();
-    [reserveA, reserveB] = [new BN(reserveA), new BN(reserveB)];
+    await tokenAContract.approve(poolAddress, formattedAmountA);
+    await tokenBContract.approve(poolAddress, formattedAmountB);
 
-    const derivedAmountTokenA = formattedAmountA;
-    const derivedAmountTokenB = getAmountOnAddingLiquidity(reserveA, reserveB, formattedAmountA, formattedAmountB, true);
-
-    await tokenAContract.approve(poolAddress, derivedAmountTokenA.toString());
-    await tokenBContract.approve(poolAddress, derivedAmountTokenB.toString());
-
-    const tx: TransactionResponse = await poolContract.addLiquidity(derivedAmountTokenA.toString(), derivedAmountTokenB.toString());
+    const tx: TransactionResponse = await poolContract.addLiquidity(formattedAmountA, formattedAmountB);
     return tx;
   }
 }

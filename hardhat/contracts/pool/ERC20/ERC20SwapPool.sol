@@ -161,7 +161,7 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
             /*****
                  reserve_1      amountToken1
                 ------------ = --------------
-                 reserver_2     amountToken2
+                 reserve_2      amountToken2
             /******/
 
             (bool successLeft, uint256 leftSide) = reserve_1.tryMul(

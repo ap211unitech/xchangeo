@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
-import { PoolInfo } from "@/types";
+import { PoolInfo, UserShare } from "@/types";
 
 const columnHelper = createColumnHelper<PoolInfo>();
 
@@ -13,7 +13,7 @@ const getFormattedVolume = (volume: number) =>
     maximumFractionDigits: 1,
   }).format(volume);
 
-export const columns = (showUserShare: boolean) =>
+export const columns = (userShares: UserShare[]) =>
   [
     columnHelper.accessor(row => row, {
       id: "#",
@@ -93,11 +93,11 @@ export const columns = (showUserShare: boolean) =>
       },
       footer: e => e.column.id,
     }),
-    showUserShare &&
+    userShares.length > 0 &&
       columnHelper.accessor(row => row, {
         id: "userSharePercent",
         header: () => <span>Your share</span>,
-        cell: info => <span>{info.getValue().userSharePercent ?? 0}%</span>,
+        cell: info => <span>{userShares.find(({ poolAddress }) => poolAddress === info.getValue().poolAddress)?.userShare ?? 0}%</span>,
         footer: e => e.column.id,
       }),
     columnHelper.accessor(row => row, {

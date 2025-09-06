@@ -1,4 +1,4 @@
-import { AddressLike, Eip1193Provider, TransactionResponse } from "ethers";
+import { AddressLike, Eip1193Provider, JsonRpcSigner, TransactionResponse } from "ethers";
 import { ReactNode } from "react";
 
 import { TokenMetadata } from "@/types";
@@ -15,5 +15,5 @@ export interface ITokenService {
   getBalance: (_token: string | null, _account: AddressLike) => Promise<number>;
   getWalletTokens: () => string[];
   addToWallet: (_wallet: Eip1193Provider, _token: TokenMetadata) => Promise<boolean>;
-  transfer: (_wallet: Eip1193Provider, _token: AddressLike, _recipientAddress: AddressLike, _amount: number) => Promise<TransactionResponse>;
+  transfer: (_signer: JsonRpcSigner, _token: AddressLike, _recipientAddress: AddressLike, _amount: number) => Promise<TransactionResponse>;
 }

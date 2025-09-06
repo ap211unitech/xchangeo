@@ -1,7 +1,7 @@
-import { AddressLike, Contract, Eip1193Provider, isAddress, TransactionResponse, ZeroAddress } from "ethers";
+import { AddressLike, Contract, Eip1193Provider, isAddress, JsonRpcSigner, TransactionResponse, ZeroAddress } from "ethers";
 
 import { ABI, GET_ALL_TOKENS, LOCALSTORAGE, TAGS } from "@/constants";
-import { executeGraphQLQuery, formatUnits, getSigner, parseUnits } from "@/lib/utils";
+import { executeGraphQLQuery, formatUnits, parseUnits } from "@/lib/utils";
 import { TokenMetadata } from "@/types";
 
 import { rpcProvider } from "..";
@@ -69,9 +69,7 @@ export class TokenService implements ITokenService {
     return !!isAdded;
   }
 
-  public async transfer(wallet: Eip1193Provider, token: AddressLike, recipientAddress: AddressLike, amount: number): Promise<TransactionResponse> {
-    const signer = await getSigner(wallet);
-
+  public async transfer(signer: JsonRpcSigner, token: AddressLike, recipientAddress: AddressLike, amount: number): Promise<TransactionResponse> {
     if (token === ZeroAddress) {
       return signer.sendTransaction({
         to: recipientAddress,

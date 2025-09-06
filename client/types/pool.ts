@@ -7,3 +7,8 @@ export type PoolInfo = {
   lpToken: TokenMetadata;
   feeTier: number;
 };
+
+export type UserShare = {
+  poolAddress: string;
+  userShare: number;
+};
