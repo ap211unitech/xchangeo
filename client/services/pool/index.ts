@@ -102,4 +102,19 @@ export class PoolService implements IPoolService {
 
     return { amountTokenA: formatUnits(amountTokenA).toString(), amountTokenB: formatUnits(amountTokenB).toString() };
   }
+
+  public async removeLiquidity(signer: JsonRpcSigner, poolAddress: AddressLike, lpTokenAddress: AddressLike, percentageToWithdraw: number) {
+    const [poolContract, lpTokenContract] = await Promise.all([
+      new Contract(await poolAddress, ABI.ERC20_SWAP, signer),
+      new Contract(await lpTokenAddress, ABI.ERC20TOKEN, signer),
+    ]);
+
+    const userBalance = await lpTokenContract.balanceOf(signer.address);
+    const lpTokensToWithdraw = (BigInt(userBalance) * BigInt(percentageToWithdraw)) / BigInt(100);
+
+    await lpTokenContract.approve(await poolAddress, lpTokensToWithdraw);
+
+    const tx: TransactionResponse = await poolContract.removeLiquidity(lpTokensToWithdraw);
+    return tx;
+  }
 }

@@ -14,5 +14,9 @@ export const useGetAmountsOnRemoveLiquidity = (poolAddress: string, lpTokenAddre
       if (!address) return { amountTokenA: "0", amountTokenB: "0" };
       return await appService.poolService.getAmountsOnRemovingLiquidity(poolAddress, lpTokenAddress, percentageToWithdraw, address);
     },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchInterval: 6 * 1000,
   });
 };

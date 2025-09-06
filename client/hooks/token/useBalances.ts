@@ -27,6 +27,9 @@ export const useBalances = (tokens: TokenMetadata[]) => {
         })),
       ];
     },
-    refetchInterval: 12 * 1000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchInterval: 6 * 1000,
   });
 };

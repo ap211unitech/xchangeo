@@ -27,7 +27,7 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
-import { useGetAmountsOnRemoveLiquidity } from "@/hooks";
+import { useGetAmountsOnRemoveLiquidity, useRemoveLiquidity } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { PoolInfo } from "@/types";
 
@@ -49,12 +49,10 @@ type Props = {
   allLiquidityPools: PoolInfo[];
 };
 
-const isPending = false;
-
 export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  // const { mutateAsync: onAddLiquidity, isPending } = useAddLiquidity();
+  const { mutateAsync: onRemoveLiquidity, isPending } = useRemoveLiquidity();
 
   // Make sure given pool address exists in available pools
   const preSelectedPool = allLiquidityPools.find(lp => lp.poolAddress === searchParams.get("pool"))
@@ -83,8 +81,12 @@ export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
     [isLoadingAmountsOnRemovingLiquidity, userShareToWithdraw],
   );
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await onRemoveLiquidity({
+      poolAddress: values.pool,
+      lpTokenAddress: selectedPoolInfo.lpToken.contractAddress,
+      percentageToWithdraw: +values.share,
+    });
   };
 
   return (

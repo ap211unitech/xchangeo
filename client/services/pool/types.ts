@@ -23,6 +23,7 @@ export type GetAllPoolsResponse = {
 export interface IPoolService {
   getAllPools: () => Promise<PoolInfo[]>;
   getUserShare: (_poolsInfo: PoolInfo[], _address: string) => Promise<UserShare[]>;
+
   addLiquidity: (
     _signer: JsonRpcSigner,
     _poolAddress: AddressLike,
@@ -31,6 +32,14 @@ export interface IPoolService {
     _amountTokenA: number,
     _amountTokenB: number,
   ) => Promise<TransactionResponse>;
+
+  removeLiquidity: (
+    _signer: JsonRpcSigner,
+    _poolAddress: AddressLike,
+    _lpTokenAddress: AddressLike,
+    _percentageToWithdraw: number,
+  ) => Promise<TransactionResponse>;
+
   getAmountsOnRemovingLiquidity: (
     _poolAddress: AddressLike,
     _lpTokenAddress: AddressLike,
