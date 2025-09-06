@@ -3,6 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
@@ -17,15 +19,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  ImageComponent,
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  TokenLogo,
 } from "@/components/ui";
-import liquidityPools from "@/public/liquidityPools.json";
+import { useGetAmountsOnRemoveLiquidity } from "@/hooks";
+import { cn } from "@/lib/utils";
+import { PoolInfo } from "@/types";
 
 const formSchema = z.object({
   pool: z
@@ -41,16 +45,43 @@ const formSchema = z.object({
     .refine(a => (a.split(".").at(1)?.length || 0) <= 18, "Max 18 digits allowed after decimal"),
 });
 
-export const RemoveLiquidityForm = () => {
-  const isPending = false;
+type Props = {
+  allLiquidityPools: PoolInfo[];
+};
+
+const isPending = false;
+
+export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // const { mutateAsync: onAddLiquidity, isPending } = useAddLiquidity();
+
+  // Make sure given pool address exists in available pools
+  const preSelectedPool = allLiquidityPools.find(lp => lp.poolAddress === searchParams.get("pool"))
+    ? searchParams.get("pool")
+    : allLiquidityPools.at(0)?.poolAddress;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      pool: "",
+      pool: preSelectedPool ?? "",
       share: "",
     },
   });
+
+  const selectedPoolInfo = allLiquidityPools.find(lp => lp.poolAddress === form.watch("pool")) as PoolInfo;
+  const userShareToWithdraw = +(form.watch("share") ?? 0);
+
+  const { isLoading: isLoadingAmountsOnRemovingLiquidity, data: amountsOnRemovingLiquidity } = useGetAmountsOnRemoveLiquidity(
+    selectedPoolInfo.poolAddress,
+    selectedPoolInfo.lpToken.contractAddress,
+    userShareToWithdraw,
+  );
+
+  const isFetchingAmountsOnRemovingLiquidity = useMemo(
+    () => isLoadingAmountsOnRemovingLiquidity && userShareToWithdraw > 0,
+    [isLoadingAmountsOnRemovingLiquidity, userShareToWithdraw],
+  );
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
@@ -130,30 +161,33 @@ export const RemoveLiquidityForm = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="pool"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Choose Pool</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel className="text-base">Choose Pool</FormLabel>
+                  <Select
+                    onValueChange={e => {
+                      field.onChange(e);
+                      router.replace(`?pool=${e}`);
+                    }}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
-                      <SelectTrigger className="relative w-full">
+                      <SelectTrigger className="relative w-full py-6 font-medium">
                         <SelectValue placeholder="Please select pool" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {liquidityPools.map(({ tokenA, tokenB, lpAddress }) => (
-                        <SelectItem key={lpAddress} value={lpAddress}>
+                      {allLiquidityPools.map(({ tokenA, tokenB, poolAddress }) => (
+                        <SelectItem key={poolAddress} value={poolAddress} className="py-2 font-medium">
                           <div className="flex w-fit items-center">
-                            <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                              <ImageComponent fill alt={tokenA.name} src={tokenA.logo} />
-                            </div>
-                            <div className="relative -left-2 h-6 w-6 overflow-hidden rounded-full">
-                              <ImageComponent fill alt={tokenB.name} src={tokenB.logo} />
-                            </div>
+                            <TokenLogo ticker={tokenA.ticker} />
+                            <TokenLogo className="relative -left-2" ticker={tokenB.ticker} />
                             <p className="flex items-center gap-1 tracking-wide">
-                              {tokenA.symbol}/{tokenB.symbol}
+                              {tokenA.ticker}/{tokenB.ticker}
                             </p>
                           </div>
                         </SelectItem>
@@ -164,6 +198,27 @@ export const RemoveLiquidityForm = () => {
                 </FormItem>
               )}
             />
+
+            {userShareToWithdraw > 0 && (
+              <div className={cn("flex flex-col gap-2", isFetchingAmountsOnRemovingLiquidity && "animate-pulse")}>
+                <h2 className="text-primary text-center text-xl font-medium">You will get:</h2>
+                <div className="bg-secondary grid grid-cols-2 rounded-md border">
+                  <div className="flex items-center justify-center gap-2 border-r p-4">
+                    <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
+                    <p>
+                      {amountsOnRemovingLiquidity?.amountTokenA} {selectedPoolInfo.tokenA.ticker}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 p-4">
+                    <TokenLogo ticker={selectedPoolInfo.tokenB.ticker} />
+                    <p>
+                      {amountsOnRemovingLiquidity?.amountTokenB} {selectedPoolInfo.tokenB.ticker}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <Button type="submit" disabled={isPending} className="flex items-center gap-2">
               {isPending ? (
                 <>

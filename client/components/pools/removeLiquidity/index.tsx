@@ -1,8 +1,13 @@
 import { DropletOff } from "lucide-react";
 
+import { ConnectWalletOverlay } from "@/components/ui";
+import { appService } from "@/services";
+
 import { RemoveLiquidityForm } from "./form";
 
-export const RemoveLiquidity = () => {
+export const RemoveLiquidity = async () => {
+  const allLiquidityPools = await appService.poolService.getAllPools();
+
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
       {/* Header */}
@@ -17,7 +22,9 @@ export const RemoveLiquidity = () => {
       </div>
 
       {/* Main Form */}
-      <RemoveLiquidityForm />
+      <ConnectWalletOverlay className="h-72 md:mx-auto md:max-w-3/4">
+        <RemoveLiquidityForm allLiquidityPools={allLiquidityPools} />
+      </ConnectWalletOverlay>
     </section>
   );
 };
