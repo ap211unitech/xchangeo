@@ -97,7 +97,15 @@ export const columns = (userShares: UserShare[]) =>
       columnHelper.accessor(row => row, {
         id: "userSharePercent",
         header: () => <span>Your share</span>,
-        cell: info => <span>{userShares.find(({ poolAddress }) => poolAddress === info.getValue().poolAddress)?.userShare ?? 0}%</span>,
+        cell: info => (
+          <span>
+            {new Intl.NumberFormat("en-US", {
+              notation: "standard",
+              maximumFractionDigits: 2,
+            }).format(userShares.find(({ poolAddress }) => poolAddress === info.getValue().poolAddress)?.userShare ?? 0)}
+            %
+          </span>
+        ),
         footer: e => e.column.id,
       }),
     columnHelper.accessor(row => row, {
