@@ -1,11 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import BN from "bignumber.js";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { ControllerRenderProps, useForm } from "react-hook-form";
 import z from "zod";
 
 import {
@@ -27,6 +28,7 @@ import {
   TokenLogo,
 } from "@/components/ui";
 import { useAddLiquidity, useBalances } from "@/hooks";
+import { getAmountOnAddingLiquidity } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
@@ -66,8 +68,17 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
     ? searchParams.get("pool")
     : allLiquidityPools.at(0)?.poolAddress;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const schema = formSchema.superRefine((data, ctx) => {
+    if (Number(data.amountTokenA) > balanceTokenA) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["amountTokenA"], message: "Insufficient balance" });
+    }
+    if (Number(data.amountTokenB) > balanceTokenB) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["amountTokenB"], message: "Insufficient balance" });
+    }
+  });
+
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       pool: preSelectedPool ?? "",
       amountTokenA: "",
@@ -83,6 +94,34 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
       availableTokens.find(token => token.contractAddress === selectedPoolInfo.tokenB.contractAddress)?.balance ?? 0,
     ];
   }, [availableTokens, selectedPoolInfo.tokenA.contractAddress, selectedPoolInfo.tokenB.contractAddress]);
+
+  const onChangeTokenA = (field: ControllerRenderProps<z.infer<typeof formSchema>>, tokenAValue: string) => {
+    field.onChange(tokenAValue);
+
+    const tokenBValue = getAmountOnAddingLiquidity(
+      new BN(selectedPoolInfo.tokenA.reserve),
+      new BN(selectedPoolInfo.tokenB.reserve),
+      new BN(tokenAValue),
+      new BN(form.getValues("amountTokenB")),
+      true,
+    );
+
+    form.setValue("amountTokenB", tokenBValue.toString());
+  };
+
+  const onChangeTokenB = (field: ControllerRenderProps<z.infer<typeof formSchema>>, tokenBValue: string) => {
+    field.onChange(tokenBValue);
+
+    const tokenAValue = getAmountOnAddingLiquidity(
+      new BN(selectedPoolInfo.tokenA.reserve),
+      new BN(selectedPoolInfo.tokenB.reserve),
+      new BN(form.getValues("amountTokenA")),
+      new BN(tokenBValue),
+      false,
+    );
+
+    form.setValue("amountTokenA", tokenAValue.toString());
+  };
 
   const onSubmit = async ({ amountTokenA, amountTokenB, pool }: z.infer<typeof formSchema>) => {
     await onAddLiquidity({
@@ -146,7 +185,18 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
                   <FormLabel className="text-base">Deposit tokens</FormLabel>
                   <FormControl>
                     <div className="relative flex items-center">
-                      <Input className="h-20 text-2xl font-semibold md:text-3xl" placeholder="0" {...field} />
+                      <Input
+                        type="number"
+                        className="h-20 text-2xl font-semibold md:text-3xl"
+                        placeholder="0"
+                        {...field}
+                        onChange={e => {
+                          const value = e.target.value;
+                          if (/^\d*\.?\d*$/.test(value)) {
+                            onChangeTokenA(field, value);
+                          }
+                        }}
+                      />
                       <div className="absolute right-4 flex flex-col items-end gap-2">
                         <div className="flex items-center gap-2">
                           <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
@@ -170,7 +220,18 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
                 <FormItem className="-mt-4">
                   <FormControl>
                     <div className="relative flex items-center">
-                      <Input className="h-20 text-2xl font-semibold md:text-3xl" placeholder="0" {...field} />
+                      <Input
+                        type="number"
+                        className="h-20 text-2xl font-semibold md:text-3xl"
+                        placeholder="0"
+                        {...field}
+                        onChange={e => {
+                          const value = e.target.value;
+                          if (/^\d*\.?\d*$/.test(value)) {
+                            onChangeTokenB(field, value);
+                          }
+                        }}
+                      />
                       <div className="absolute right-4 flex flex-col items-end gap-2">
                         <div className="flex items-center gap-2">
                           <TokenLogo ticker={selectedPoolInfo.tokenB.ticker} />

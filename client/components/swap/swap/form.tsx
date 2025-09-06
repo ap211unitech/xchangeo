@@ -88,6 +88,7 @@ export const SwapTokensForm = () => {
                   <FormControl>
                     <div className="relative flex items-center">
                       <Input
+                        type="number"
                         className="h-28 text-2xl md:text-3xl"
                         placeholder="0"
                         {...field}
@@ -147,6 +148,7 @@ export const SwapTokensForm = () => {
                   <FormControl>
                     <div className="relative flex items-center">
                       <Input
+                        type="number"
                         className="h-28 text-2xl md:text-3xl"
                         placeholder="0"
                         {...field}

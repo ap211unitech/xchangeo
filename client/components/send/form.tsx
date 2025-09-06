@@ -66,8 +66,14 @@ export const SendTokensForm = ({ tokens }: Props) => {
     ? searchParams.get("token")
     : NATIVE_TOKEN.contractAddress;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const schema = formSchema.superRefine((data, ctx) => {
+    if (Number(data.amount) > (selectedTokenInfo?.balance ?? 0)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["amount"], message: "Insufficient balance" });
+    }
+  });
+
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       token: preSelectedToken ?? NATIVE_TOKEN.contractAddress,
       recipientAddress: "",
@@ -83,7 +89,7 @@ export const SendTokensForm = ({ tokens }: Props) => {
     // Selected token is ETH
     if (selectedTokenInfo?.contractAddress === NATIVE_TOKEN.contractAddress) {
       const nativeTokenBalance = availableTokens.find(token => token.contractAddress === NATIVE_TOKEN.contractAddress)?.balance ?? 0;
-      const gasBuffer = 0.01;
+      const gasBuffer = 0.1;
       const maxAmount = Math.max(0, nativeTokenBalance - gasBuffer);
       form.setValue("amount", String(maxAmount));
     } else {
@@ -162,6 +168,7 @@ export const SendTokensForm = ({ tokens }: Props) => {
                   <FormControl>
                     <div className="relative flex items-center">
                       <Input
+                        type="number"
                         placeholder="0.639"
                         {...field}
                         onChange={e => {

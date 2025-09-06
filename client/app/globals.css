@@ -133,3 +133,14 @@
 .animate-fade-in-up {
   animation: fade-in-up 0.8s ease-out;
 }
+
+/* Remove arrows from input type number in all browsers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
