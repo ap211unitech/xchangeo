@@ -3,7 +3,7 @@ import { AddressLike, Contract, JsonRpcSigner, TransactionResponse } from "ether
 
 import { ABI, GET_ALL_POOLS, TAGS } from "@/constants";
 import { executeGraphQLQuery, formatUnits, parseUnits } from "@/lib/utils";
-import { PoolInfo, UserShare } from "@/types";
+import { GetAmountsOnRemovingLiquidity, PoolInfo, UserShare } from "@/types";
 
 import { rpcProvider } from "..";
 import { GetAllPoolsResponse, IPoolService } from "./types";
@@ -81,5 +81,25 @@ export class PoolService implements IPoolService {
 
     const tx: TransactionResponse = await poolContract.addLiquidity(formattedAmountA, formattedAmountB);
     return tx;
+  }
+
+  public async getAmountsOnRemovingLiquidity(
+    poolAddress: AddressLike,
+    lpTokenAddress: AddressLike,
+    percentageToWithdraw: number,
+    address: string,
+  ): Promise<GetAmountsOnRemovingLiquidity> {
+    const [poolContract, lpTokenContract] = await Promise.all([
+      new Contract(await poolAddress, ABI.ERC20_SWAP, rpcProvider),
+      new Contract(await lpTokenAddress, ABI.ERC20TOKEN, rpcProvider),
+    ]);
+
+    const userBalance = await lpTokenContract.balanceOf(address);
+
+    const [amountTokenA, amountTokenB] = await poolContract.getAmountsOnRemovingLiquidity(
+      (BigInt(userBalance) * BigInt(percentageToWithdraw)) / BigInt(100),
+    );
+
+    return { amountTokenA: formatUnits(amountTokenA).toString(), amountTokenB: formatUnits(amountTokenB).toString() };
   }
 }

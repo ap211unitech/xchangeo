@@ -12,3 +12,8 @@ export type UserShare = {
   poolAddress: string;
   userShare: number;
 };
+
+export type GetAmountsOnRemovingLiquidity = {
+  amountTokenA: string;
+  amountTokenB: string;
+};
