@@ -61,7 +61,7 @@ export const Transactions = ({ faucetTransactionsHistory }: Props) => {
               <TableRow key={row.id} className={cn("cursor-pointer", index % 2 && "bg-muted/50")}>
                 {row.getVisibleCells().map(cell => {
                   return (
-                    <TableCell className="px-4" key={cell.id}>
+                    <TableCell className="h-18 px-4" key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   );
