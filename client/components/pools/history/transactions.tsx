@@ -4,17 +4,20 @@ import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@
 import { ChevronsUpDown } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
+import { usePoolActivity } from "@/hooks";
 import { cn } from "@/lib/utils";
-import swapTransactionsHistory from "@/public/swap-transactions.json";
 
 import { columns } from "./columns";
+import { Loading } from "./loading";
 
-const actionKeys = ["tokenIn", "tokenOut", "timestamp"];
+const actionKeys = ["timestamp"];
 
 export const Transactions = () => {
+  const { data: poolsActivity = [], isLoading } = usePoolActivity();
+
   const table = useReactTable({
     columns,
-    data: swapTransactionsHistory,
+    data: poolsActivity,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
@@ -52,9 +55,15 @@ export const Transactions = () => {
         </TableHeader>
 
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                <Loading />
+              </TableCell>
+            </TableRow>
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row, index) => (
-              <TableRow key={row.id} className={cn("cursor-pointer", index % 2 && "bg-muted/50")}>
+              <TableRow key={row.id} className={cn("h-18 cursor-pointer", index % 2 && "bg-muted/50")}>
                 {row.getVisibleCells().map(cell => {
                   return (
                     <TableCell className="px-4" key={cell.id}>
@@ -66,8 +75,8 @@ export const Transactions = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+              <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                No activity yet.
               </TableCell>
             </TableRow>
           )}

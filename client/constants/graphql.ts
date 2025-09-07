@@ -82,7 +82,11 @@ export const GET_ALL_POOLS = `{
 }`;
 
 export const GET_POOLS_ACTIVITY = `{
-  poolTransactions {
+  poolTransactions(
+    orderBy: timestamp
+    orderDirection: desc
+    first: 50
+  ) {
     amountA
     amountB
     eventType
