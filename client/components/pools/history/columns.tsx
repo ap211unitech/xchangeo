@@ -111,11 +111,11 @@ export const columns = [
   }),
   columnHelper.accessor(row => row, {
     id: "actions",
-    header: () => <div className="flex justify-end">Actions</div>,
+    header: () => <div className="flex justify-end pr-4">Actions</div>,
     cell: info => {
       const { transactionHash } = info.getValue();
       return (
-        <div className="flex items-center justify-end gap-2 text-right">
+        <div className="flex items-center justify-end gap-2 pr-4">
           <Button variant="secondary" size="icon" asChild>
             <Link href={`https://sepolia.etherscan.io/tx/${transactionHash}`} target="_blank">
               <Eye className="h-4 w-4" />
