@@ -22,7 +22,7 @@ export const Send = async () => {
       </div>
 
       {/* Main Form */}
-      <ConnectWalletOverlay className="md:mx-auto md:max-w-3/4">
+      <ConnectWalletOverlay className="h-72 md:mx-auto md:max-w-3/4">
         <SendTokensForm tokens={tokens} />
       </ConnectWalletOverlay>
     </section>
