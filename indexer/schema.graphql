@@ -49,4 +49,5 @@ type PoolTransaction @entity(immutable: true) {
   amountB: BigInt!
   timestamp: BigInt!
   eventType: String!
+  transactionHash: Bytes!
 }

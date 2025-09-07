@@ -27,7 +27,7 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
-import { useGetAmountsOnRemoveLiquidity, useRemoveLiquidity } from "@/hooks";
+import { useGetAmountsOnRemoveLiquidity, useRemoveLiquidity, useUserShare } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { PoolInfo } from "@/types";
 
@@ -52,6 +52,7 @@ type Props = {
 export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: userShares = [] } = useUserShare(allLiquidityPools);
   const { mutateAsync: onRemoveLiquidity, isPending } = useRemoveLiquidity();
 
   // Make sure given pool address exists in available pools
@@ -79,6 +80,11 @@ export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
   const isFetchingAmountsOnRemovingLiquidity = useMemo(
     () => isLoadingAmountsOnRemovingLiquidity && userShareToWithdraw > 0,
     [isLoadingAmountsOnRemovingLiquidity, userShareToWithdraw],
+  );
+
+  const isDisabled = useMemo(
+    () => isPending || (userShares.find(e => e.poolAddress === selectedPoolInfo.poolAddress)?.userShare ?? 0) === 0,
+    [isPending, selectedPoolInfo.poolAddress, userShares],
   );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -221,7 +227,7 @@ export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
               </div>
             )}
 
-            <Button type="submit" disabled={isPending} className="flex items-center gap-2">
+            <Button type="submit" disabled={isDisabled} className="flex items-center gap-2">
               {isPending ? (
                 <>
                   <Loader className="h-4 w-4 animate-spin" />

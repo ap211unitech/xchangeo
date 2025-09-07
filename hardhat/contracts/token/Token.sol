@@ -19,7 +19,7 @@ contract ERC20Token is ERC20Capped, ERC20Burnable, Ownable {
         ERC20Capped(maximumCap * (10 ** decimals()))
         Ownable(msg.sender)
     {
-        uint256 initialSupply = maximumCap / 100_000;
+        uint256 initialSupply = maximumCap / 10;
         _mint(msg.sender, initialSupply * (10 ** decimals()));
         emit ERC20TokenCreated(address(this), tokenName, tokenSymbol);
     }

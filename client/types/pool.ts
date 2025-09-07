@@ -17,3 +17,23 @@ export type GetAmountsOnRemovingLiquidity = {
   amountTokenA: string;
   amountTokenB: string;
 };
+
+export type PoolActivity = {
+  id: string;
+  timestamp: number;
+  transactionHash: string;
+  sender: string;
+  tokenA: {
+    name: string;
+    ticker: string;
+    tokenAddress: string;
+    amount: number;
+  };
+  tokenB: {
+    name: string;
+    ticker: string;
+    tokenAddress: string;
+    amount: number;
+  };
+  eventType: "AddLiquidity" | "RemoveLiquidity" | "Swap";
+};

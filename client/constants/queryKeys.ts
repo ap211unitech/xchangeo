@@ -11,4 +11,5 @@ export const QUERY_KEYS = {
     lpTokenAddress,
     percentageToWithdraw,
   ],
+  getPoolsActivity: () => [PREFIX, "getPoolsActivity"],
 };

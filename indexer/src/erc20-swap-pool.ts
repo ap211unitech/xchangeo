@@ -57,6 +57,7 @@ export function handleLiquidityAdded(event: LiquidityAddedEvent): void {
     poolTransactionEntity.amountB = event.params.tokenAmount2;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "AddLiquidity";
+    poolTransactionEntity.transactionHash = event.transaction.hash;
 
     poolTransactionEntity.save();
   }
@@ -82,6 +83,7 @@ export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
     poolTransactionEntity.amountB = event.params.tokenAmount2;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "RemoveLiquidity";
+    poolTransactionEntity.transactionHash = event.transaction.hash;
 
     poolTransactionEntity.save();
   }
@@ -107,6 +109,7 @@ export function handleTokenSwapped(event: TokenSwappedEvent): void {
     poolTransactionEntity.amountB = event.params.amountOut;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "Swap";
+    poolTransactionEntity.transactionHash = event.transaction.hash;
 
     poolTransactionEntity.save();
   }

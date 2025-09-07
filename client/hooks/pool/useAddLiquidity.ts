@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddressLike, Eip1193Provider } from "ethers";
 import { toast } from "sonner";
 
-import { ABI } from "@/constants";
+import { ABI, revalidateAllPools } from "@/constants";
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { getSigner, parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
@@ -40,6 +40,9 @@ export const useAddLiquidity = () => {
         },
       }),
     onError: error => toast.error(parseRevertError(error, ABI.ERC20_SWAP)),
-    onSettled: () => queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) }),
+    onSettled: async () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) });
+      await revalidateAllPools();
+    },
   });
 };

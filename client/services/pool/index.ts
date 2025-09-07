@@ -96,6 +96,10 @@ export class PoolService implements IPoolService {
 
     const userBalance = await lpTokenContract.balanceOf(address);
 
+    if (userBalance === BigInt(0)) {
+      return { amountTokenA: "0", amountTokenB: "0" };
+    }
+
     const [amountTokenA, amountTokenB] = await poolContract.getAmountsOnRemovingLiquidity(
       (BigInt(userBalance) * BigInt(percentageToWithdraw)) / BigInt(100),
     );

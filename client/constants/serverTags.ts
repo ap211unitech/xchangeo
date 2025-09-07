@@ -6,4 +6,5 @@ export const TAGS = {
   getFaucetMetadata: (tokenAddress: string) => [PREFIX, "getFaucetMetadata", tokenAddress].join("--"),
   getFaucetTransactionsHistory: () => [PREFIX, "getFaucetTransactionsHistory"].join("--"),
   getAllPools: () => [PREFIX, "getAllPools"].join("--"),
+  getPoolsActivity: () => [PREFIX, "getPoolsActivity"].join("--"),
 };
