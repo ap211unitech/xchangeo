@@ -30,12 +30,25 @@ type Transfer @entity(immutable: true) {
 type Pool @entity {
   id: ID!
   pool: Bytes!
-  tokenA: ERC20Token
-  tokenB: ERC20Token
-  lpToken: ERC20Token # address of the lp token
+
+  # tokens involved
+  tokenA: ERC20Token!
+  tokenB: ERC20Token!
+  lpToken: ERC20Token!
+
+  # fee in basis points (e.g., 30 = 0.3%)
   fee: BigInt!
+
+  # latest reserves
   reserveA: BigInt!
   reserveB: BigInt!
+
+  # all-time stats
+  allTimeVolumeA: BigInt! # total amount of tokenA traded
+  allTimeVolumeB: BigInt! # total amount of tokenB traded
+  allTimeFeesA: BigInt! # total fees collected in tokenA
+  allTimeFeesB: BigInt! # total fees collected in tokenB
+  
   timestamp: BigInt!
 }
 

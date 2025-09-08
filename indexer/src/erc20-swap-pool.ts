@@ -31,6 +31,10 @@ export function handlePoolCreated(event: PoolCreatedEvent): void {
   entity.fee = event.params.fee;
   entity.reserveA = new BigInt(0);
   entity.reserveB = new BigInt(0);
+  entity.allTimeVolumeA = new BigInt(0);
+  entity.allTimeVolumeB = new BigInt(0);
+  entity.allTimeFeesA = new BigInt(0);
+  entity.allTimeFeesB = new BigInt(0);
   entity.fee = event.params.fee;
   entity.timestamp = event.block.timestamp;
 
@@ -95,6 +99,35 @@ export function handleTokenSwapped(event: TokenSwappedEvent): void {
   if (poolEntity) {
     poolEntity.reserveA = event.params.reserveToken1;
     poolEntity.reserveB = event.params.reserveToken2;
+
+    // Update all-time volumes for tokens
+    if (event.params.tokenIn.toHex() === poolEntity.tokenA) {
+      poolEntity.allTimeVolumeA = poolEntity.allTimeVolumeA.plus(
+        event.params.amountIn
+      );
+      poolEntity.allTimeVolumeB = poolEntity.allTimeVolumeB.plus(
+        event.params.amountOut
+      );
+
+      // fees in tokenA
+      let feesA = event.params.amountIn
+        .times(poolEntity.fee)
+        .div(BigInt.fromI32(10000)); // fee in basis points i.e. 0.3% denoted as 30; so, 0.3% = 30/100_00
+      poolEntity.allTimeFeesA = poolEntity.allTimeFeesA.plus(feesA);
+    } else {
+      poolEntity.allTimeVolumeA = poolEntity.allTimeVolumeA.plus(
+        event.params.amountOut
+      );
+      poolEntity.allTimeVolumeB = poolEntity.allTimeVolumeB.plus(
+        event.params.amountIn
+      );
+
+      // fees in tokenB
+      let feesB = event.params.amountIn
+        .times(poolEntity.fee)
+        .div(BigInt.fromI32(10000));
+      poolEntity.allTimeFeesB = poolEntity.allTimeFeesB.plus(feesB);
+    }
 
     poolEntity.save();
 
