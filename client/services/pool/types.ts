@@ -1,6 +1,6 @@
 import { AddressLike, JsonRpcSigner, TransactionResponse } from "ethers";
 
-import { GetAmountsOnRemovingLiquidity, PoolActivity, PoolInfo, UserShare } from "@/types";
+import { GetAmountOutOnSwap, GetAmountsOnRemovingLiquidity, PoolActivity, PoolInfo, UserShare } from "@/types";
 
 interface TokenInfo {
   id: string;
@@ -44,6 +44,17 @@ export interface IPoolService {
   getAllPools: () => Promise<PoolInfo[]>;
   getUserShare: (_poolsInfo: PoolInfo[], _address: string) => Promise<UserShare[]>;
 
+  getAmountsOnRemovingLiquidity: (
+    _poolAddress: AddressLike,
+    _lpTokenAddress: AddressLike,
+    _percentageToWithdraw: number,
+    _address: string,
+  ) => Promise<GetAmountsOnRemovingLiquidity>;
+
+  getPoolsActivity: () => Promise<PoolActivity[]>;
+
+  getAmountOutOnSwap: (_pool: PoolInfo, _tokenIn: AddressLike, _amountIn: number) => Promise<GetAmountOutOnSwap>;
+
   addLiquidity: (
     _signer: JsonRpcSigner,
     _poolAddress: AddressLike,
@@ -60,12 +71,5 @@ export interface IPoolService {
     _percentageToWithdraw: number,
   ) => Promise<TransactionResponse>;
 
-  getAmountsOnRemovingLiquidity: (
-    _poolAddress: AddressLike,
-    _lpTokenAddress: AddressLike,
-    _percentageToWithdraw: number,
-    _address: string,
-  ) => Promise<GetAmountsOnRemovingLiquidity>;
-
-  getPoolsActivity: () => Promise<PoolActivity[]>;
+  swap: (_signer: JsonRpcSigner, _pool: PoolInfo, _tokenIn: AddressLike, _amountIn: number, _slippage: number) => Promise<TransactionResponse>;
 }

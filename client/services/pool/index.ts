@@ -3,7 +3,7 @@ import { AddressLike, Contract, JsonRpcSigner, TransactionResponse } from "ether
 
 import { ABI, GET_ALL_POOLS, GET_POOLS_ACTIVITY, TAGS } from "@/constants";
 import { executeGraphQLQuery, formatUnits, parseUnits } from "@/lib/utils";
-import { GetAmountsOnRemovingLiquidity, PoolActivity, PoolInfo, UserShare } from "@/types";
+import { GetAmountOutOnSwap, GetAmountsOnRemovingLiquidity, PoolActivity, PoolInfo, UserShare } from "@/types";
 
 import { rpcProvider } from "..";
 import { GetAllPoolsResponse, GetPoolsActivityResponse, IPoolService } from "./types";
@@ -153,5 +153,41 @@ export class PoolService implements IPoolService {
         },
       };
     });
+  }
+
+  public async getAmountOutOnSwap(pool: PoolInfo, tokenIn: AddressLike, amountIn: number): Promise<GetAmountOutOnSwap> {
+    const poolContract = new Contract(pool.poolAddress, ABI.ERC20_SWAP, rpcProvider);
+
+    const formattedAmountIn = BigInt(parseUnits(amountIn));
+
+    const [tokenOut, amountOut] = await poolContract.getAmountOut(formattedAmountIn, await tokenIn);
+
+    return {
+      fee: {
+        amount: formatUnits((formattedAmountIn * BigInt(pool.feeTier)) / BigInt(10000)),
+        token: pool.tokenA.contractAddress === tokenIn ? pool.tokenA : pool.tokenB,
+      },
+      tokenOut,
+      amountOut: formatUnits(BigInt(amountOut)),
+    };
+  }
+
+  public async swap(signer: JsonRpcSigner, pool: PoolInfo, tokenIn: AddressLike, amountIn: number, slippage: number): Promise<TransactionResponse> {
+    const poolAddress = pool.poolAddress;
+    const formattedAmountIn = parseUnits(amountIn);
+
+    const [poolContract, tokenInContract] = await Promise.all([
+      new Contract(poolAddress, ABI.ERC20_SWAP, signer),
+      new Contract(await tokenIn, ABI.ERC20TOKEN, signer),
+    ]);
+
+    const [, formattedAmountOut] = await poolContract.getAmountOut(formattedAmountIn, await tokenIn);
+
+    const minAmountOut = BigInt(formattedAmountOut) * BigInt(slippage);
+
+    await tokenInContract.approve(poolAddress, formattedAmountIn);
+
+    const tx: TransactionResponse = await poolContract.swap(tokenIn, formattedAmountIn, minAmountOut);
+    return tx;
   }
 }

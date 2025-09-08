@@ -37,3 +37,9 @@ export type PoolActivity = {
   };
   eventType: "AddLiquidity" | "RemoveLiquidity" | "Swap";
 };
+
+export type GetAmountOutOnSwap = {
+  fee: { amount: number; token: TokenMetadata };
+  tokenOut: string;
+  amountOut: number;
+};
