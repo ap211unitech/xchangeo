@@ -81,7 +81,7 @@ const DeployModule = buildModule("DeployModule", (m) => {
       "mint",
       [
         faucetContract, // or another address
-        parseUnits(token.maximumCap / 1000),
+        parseUnits(token.maximumCap / 10),
       ],
       {
         id: `Mint_${token.symbol}`,
