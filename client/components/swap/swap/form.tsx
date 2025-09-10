@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,15 +18,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  ImageComponent,
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  TokenLogo,
 } from "@/components/ui";
-import availableTokens from "@/public/tokens.json";
+import { useBalances } from "@/hooks";
+import { PoolInfo, TokenMetadata } from "@/types";
+
+import { Loading } from "./loading";
 
 const formSchema = z.object({
   sellToken: z
@@ -52,26 +56,57 @@ const formSchema = z.object({
     .refine(a => (a.split(".").at(1)?.length || 0) <= 18, "Max 18 digits allowed after decimal"),
 });
 
-export const SwapTokensForm = () => {
+type Props = {
+  allLiquidityPools: PoolInfo[];
+  tokens: TokenMetadata[];
+};
+
+export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const sellToken = searchParams.get("sellToken") as string;
-  const buyToken = searchParams.get("buyToken") as string;
+  const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
+
+  const querySellToken = searchParams.get("sellToken") as string;
+  const queryBuyToken = searchParams.get("buyToken") as string;
+
+  const {
+    tokenA: { contractAddress: preSelectedSellToken },
+    tokenB: { contractAddress: preSelectedBuyToken },
+  } =
+    allLiquidityPools.find(({ tokenA, tokenB }) => tokenA.contractAddress === querySellToken && tokenB.contractAddress === queryBuyToken) ??
+    allLiquidityPools[0];
 
   const isPending = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sellToken: availableTokens.find(({ ticker }) => ticker === sellToken)?.contractAddress || "",
-      buyToken: availableTokens.find(({ ticker }) => ticker === buyToken)?.contractAddress || "",
+      sellToken: preSelectedSellToken,
+      buyToken: preSelectedBuyToken,
       sellAmount: "",
       buyAmount: "",
     },
   });
 
+  const sellTokenFormValue = form.watch("sellToken");
+  const buyTokenFormValue = form.watch("buyToken");
+
+  const { tokenA: selectedSellToken, tokenB: selectedBuyToken } = allLiquidityPools.find(
+    lp => lp.tokenA.contractAddress === sellTokenFormValue && lp.tokenB.contractAddress === buyTokenFormValue,
+  ) as PoolInfo;
+
+  const [sellTokenBalance, buyTokenBalance] = useMemo(() => {
+    return [
+      availableTokens.find(token => token.contractAddress === selectedSellToken.contractAddress)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === selectedBuyToken.contractAddress)?.balance ?? 0,
+    ];
+  }, [availableTokens, selectedBuyToken.contractAddress, selectedSellToken.contractAddress]);
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
   };
+
+  if (isBalancesPending) return <Loading />;
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
@@ -105,19 +140,23 @@ export const SwapTokensForm = () => {
                           name="sellToken"
                           render={({ field }) => (
                             <FormItem>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select
+                                onValueChange={e => {
+                                  field.onChange(e);
+                                  router.replace(`?sellToken=${e}`);
+                                }}
+                                defaultValue={field.value}
+                              >
                                 <FormControl>
                                   <SelectTrigger className="relative w-full rounded-4xl">
                                     <SelectValue placeholder="Select token" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {availableTokens.map(({ logo, name, contractAddress, ticker }) => (
+                                  {availableTokens.map(({ contractAddress, ticker }) => (
                                     <SelectItem key={contractAddress} value={contractAddress}>
-                                      <div className="flex items-center justify-between gap-2">
-                                        <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                                          <ImageComponent fill alt={name} src={logo} />
-                                        </div>
+                                      <div className="flex items-center justify-between gap-2 font-medium">
+                                        <TokenLogo className="size-6" ticker={ticker} />
                                         {ticker}
                                       </div>
                                     </SelectItem>
@@ -165,19 +204,23 @@ export const SwapTokensForm = () => {
                           name="buyToken"
                           render={({ field }) => (
                             <FormItem>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <Select
+                                onValueChange={e => {
+                                  field.onChange(e);
+                                  router.replace(`?buyToken=${e}`);
+                                }}
+                                defaultValue={field.value}
+                              >
                                 <FormControl>
                                   <SelectTrigger className="relative w-full rounded-4xl">
                                     <SelectValue placeholder="Select token" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {availableTokens.map(({ logo, name, contractAddress, ticker }) => (
+                                  {availableTokens.map(({ contractAddress, ticker }) => (
                                     <SelectItem key={contractAddress} value={contractAddress}>
-                                      <div className="flex items-center justify-between gap-2">
-                                        <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                                          <ImageComponent fill alt={name} src={logo} />
-                                        </div>
+                                      <div className="flex items-center justify-between gap-2 font-medium">
+                                        <TokenLogo className="size-6" ticker={ticker} />
                                         {ticker}
                                       </div>
                                     </SelectItem>
