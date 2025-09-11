@@ -5,7 +5,7 @@ import { isAddress } from "ethers";
 import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { ControllerRenderProps, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import {
@@ -27,6 +27,7 @@ import {
   TokenLogo,
 } from "@/components/ui";
 import { useBalances } from "@/hooks";
+import { getOtherTokensToSwap } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
@@ -59,9 +60,10 @@ const formSchema = z.object({
 type Props = {
   allLiquidityPools: PoolInfo[];
   tokens: TokenMetadata[];
+  allowedTokensForSwap: TokenMetadata[];
 };
 
-export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
+export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
@@ -91,16 +93,46 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
   const sellTokenFormValue = form.watch("sellToken");
   const buyTokenFormValue = form.watch("buyToken");
 
-  const { tokenA: selectedSellToken, tokenB: selectedBuyToken } = allLiquidityPools.find(
-    lp => lp.tokenA.contractAddress === sellTokenFormValue && lp.tokenB.contractAddress === buyTokenFormValue,
-  ) as PoolInfo;
+  const selectedPoolInfo = allLiquidityPools.find(
+    lp =>
+      (lp.tokenA.contractAddress === sellTokenFormValue && lp.tokenB.contractAddress === buyTokenFormValue) ||
+      (lp.tokenB.contractAddress === sellTokenFormValue && lp.tokenA.contractAddress === buyTokenFormValue),
+  );
+  const selectedSellToken = selectedPoolInfo?.tokenA;
+  const selectedBuyToken = selectedPoolInfo?.tokenB;
+
+  const onChangeSellToken = (field: ControllerRenderProps<z.infer<typeof formSchema>>, selectedSellToken: string) => {
+    const allowedTokensForBuy = getOtherTokensToSwap(allLiquidityPools, selectedSellToken);
+
+    if (allowedTokensForBuy.length > 0) {
+      const autoSelectedBuyToken =
+        allowedTokensForBuy.find(e => e.contractAddress === buyTokenFormValue)?.contractAddress ?? allowedTokensForBuy[0].contractAddress;
+
+      field.onChange(selectedSellToken);
+      form.setValue("buyToken", autoSelectedBuyToken);
+      router.replace(`?sellToken=${selectedSellToken}&buyToken=${autoSelectedBuyToken}`);
+    }
+  };
+
+  const onChangeBuyToken = (field: ControllerRenderProps<z.infer<typeof formSchema>>, selectedBuyToken: string) => {
+    const allowedTokensForSell = getOtherTokensToSwap(allLiquidityPools, selectedBuyToken);
+
+    if (allowedTokensForSell.length > 0) {
+      const autoSelectedSellToken =
+        allowedTokensForSell.find(e => e.contractAddress === sellTokenFormValue)?.contractAddress ?? allowedTokensForSell[0].contractAddress;
+
+      field.onChange(selectedBuyToken);
+      form.setValue("sellToken", autoSelectedSellToken);
+      router.replace(`?sellToken=${autoSelectedSellToken}&buyToken=${selectedBuyToken}`);
+    }
+  };
 
   const [sellTokenBalance, buyTokenBalance] = useMemo(() => {
     return [
-      availableTokens.find(token => token.contractAddress === selectedSellToken.contractAddress)?.balance ?? 0,
-      availableTokens.find(token => token.contractAddress === selectedBuyToken.contractAddress)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === selectedSellToken?.contractAddress)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === selectedBuyToken?.contractAddress)?.balance ?? 0,
     ];
-  }, [availableTokens, selectedBuyToken.contractAddress, selectedSellToken.contractAddress]);
+  }, [availableTokens, selectedBuyToken?.contractAddress, selectedSellToken?.contractAddress]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
@@ -134,26 +166,23 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
                           }
                         }}
                       />
-                      <div className="absolute right-4 space-y-4">
+                      <div className="absolute right-4 flex flex-col items-end justify-end space-y-1.5">
+                        <Button className="float-right h-6 max-w-fit rounded-sm px-2 text-xs" type="button">
+                          MAX
+                        </Button>
                         <FormField
                           control={form.control}
                           name="sellToken"
                           render={({ field }) => (
                             <FormItem>
-                              <Select
-                                onValueChange={e => {
-                                  field.onChange(e);
-                                  router.replace(`?sellToken=${e}`);
-                                }}
-                                defaultValue={field.value}
-                              >
+                              <Select onValueChange={e => onChangeSellToken(field, e)} value={field.value}>
                                 <FormControl>
-                                  <SelectTrigger className="relative w-full rounded-4xl">
+                                  <SelectTrigger className="focus-visible:border-input relative w-full rounded-full pl-2 focus-visible:ring-0">
                                     <SelectValue placeholder="Select token" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {availableTokens.map(({ contractAddress, ticker }) => (
+                                  {allowedTokensForSwap.map(({ contractAddress, ticker }) => (
                                     <SelectItem key={contractAddress} value={contractAddress}>
                                       <div className="flex items-center justify-between gap-2 font-medium">
                                         <TokenLogo className="size-6" ticker={ticker} />
@@ -166,9 +195,9 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
                             </FormItem>
                           )}
                         />
-                        <Button className="float-right h-6 rounded-sm px-2 text-xs" type="button">
-                          MAX
-                        </Button>
+                        <div className="text-muted-foreground text-sm">
+                          {sellTokenBalance} {selectedSellToken?.ticker}
+                        </div>
                       </div>
                     </div>
                   </FormControl>
@@ -198,26 +227,23 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
                           }
                         }}
                       />
-                      <div className="absolute right-4 space-y-4">
+                      <div className="absolute right-4 flex flex-col items-end justify-end space-y-1.5">
+                        <Button className="float-right h-6 max-w-fit rounded-sm px-2 text-xs" type="button">
+                          MAX
+                        </Button>
                         <FormField
                           control={form.control}
                           name="buyToken"
                           render={({ field }) => (
                             <FormItem>
-                              <Select
-                                onValueChange={e => {
-                                  field.onChange(e);
-                                  router.replace(`?buyToken=${e}`);
-                                }}
-                                defaultValue={field.value}
-                              >
+                              <Select onValueChange={e => onChangeBuyToken(field, e)} value={field.value}>
                                 <FormControl>
-                                  <SelectTrigger className="relative w-full rounded-4xl">
+                                  <SelectTrigger className="relative. focus-visible:border-input w-full rounded-full pl-2 focus-visible:ring-0">
                                     <SelectValue placeholder="Select token" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {availableTokens.map(({ contractAddress, ticker }) => (
+                                  {allowedTokensForSwap.map(({ contractAddress, ticker }) => (
                                     <SelectItem key={contractAddress} value={contractAddress}>
                                       <div className="flex items-center justify-between gap-2 font-medium">
                                         <TokenLogo className="size-6" ticker={ticker} />
@@ -230,9 +256,9 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools }: Props) => {
                             </FormItem>
                           )}
                         />
-                        <Button className="float-right h-6 rounded-sm px-2 text-xs" type="button">
-                          MAX
-                        </Button>
+                        <div className="text-muted-foreground text-sm">
+                          {buyTokenBalance} {selectedBuyToken?.ticker}
+                        </div>
                       </div>
                     </div>
                   </FormControl>

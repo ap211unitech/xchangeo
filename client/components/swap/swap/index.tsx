@@ -2,11 +2,21 @@ import { ArrowRightLeft } from "lucide-react";
 
 import { ConnectWalletOverlay } from "@/components/ui";
 import { appService } from "@/services";
+import { TokenMetadata } from "@/types";
 
 import { SwapTokensForm } from "./form";
 
 export const Swap = async () => {
   const [allLiquidityPools, tokens] = await Promise.all([await appService.poolService.getAllPools(), await appService.tokenService.getAllTokens()]);
+
+  const allowedTokensForSwap: TokenMetadata[] = Array.from(
+    new Map(
+      allLiquidityPools.flatMap(lp => [
+        [lp.tokenA.contractAddress, lp.tokenA],
+        [lp.tokenB.contractAddress, lp.tokenB],
+      ]),
+    ).values(),
+  );
 
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
@@ -25,7 +35,7 @@ export const Swap = async () => {
 
       {/* Swap Form */}
       <ConnectWalletOverlay className="h-72 md:mx-auto md:max-w-3/4">
-        <SwapTokensForm tokens={tokens} allLiquidityPools={allLiquidityPools} />
+        <SwapTokensForm tokens={tokens} allLiquidityPools={allLiquidityPools} allowedTokensForSwap={allowedTokensForSwap} />
       </ConnectWalletOverlay>
     </section>
   );

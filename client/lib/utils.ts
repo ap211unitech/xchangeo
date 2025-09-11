@@ -4,6 +4,7 @@ import moment from "moment";
 import { twMerge } from "tailwind-merge";
 
 import { CONFIG } from "@/config";
+import { PoolInfo, TokenMetadata } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -115,4 +116,17 @@ export const getAmountOnAddingLiquidity = (reserveA: BigNumber, reserveB: BigNum
   }
 
   return isTokenA ? amountB : amountA;
+};
+
+export const getOtherTokensToSwap = (allLiquidityPools: PoolInfo[], choosenToken: string) => {
+  const res = new Map<string, TokenMetadata>();
+  allLiquidityPools.forEach(lp => {
+    if (lp.tokenA.contractAddress === choosenToken) {
+      res.set(lp.tokenB.contractAddress, lp.tokenB);
+    }
+    if (lp.tokenB.contractAddress === choosenToken) {
+      res.set(lp.tokenA.contractAddress, lp.tokenA);
+    }
+  });
+  return Array.from(res.values());
 };
