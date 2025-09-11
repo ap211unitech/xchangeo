@@ -5,6 +5,7 @@ export * from "./connectWalletOverlay";
 export * from "./footer";
 export * from "./form";
 export * from "./header";
+export * from "./hover-card";
 export * from "./imageComponent";
 export * from "./input";
 export * from "./label";

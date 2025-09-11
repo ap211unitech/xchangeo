@@ -2,7 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
-import { Loader } from "lucide-react";
+import { ArrowUp, FuelIcon, Loader, Plus } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
@@ -11,13 +12,19 @@ import { z } from "zod";
 import {
   Button,
   Card,
+  CardAction,
   CardContent,
+  CardHeader,
+  CardTitle,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
   Input,
   Select,
   SelectContent,
@@ -141,6 +148,34 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
+      <CardHeader>
+        <CardTitle>
+          {!!selectedPoolInfo && (
+            <div
+              className="hover:text-primary flex w-fit cursor-pointer items-center"
+              onClick={() => window.open(`https://sepolia.etherscan.io/address/${selectedPoolInfo.poolAddress}`)}
+            >
+              <div className="-mr-1 flex items-center">
+                <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
+                <TokenLogo className="relative -left-3" ticker={selectedPoolInfo.tokenB.ticker} />
+              </div>
+              <p className="tracking-wide">
+                {selectedPoolInfo.tokenA.ticker}/{selectedPoolInfo.tokenB.ticker}
+              </p>
+              <ArrowUp className="ml-1 size-4 rotate-45" />
+            </div>
+          )}
+        </CardTitle>
+        <CardAction>
+          <Button type="button" variant="secondary" asChild>
+            <Link href="/pools/addLiquidity">
+              <Plus className="size-4" />
+              Add Liquidity
+            </Link>
+          </Button>
+        </CardAction>
+      </CardHeader>
+
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -266,16 +301,36 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
               )}
             />
 
-            <Button type="submit" disabled={isPending} className="flex items-center gap-2">
-              {isPending ? (
-                <>
-                  <Loader className="h-4 w-4 animate-spin" />
-                  Swapping...
-                </>
-              ) : (
-                <>Swap</>
-              )}
-            </Button>
+            <div className="flex items-center justify-between">
+              <Button type="submit" disabled={isPending} className="flex items-center gap-2">
+                {isPending ? (
+                  <>
+                    <Loader className="h-4 w-4 animate-spin" />
+                    Swapping...
+                  </>
+                ) : (
+                  <>Swap</>
+                )}
+              </Button>
+              <HoverCard openDelay={0} closeDelay={0}>
+                <HoverCardTrigger asChild className="group">
+                  <Button variant="ghost">
+                    <FuelIcon className="size-4" />
+                    Swap Info
+                  </Button>
+                </HoverCardTrigger>
+                <HoverCardContent side="top" className="w-72">
+                  {/* // TODO: Add info */}
+                  <div className="flex justify-between gap-4">
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold">@nextjs</h4>
+                      <p className="text-sm">The React Framework – created and maintained by @vercel.</p>
+                      <div className="text-muted-foreground text-xs">Joined December 2021</div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </div>
           </form>
         </Form>
       </CardContent>

@@ -104,7 +104,11 @@ export const Home = () => {
                         <span className="ml-auto text-2xl">2,847.52</span>
                       </div>
                     </div>
-                    <Button className="h-full w-full py-3 font-semibold">Swap Now</Button>
+                    <Button className="h-full w-full py-3 font-semibold" asChild>
+                      <Link href="/swap" target="_self" scroll>
+                        Swap Now
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </CardContent>
