@@ -97,8 +97,8 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       (lp.tokenA.contractAddress === sellTokenFormValue && lp.tokenB.contractAddress === buyTokenFormValue) ||
       (lp.tokenB.contractAddress === sellTokenFormValue && lp.tokenA.contractAddress === buyTokenFormValue),
   );
-  const selectedSellToken = selectedPoolInfo?.tokenA;
-  const selectedBuyToken = selectedPoolInfo?.tokenB;
+  const selectedSellToken = tokens.find(e => e.contractAddress === sellTokenFormValue);
+  const selectedBuyToken = tokens.find(e => e.contractAddress === buyTokenFormValue);
 
   const onChangeSellToken = (field: ControllerRenderProps<z.infer<typeof formSchema>>, selectedSellToken: string) => {
     const allowedTokensForBuy = getOtherTokensToSwap(allLiquidityPools, selectedSellToken);
@@ -128,10 +128,10 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
 
   const [sellTokenBalance, buyTokenBalance] = useMemo(() => {
     return [
-      availableTokens.find(token => token.contractAddress === selectedSellToken?.contractAddress)?.balance ?? 0,
-      availableTokens.find(token => token.contractAddress === selectedBuyToken?.contractAddress)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === sellTokenFormValue)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === buyTokenFormValue)?.balance ?? 0,
     ];
-  }, [availableTokens, selectedBuyToken?.contractAddress, selectedSellToken?.contractAddress]);
+  }, [availableTokens, buyTokenFormValue, sellTokenFormValue]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
