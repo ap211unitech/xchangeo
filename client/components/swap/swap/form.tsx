@@ -71,20 +71,19 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
   const querySellToken = searchParams.get("sellToken") as string;
   const queryBuyToken = searchParams.get("buyToken") as string;
 
-  const {
-    tokenA: { contractAddress: preSelectedSellToken },
-    tokenB: { contractAddress: preSelectedBuyToken },
-  } =
-    allLiquidityPools.find(({ tokenA, tokenB }) => tokenA.contractAddress === querySellToken && tokenB.contractAddress === queryBuyToken) ??
-    allLiquidityPools[0];
+  const isValidPoolFound = allLiquidityPools.find(
+    ({ tokenA, tokenB }) =>
+      (tokenA.contractAddress === querySellToken && tokenB.contractAddress === queryBuyToken) ||
+      (tokenB.contractAddress === querySellToken && tokenA.contractAddress === queryBuyToken),
+  );
 
   const isPending = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sellToken: preSelectedSellToken,
-      buyToken: preSelectedBuyToken,
+      sellToken: isValidPoolFound ? querySellToken : allLiquidityPools[0].tokenA.contractAddress,
+      buyToken: isValidPoolFound ? queryBuyToken : allLiquidityPools[0].tokenB.contractAddress,
       sellAmount: "",
       buyAmount: "",
     },
