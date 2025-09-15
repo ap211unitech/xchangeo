@@ -83,7 +83,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
       await token1.transfer(user.address, 100);
       await token1.connect(user).approve(pool, 100);
 
-      const tx = await pool.connect(user).swap(token1, 10, 0);
+      const tx = await pool.connect(user).swap(token1, 100, 0);
       const receipt = (await tx.wait()) as ContractTransactionReceipt;
       const timestamp = (
         (await hre.ethers.provider.getBlock(receipt.blockNumber)) as Block
@@ -97,8 +97,8 @@ describe("ERC20/ERC20 Pool Contract", () => {
           pool,
           token1.target,
           token2.target,
-          10,
-          9,
+          100,
+          90,
           new_reserve1,
           new_reserve2,
           timestamp,

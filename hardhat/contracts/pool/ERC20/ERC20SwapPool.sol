@@ -295,6 +295,12 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
             revert ERC20SwapPool__InvalidTokenAddress("Invalid token");
         }
 
+        if (amountIn <= 0) {
+            revert ERC20SwapPool__InvalidAmount(
+                "Amount must be greater than zero"
+            );
+        }
+
         bool isToken1 = address(token1) == tokenIn;
         (uint256 reserve_1, uint256 reserve_2) = getReserves();
 
@@ -303,6 +309,10 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         (uint256 resIn, uint256 resOut) = isToken1
             ? (reserve_1, reserve_2)
             : (reserve_2, reserve_1);
+
+        if (!(resIn > 0 && resOut > 0)) {
+            revert ERC20SwapPool__InsufficientReserves("Invalid reserves");
+        }
 
         // xy = k
         // (x + dx.(1-f))(y - dy) = k
@@ -314,11 +324,13 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         // so, dy = ------------------------------
         //           (100_00.x + dx.(100_00 - f))
 
-        uint256 amountInWithFee = (amountIn * (10000 - fee));
+        uint256 amountInWithFee = (amountIn * (10000 - fee)) / 10000;
 
-        uint256 numerator = resOut * amountInWithFee;
-        uint256 denominator = (10000 * resIn) + amountInWithFee;
-        uint256 amountOut = numerator / denominator;
+        uint256 amountOut = Math.mulDiv(
+            resOut,
+            amountInWithFee,
+            resIn + amountInWithFee
+        );
 
         return (tokenOut, amountOut, resIn, resOut, isToken1);
     }
