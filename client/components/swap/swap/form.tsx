@@ -199,6 +199,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                   <FormControl>
                     <div className="relative flex items-center">
                       <Input
+                        autoFocus
                         type="number"
                         className="h-28 text-2xl md:text-3xl"
                         placeholder="0"

@@ -19,12 +19,12 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
     sellAmountFormValue > 0 && (
       <HoverCard openDelay={0} closeDelay={0}>
         <HoverCardTrigger asChild className={cn("group", isFetchingEstimatedFeeInfo && "animate-pulse")}>
-          <Button variant="ghost">
+          <Button type="button" variant="ghost">
             <FuelIcon className="size-4" />
             Swap Info
           </Button>
         </HoverCardTrigger>
-        <HoverCardContent side="top" className="w-72 space-y-2 text-sm">
+        <HoverCardContent side="top" className="w-80 space-y-2 text-sm">
           <div className="flex items-center justify-between">
             <p className="text-muted-foreground">You&apos;ll selling:</p>
             <SkeletonLoading isLoading={!estimatedFeeInfo}>
@@ -42,7 +42,7 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
             <SkeletonLoading isLoading={!estimatedFeeInfo}>
               <div className="flex items-center gap-2">
                 <span>
-                  ~ {getHumanizeValue(estimatedFeeInfo?.fee.amount)} {estimatedFeeInfo?.fee.token.ticker}
+                  ~ {getHumanizeValue(estimatedFeeInfo?.fee.amount, 8)} {estimatedFeeInfo?.fee.token.ticker}
                 </span>
                 <TokenLogo className="size-6" ticker={estimatedFeeInfo?.fee.token.ticker || ""} />
               </div>
@@ -54,7 +54,7 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
             <SkeletonLoading isLoading={!estimatedFeeInfo}>
               <div className="flex items-center gap-2">
                 <span>
-                  {getHumanizeValue(estimatedFeeInfo?.amountOut)} {selectedBuyToken?.ticker}
+                  ~ {getHumanizeValue(estimatedFeeInfo?.amountOut, 8)} {selectedBuyToken?.ticker}
                 </span>
                 <TokenLogo className="size-6" ticker={selectedBuyToken?.ticker || ""} />
               </div>
@@ -66,7 +66,7 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
             <SkeletonLoading isLoading={!estimatedFeeInfo}>
               <div className="flex items-center gap-2">
                 <span>
-                  ~ {estimatedFeeInfo?.estimatedSwapTxFee} {NATIVE_TOKEN.ticker}
+                  ~ {getHumanizeValue(estimatedFeeInfo?.estimatedSwapTxFee, 8)} {NATIVE_TOKEN.ticker}
                 </span>
                 <TokenLogo className="size-6" ticker={NATIVE_TOKEN.ticker} />
               </div>

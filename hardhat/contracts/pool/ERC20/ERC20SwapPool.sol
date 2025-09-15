@@ -107,11 +107,9 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
                 );
 
         // Transfer input token amount to pool
-        bool success = tokenIn.transferFrom(
-            msg.sender,
-            address(this),
-            amountIn
-        );
+        bool success = msg.sender == address(this)
+            ? tokenIn.transfer(address(this), amountIn)
+            : tokenIn.transferFrom(msg.sender, address(this), amountIn);
         if (!success) {
             revert ERC20SwapPool__TransferFailed(
                 "Swap failed: Can not transfer input amount to pool"
