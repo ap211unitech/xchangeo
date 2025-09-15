@@ -130,3 +130,10 @@ export const getOtherTokensToSwap = (allLiquidityPools: PoolInfo[], choosenToken
   });
   return Array.from(res.values());
 };
+
+export const getHumanizeValue = (value?: number) =>
+  new Intl.NumberFormat("en-US", {
+    notation: "compact", // gives 1.2K, 1.5M etc.
+    maximumFractionDigits: 1,
+    roundingMode: "trunc",
+  }).format(value ?? 0);

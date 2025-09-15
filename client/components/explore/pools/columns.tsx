@@ -11,6 +11,7 @@ const getFormattedVolume = (volume: number) =>
   new Intl.NumberFormat("en-US", {
     notation: "compact", // gives 1.2K, 1.5M etc.
     maximumFractionDigits: 1,
+    roundingMode: "trunc",
   }).format(volume);
 
 export const columns = (userShares: UserShare[]) =>
