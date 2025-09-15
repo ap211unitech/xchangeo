@@ -6,6 +6,7 @@ import { Loader } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useDebounceValue } from "usehooks-ts";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 
@@ -71,10 +72,12 @@ export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
   const selectedPoolInfo = allLiquidityPools.find(lp => lp.poolAddress === form.watch("pool")) as PoolInfo;
   const userShareToWithdraw = +(form.watch("share") ?? 0);
 
+  const [debouncedUserShareToWithdraw] = useDebounceValue(userShareToWithdraw, 500);
+
   const { isLoading: isLoadingAmountsOnRemovingLiquidity, data: amountsOnRemovingLiquidity } = useGetAmountsOnRemoveLiquidity(
     selectedPoolInfo.poolAddress,
     selectedPoolInfo.lpToken.contractAddress,
-    userShareToWithdraw,
+    debouncedUserShareToWithdraw,
   );
 
   const isFetchingAmountsOnRemovingLiquidity = useMemo(
