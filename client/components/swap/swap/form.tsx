@@ -73,6 +73,15 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
   const searchParams = useSearchParams();
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
 
+  const schema = formSchema.superRefine((data, ctx) => {
+    if (Number(data.sellAmount) > sellTokenBalance) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["sellAmount"], message: "Insufficient balance" });
+    }
+    if (Number(data.buyAmount) > buyTokenBalance) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["buyAmount"], message: "Insufficient balance" });
+    }
+  });
+
   const querySellToken = searchParams.get("sellToken") as string;
   const queryBuyToken = searchParams.get("buyToken") as string;
 
@@ -84,8 +93,8 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
 
   const isPending = false;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       sellToken: isValidPoolFound ? querySellToken : allLiquidityPools[0].tokenA.contractAddress,
       buyToken: isValidPoolFound ? queryBuyToken : allLiquidityPools[0].tokenB.contractAddress,
