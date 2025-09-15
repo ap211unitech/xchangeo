@@ -2,10 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAddress } from "ethers";
-import { ArrowUp, FuelIcon, Loader, Plus } from "lucide-react";
+import { ArrowUp, Loader, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PropsWithChildren, useMemo } from "react";
+import { useMemo } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -22,9 +22,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
   Input,
   Select,
   SelectContent,
@@ -34,10 +31,11 @@ import {
   TokenLogo,
 } from "@/components/ui";
 import { useBalances, useEstimatedSwapInfo } from "@/hooks";
-import { cn, getHumanizeValue, getOtherTokensToSwap } from "@/lib/utils";
+import { getOtherTokensToSwap } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
+import { SwapInfo } from "./swapInfo";
 
 const formSchema = z.object({
   sellToken: z
@@ -118,8 +116,6 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
     () => isLoadingEstimatedFeeInfo && sellAmountFormValue > 0,
     [isLoadingEstimatedFeeInfo, sellAmountFormValue],
   );
-
-  console.log(estimatedFeeInfo, selectedPoolInfo, sellTokenFormValue, sellAmountFormValue);
 
   const onChangeSellToken = (field: ControllerRenderProps<z.infer<typeof formSchema>>, selectedSellToken: string) => {
     const allowedTokensForBuy = getOtherTokensToSwap(allLiquidityPools, selectedSellToken);
@@ -327,65 +323,17 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                 )}
               </Button>
 
-              {sellAmountFormValue > 0 && (
-                <HoverCard openDelay={0} closeDelay={0}>
-                  <HoverCardTrigger asChild className={cn("group", isFetchingEstimatedFeeInfo && "animate-pulse")}>
-                    <Button variant="ghost">
-                      <FuelIcon className="size-4" />
-                      Swap Info
-                    </Button>
-                  </HoverCardTrigger>
-                  <HoverCardContent side="top" className="w-72 space-y-2 text-sm">
-                    <div className="flex items-center justify-between">
-                      <p className="text-muted-foreground">You&apos;ll selling:</p>
-                      <SkeletonLoading isLoading={!estimatedFeeInfo}>
-                        <div className="flex items-center gap-2">
-                          <span>
-                            {getHumanizeValue(sellAmountFormValue)} {selectedSellToken?.ticker}
-                          </span>
-                          <TokenLogo className="size-6" ticker={selectedSellToken?.ticker || ""} />
-                        </div>
-                      </SkeletonLoading>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-muted-foreground">Trading Fee</p>
-                      <SkeletonLoading isLoading={!estimatedFeeInfo}>
-                        <div className="flex items-center gap-2">
-                          <span>
-                            {estimatedFeeInfo?.fee.amount} {estimatedFeeInfo?.fee.token.ticker}
-                          </span>
-                          <TokenLogo className="size-6" ticker={estimatedFeeInfo?.fee.token.ticker || ""} />
-                        </div>
-                      </SkeletonLoading>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <p className="text-muted-foreground">You&apos;ll receive:</p>
-                      <SkeletonLoading isLoading={!estimatedFeeInfo}>
-                        <div className="flex items-center gap-2">
-                          <span>
-                            {getHumanizeValue(estimatedFeeInfo?.amountOut)} {selectedBuyToken?.ticker}
-                          </span>
-                          <TokenLogo className="size-6" ticker={selectedBuyToken?.ticker || ""} />
-                        </div>
-                      </SkeletonLoading>
-                    </div>
-
-                    <div className="text-muted-foreground mt-4 text-xs">
-                      This is the cost to process your transaction on the blockchain. Xchangeo does not receive any share of these fees.
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-              )}
+              <SwapInfo
+                estimatedFeeInfo={estimatedFeeInfo}
+                isFetchingEstimatedFeeInfo={isFetchingEstimatedFeeInfo}
+                selectedBuyToken={selectedBuyToken}
+                selectedSellToken={selectedSellToken}
+                sellAmountFormValue={sellAmountFormValue}
+              />
             </div>
           </form>
         </Form>
       </CardContent>
     </Card>
   );
-};
-
-const SkeletonLoading = ({ isLoading, children }: PropsWithChildren<{ isLoading?: boolean }>) => {
-  return isLoading ? <div className="bg-secondary h-2 w-20 animate-pulse rounded-sm" /> : children;
 };

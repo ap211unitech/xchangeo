@@ -9,7 +9,7 @@ export const useEstimatedSwapInfo = (pool: PoolInfo | undefined, tokenIn: string
     enabled: !!pool?.poolAddress,
     queryKey: QUERY_KEYS.getEstimatedSwapInfo(pool?.poolAddress || "", tokenIn, amountIn),
     queryFn: async () => {
-      if (!pool?.poolAddress) return null;
+      if (!pool?.poolAddress) return undefined;
       return appService.poolService.getAmountOutOnSwap(pool, tokenIn, amountIn);
     },
     refetchOnWindowFocus: true,
