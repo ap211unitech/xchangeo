@@ -80,9 +80,6 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
     if (Number(data.sellAmount) > sellTokenBalance) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["sellAmount"], message: "Insufficient balance" });
     }
-    if (Number(data.buyAmount) > buyTokenBalance) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["buyAmount"], message: "Insufficient balance" });
-    }
   });
 
   const querySellToken = searchParams.get("sellToken") as string;
