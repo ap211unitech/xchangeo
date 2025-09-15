@@ -130,6 +130,13 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
     [isLoadingEstimatedFeeInfo, sellAmountFormValue],
   );
 
+  const [sellTokenBalance, buyTokenBalance] = useMemo(() => {
+    return [
+      availableTokens.find(token => token.contractAddress === sellTokenFormValue)?.balance ?? 0,
+      availableTokens.find(token => token.contractAddress === buyTokenFormValue)?.balance ?? 0,
+    ];
+  }, [availableTokens, buyTokenFormValue, sellTokenFormValue]);
+
   const onChangeSellToken = (field: ControllerRenderProps<z.infer<typeof formSchema>>, selectedSellToken: string) => {
     const allowedTokensForBuy = getOtherTokensToSwap(allLiquidityPools, selectedSellToken);
 
@@ -190,12 +197,8 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
     );
   };
 
-  const [sellTokenBalance, buyTokenBalance] = useMemo(() => {
-    return [
-      availableTokens.find(token => token.contractAddress === sellTokenFormValue)?.balance ?? 0,
-      availableTokens.find(token => token.contractAddress === buyTokenFormValue)?.balance ?? 0,
-    ];
-  }, [availableTokens, buyTokenFormValue, sellTokenFormValue]);
+  const onBuyMax = (field: ControllerRenderProps<z.infer<typeof formSchema>>) => onChangeBuyAmount(field, String(buyTokenBalance));
+  const onSellMax = (field: ControllerRenderProps<z.infer<typeof formSchema>>) => onChangeSellAmount(field, String(sellTokenBalance));
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log(values);
@@ -259,7 +262,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                         }}
                       />
                       <div className="absolute right-4 flex flex-col items-end justify-end space-y-1.5">
-                        <Button className="float-right h-6 max-w-fit rounded-sm px-2 text-xs" type="button">
+                        <Button onClick={() => onSellMax(field)} className="float-right h-6 max-w-fit rounded-sm px-2 text-xs" type="button">
                           MAX
                         </Button>
                         <FormField
@@ -320,7 +323,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                         }}
                       />
                       <div className="absolute right-4 flex flex-col items-end justify-end space-y-1.5">
-                        <Button className="float-right h-6 max-w-fit rounded-sm px-2 text-xs" type="button">
+                        <Button onClick={() => onBuyMax(field)} className="float-right h-6 max-w-fit rounded-sm px-2 text-xs" type="button">
                           MAX
                         </Button>
                         <FormField
