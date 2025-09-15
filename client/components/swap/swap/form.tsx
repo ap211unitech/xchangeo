@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
+import { useDebounceValue } from "usehooks-ts";
 import { z } from "zod";
 
 import {
@@ -115,10 +116,12 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
   const selectedSellToken = tokens.find(e => e.contractAddress === sellTokenFormValue);
   const selectedBuyToken = tokens.find(e => e.contractAddress === buyTokenFormValue);
 
+  const [debouncedSellAmountFormValue] = useDebounceValue(sellAmountFormValue, 500);
+
   const { isLoading: isLoadingEstimatedFeeInfo, data: estimatedFeeInfo } = useEstimatedSwapInfo(
     selectedPoolInfo,
     sellTokenFormValue,
-    sellAmountFormValue,
+    debouncedSellAmountFormValue,
   );
 
   const isFetchingEstimatedFeeInfo = useMemo(
