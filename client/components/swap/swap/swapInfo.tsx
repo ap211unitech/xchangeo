@@ -2,6 +2,7 @@ import { FuelIcon } from "lucide-react";
 import { PropsWithChildren } from "react";
 
 import { Button, HoverCard, HoverCardContent, HoverCardTrigger, TokenLogo } from "@/components/ui";
+import { NATIVE_TOKEN } from "@/constants";
 import { cn, getHumanizeValue } from "@/lib/utils";
 import { GetAmountOutOnSwap, TokenMetadata } from "@/types";
 
@@ -41,7 +42,7 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
             <SkeletonLoading isLoading={!estimatedFeeInfo}>
               <div className="flex items-center gap-2">
                 <span>
-                  {getHumanizeValue(estimatedFeeInfo?.fee.amount)} {estimatedFeeInfo?.fee.token.ticker}
+                  ~ {getHumanizeValue(estimatedFeeInfo?.fee.amount)} {estimatedFeeInfo?.fee.token.ticker}
                 </span>
                 <TokenLogo className="size-6" ticker={estimatedFeeInfo?.fee.token.ticker || ""} />
               </div>
@@ -60,7 +61,19 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
             </SkeletonLoading>
           </div>
 
-          <div className="text-muted-foreground mt-4 text-xs">
+          <div className="flex items-center justify-between">
+            <p className="text-muted-foreground">Transaction fee:</p>
+            <SkeletonLoading isLoading={!estimatedFeeInfo}>
+              <div className="flex items-center gap-2">
+                <span>
+                  ~ {estimatedFeeInfo?.estimatedSwapTxFee} {NATIVE_TOKEN.ticker}
+                </span>
+                <TokenLogo className="size-6" ticker={NATIVE_TOKEN.ticker} />
+              </div>
+            </SkeletonLoading>
+          </div>
+
+          <div className="text-muted-foreground mt-4 text-xs italic">
             This is the cost to process your transaction on the blockchain. Xchangeo does not receive any share of these fees.
           </div>
         </HoverCardContent>

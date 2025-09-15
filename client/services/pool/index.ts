@@ -162,6 +162,28 @@ export class PoolService implements IPoolService {
 
     const [tokenOut, amountOut] = await poolContract.getAmountOut(formattedAmountIn, await tokenIn);
 
+    let estimatedFeeEth = 0.005;
+
+    //////////////////////// Estimate fee for Swap transaction ////////////////////////
+
+    try {
+      // Populate tx (don't send yet)
+      const unsignedTx = await poolContract.swap.populateTransaction(tokenIn, amountIn, 0);
+      unsignedTx.from = pool.poolAddress;
+
+      // Estimate gas
+      const gasEstimate = await rpcProvider.estimateGas(unsignedTx);
+
+      // Get gas price (EIP-1559 compatible)
+      const feeData = await rpcProvider.getFeeData();
+      const gasPrice = BigInt(feeData.gasPrice ?? feeData.maxFeePerGas ?? 0); // fallback
+
+      const estimatedFeeWei = gasEstimate * gasPrice;
+      estimatedFeeEth = formatUnits(estimatedFeeWei);
+    } catch {}
+
+    //////////////////////// /////////////////////////////////// //////////////////////
+
     return {
       fee: {
         amount: formatUnits((formattedAmountIn * BigInt(pool.feeTier)) / BigInt(10000)),
@@ -169,6 +191,7 @@ export class PoolService implements IPoolService {
       },
       tokenOut,
       amountOut: formatUnits(BigInt(amountOut)),
+      estimatedSwapTxFee: estimatedFeeEth,
     };
   }
 

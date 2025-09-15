@@ -42,4 +42,5 @@ export type GetAmountOutOnSwap = {
   fee: { amount: number; token: TokenMetadata };
   tokenOut: string;
   amountOut: number;
+  estimatedSwapTxFee: number;
 };

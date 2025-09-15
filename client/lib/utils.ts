@@ -134,6 +134,6 @@ export const getOtherTokensToSwap = (allLiquidityPools: PoolInfo[], choosenToken
 export const getHumanizeValue = (value?: number) =>
   new Intl.NumberFormat("en-US", {
     notation: "compact", // gives 1.2K, 1.5M etc.
-    maximumFractionDigits: 1,
+    maximumFractionDigits: 8,
     roundingMode: "trunc",
   }).format(value ?? 0);

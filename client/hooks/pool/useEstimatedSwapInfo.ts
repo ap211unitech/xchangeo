@@ -6,7 +6,7 @@ import { PoolInfo } from "@/types";
 
 export const useEstimatedSwapInfo = (pool: PoolInfo | undefined, tokenIn: string, amountIn: number) => {
   return useQuery({
-    enabled: !!pool?.poolAddress,
+    enabled: !!pool?.poolAddress && amountIn > 0,
     queryKey: QUERY_KEYS.getEstimatedSwapInfo(pool?.poolAddress || "", tokenIn, amountIn),
     queryFn: async () => {
       if (!pool?.poolAddress) return undefined;
@@ -15,6 +15,6 @@ export const useEstimatedSwapInfo = (pool: PoolInfo | undefined, tokenIn: string
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true,
-    refetchInterval: 6 * 1000,
+    refetchInterval: 12 * 1000,
   });
 };
