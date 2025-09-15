@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { type ClassValue, clsx } from "clsx";
 import { BrowserProvider, Eip1193Provider, ethers, Fragment, Interface, JsonFragment } from "ethers";
 import moment from "moment";
@@ -111,7 +112,13 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
   }
 }
 
-export const getAmountOnAddingLiquidity = (reserveA: BigNumber, reserveB: BigNumber, amountA: BigNumber, amountB: BigNumber, isTokenA: boolean) => {
+export const getAmountOnAddingLiquidity = (
+  reserveA: BigNumber,
+  reserveB: BigNumber,
+  amountA: BigNumber,
+  amountB: BigNumber,
+  isTokenA: boolean,
+): BigNumber => {
   if (reserveA.toNumber() > 0 || reserveB.toNumber() > 0) {
     if (isTokenA) {
       const expectedAmountB = amountA.multipliedBy(reserveB).div(reserveA);
@@ -123,6 +130,31 @@ export const getAmountOnAddingLiquidity = (reserveA: BigNumber, reserveB: BigNum
   }
 
   return isTokenA ? amountB : amountA;
+};
+
+export const getAmountOutOnSwap = (pool: PoolInfo, tokenIn: string, amountIn: BigNumber): BigNumber => {
+  if (!(tokenIn !== pool.tokenA.contractAddress || tokenIn !== pool.tokenB.contractAddress)) {
+    return new BigNumber(0);
+  }
+
+  if (amountIn.isLessThanOrEqualTo(new BigNumber(0))) {
+    return new BigNumber(0);
+  }
+
+  const isToken1 = pool.tokenA.contractAddress === tokenIn;
+
+  const resIn = isToken1 ? pool.tokenA.reserve : pool.tokenB.reserve;
+  const resOut = !isToken1 ? pool.tokenA.reserve : pool.tokenB.reserve;
+
+  if (resIn <= 0 || resOut <= 0) {
+    return new BigNumber(0);
+  }
+
+  const amountInWithFee = amountIn.multipliedBy(new BigNumber(10000 - pool.feeTier)).dividedBy(10000);
+
+  const amountOut = new BigNumber(resOut).multipliedBy(amountInWithFee).dividedBy(new BigNumber(resIn).plus(amountInWithFee));
+
+  return amountOut;
 };
 
 export const getOtherTokensToSwap = (allLiquidityPools: PoolInfo[], choosenToken: string) => {

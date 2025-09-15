@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import BN from "bignumber.js";
 import { isAddress } from "ethers";
 import { ArrowUp, Loader, Plus } from "lucide-react";
 import Link from "next/link";
@@ -32,7 +33,7 @@ import {
   TokenLogo,
 } from "@/components/ui";
 import { useBalances, useEstimatedSwapInfo } from "@/hooks";
-import { getOtherTokensToSwap } from "@/lib/utils";
+import { getAmountOutOnSwap, getOtherTokensToSwap } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
@@ -155,6 +156,40 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
     }
   };
 
+  const onChangeSellAmount = (field: ControllerRenderProps<z.infer<typeof formSchema>>, sellTokenValue: string) => {
+    if (!selectedPoolInfo) return;
+
+    field.onChange(sellTokenValue);
+
+    const tokenBValue = getAmountOutOnSwap(selectedPoolInfo, sellTokenFormValue, new BN(sellTokenValue));
+
+    form.setValue(
+      "buyAmount",
+      new Intl.NumberFormat("en-US", {
+        notation: "standard",
+        useGrouping: false,
+        maximumFractionDigits: 8,
+      }).format(tokenBValue.toNumber()),
+    );
+  };
+
+  const onChangeBuyAmount = (field: ControllerRenderProps<z.infer<typeof formSchema>>, buyTokenValue: string) => {
+    if (!selectedPoolInfo) return;
+
+    field.onChange(buyTokenValue);
+
+    const tokenAValue = getAmountOutOnSwap(selectedPoolInfo, buyTokenFormValue, new BN(buyTokenValue));
+
+    form.setValue(
+      "sellAmount",
+      new Intl.NumberFormat("en-US", {
+        notation: "standard",
+        useGrouping: false,
+        maximumFractionDigits: 8,
+      }).format(tokenAValue.toNumber()),
+    );
+  };
+
   const [sellTokenBalance, buyTokenBalance] = useMemo(() => {
     return [
       availableTokens.find(token => token.contractAddress === sellTokenFormValue)?.balance ?? 0,
@@ -219,7 +254,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                         onChange={e => {
                           const value = e.target.value;
                           if (/^\d*\.?\d*$/.test(value)) {
-                            field.onChange(value);
+                            onChangeSellAmount(field, value);
                           }
                         }}
                       />
@@ -280,7 +315,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                         onChange={e => {
                           const value = e.target.value;
                           if (/^\d*\.?\d*$/.test(value)) {
-                            field.onChange(value);
+                            onChangeBuyAmount(field, value);
                           }
                         }}
                       />
