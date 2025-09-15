@@ -13,7 +13,14 @@ export function cn(...inputs: ClassValue[]) {
 export const sleep = (seconds: number) => new Promise(resolve => setTimeout(resolve, seconds * 1000));
 
 export const parseUnits = (val: number) => {
-  return ethers.parseUnits(val.toString());
+  return ethers.parseUnits(
+    new Intl.NumberFormat("en-US", {
+      notation: "standard",
+      useGrouping: false,
+      minimumFractionDigits: 50,
+      maximumFractionDigits: 50,
+    }).format(val),
+  );
 };
 
 export const formatUnits = (val: bigint) => {

@@ -168,7 +168,7 @@ export class PoolService implements IPoolService {
 
     try {
       // Populate tx (don't send yet)
-      const unsignedTx = await poolContract.swap.populateTransaction(tokenIn, amountIn, 0);
+      const unsignedTx = await poolContract.swap.populateTransaction(tokenIn, formattedAmountIn, 0);
       unsignedTx.from = pool.poolAddress;
 
       // Estimate gas
