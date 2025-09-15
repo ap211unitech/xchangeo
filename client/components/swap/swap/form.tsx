@@ -32,7 +32,7 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
-import { useBalances, useEstimatedSwapInfo } from "@/hooks";
+import { useBalances, useEstimatedSwapInfo, useSwap } from "@/hooks";
 import { getAmountOutOnSwap, getOtherTokensToSwap } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
@@ -74,6 +74,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
+  const { mutateAsync: onSwap, isPending } = useSwap();
 
   const schema = formSchema.superRefine((data, ctx) => {
     if (Number(data.sellAmount) > sellTokenBalance) {
@@ -92,8 +93,6 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       (tokenA.contractAddress === querySellToken && tokenB.contractAddress === queryBuyToken) ||
       (tokenB.contractAddress === querySellToken && tokenA.contractAddress === queryBuyToken),
   );
-
-  const isPending = false;
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -200,8 +199,12 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
   const onBuyMax = (field: ControllerRenderProps<z.infer<typeof formSchema>>) => onChangeBuyAmount(field, String(buyTokenBalance));
   const onSellMax = (field: ControllerRenderProps<z.infer<typeof formSchema>>) => onChangeSellAmount(field, String(sellTokenBalance));
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async ({ sellToken, sellAmount }: z.infer<typeof formSchema>) => {
+    await onSwap({
+      pool: selectedPoolInfo,
+      tokenIn: sellToken,
+      amountIn: +sellAmount,
+    });
   };
 
   if (isBalancesPending) return <Loading />;

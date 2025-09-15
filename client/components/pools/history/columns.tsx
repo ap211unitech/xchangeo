@@ -4,7 +4,7 @@ import moment from "moment";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
-import { formatTimestamp, trimString } from "@/lib/utils";
+import { formatTimestamp, getHumanizeValue, trimString } from "@/lib/utils";
 import { PoolActivity } from "@/types";
 
 const columnHelper = createColumnHelper<PoolActivity>();
@@ -37,7 +37,7 @@ export const columns = [
       const { eventType, tokenA, tokenB } = info.getValue();
       return (
         <div className="flex items-center gap-2 text-base">
-          <div className="text-muted-foreground">{eventType}</div>
+          <div className="text-muted-foreground">{eventType.replace("Liquidity", "")}</div>
           <div
             className="hover:text-primary flex items-center gap-2"
             onClick={() => window.open(`https://sepolia.etherscan.io/address/${tokenA.tokenAddress}`)}
@@ -66,7 +66,7 @@ export const columns = [
       return (
         <div className="flex items-center justify-end gap-2">
           <div className="text-base">
-            {amount} {ticker}
+            {getHumanizeValue(amount)} {ticker}
           </div>
           <TokenLogo ticker={ticker} />
         </div>
@@ -82,7 +82,7 @@ export const columns = [
       return (
         <div className="flex items-center justify-end gap-2">
           <div className="text-base">
-            {amount} {ticker}
+            {getHumanizeValue(amount)} {ticker}
           </div>
           <TokenLogo ticker={ticker} />
         </div>
