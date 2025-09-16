@@ -108,7 +108,7 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
     const reason = parsedError.args?.description || "Unknown reason";
     return `${parsedError.name}: ${reason}`;
   } catch {
-    return revertData ?? "Transaction reverted: Unknown reason.";
+    return revertData?.toString()?.includes("user rejected action") ? "User denied transaction signature" : "Transaction reverted: Unknown reason.";
   }
 }
 
@@ -130,6 +130,47 @@ export const getAmountOnAddingLiquidity = (
   }
 
   return isTokenA ? amountB : amountA;
+};
+
+export const getAmountInForSwap = (pool: PoolInfo, tokenOut: string, amountOut: BigNumber): BigNumber => {
+  if (!(tokenOut !== pool.tokenA.contractAddress || tokenOut !== pool.tokenB.contractAddress)) {
+    return new BigNumber(0);
+  }
+
+  // Cannot calculate for a zero or negative output amount
+  if (!amountOut || amountOut.isLessThanOrEqualTo(0)) {
+    return new BigNumber(0);
+  }
+
+  const isToken1 = pool.tokenA.contractAddress === tokenOut;
+
+  const resOut = new BigNumber(isToken1 ? pool.tokenA.reserve : pool.tokenB.reserve);
+  const resIn = new BigNumber(!isToken1 ? pool.tokenA.reserve : pool.tokenB.reserve);
+
+  if (resIn.isLessThanOrEqualTo(0) || resOut.isLessThanOrEqualTo(0)) {
+    return new BigNumber(0);
+  }
+
+  // Not enough liquidity to fulfill the swap
+  if (amountOut.isGreaterThanOrEqualTo(resOut)) {
+    return new BigNumber(0);
+  }
+
+  // The formula would be: amountIn = (reserveIn * amountOut * 10000) / ((reserveOut - amountOut) * (10000 - feeTier))
+
+  const numerator = resIn.multipliedBy(amountOut).multipliedBy(10000);
+
+  const feeFactor = new BigNumber(10000 - pool.feeTier);
+  const denominator = resOut.minus(amountOut).multipliedBy(feeFactor);
+
+  // Should not happen due to the liquidity check above, but as a safeguard
+  if (denominator.isLessThanOrEqualTo(0)) {
+    return new BigNumber(0);
+  }
+
+  const amountIn = numerator.dividedBy(denominator);
+
+  return amountIn;
 };
 
 export const getAmountOutOnSwap = (pool: PoolInfo, tokenIn: string, amountIn: BigNumber): BigNumber => {

@@ -33,7 +33,7 @@ import {
   TokenLogo,
 } from "@/components/ui";
 import { useBalances, useEstimatedSwapInfo, useSwap } from "@/hooks";
-import { getAmountOutOnSwap, getOtherTokensToSwap } from "@/lib/utils";
+import { getAmountInForSwap, getAmountOutOnSwap, getOtherTokensToSwap } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
@@ -181,7 +181,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
 
     field.onChange(buyTokenValue);
 
-    const tokenAValue = getAmountOutOnSwap(selectedPoolInfo, buyTokenFormValue, new BN(buyTokenValue));
+    const tokenAValue = getAmountInForSwap(selectedPoolInfo, buyTokenFormValue, new BN(buyTokenValue));
 
     form.setValue(
       "sellAmount",
