@@ -6,7 +6,7 @@ import { isAddress } from "ethers";
 import { ArrowUp, Loader, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { useDebounceValue } from "usehooks-ts";
 import { z } from "zod";
@@ -37,6 +37,7 @@ import { getAmountInForSwap, getAmountOutOnSwap, getOtherTokensToSwap } from "@/
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
+import { MaxSlippage } from "./maxSlippage";
 import { SwapInfo } from "./swapInfo";
 
 const formSchema = z.object({
@@ -73,6 +74,7 @@ type Props = {
 export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [maxSlippage, setMaxSlippage] = useState(5);
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
   const { mutateAsync: onSwap, isPending } = useSwap();
 
@@ -201,6 +203,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       pool: selectedPoolInfo,
       tokenIn: sellToken,
       amountIn: +sellAmount,
+      maxSlippage,
     });
   };
 
@@ -226,13 +229,14 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
             </div>
           )}
         </CardTitle>
-        <CardAction>
+        <CardAction className="flex items-center gap-2">
           <Button type="button" variant="secondary" asChild>
             <Link href={{ pathname: "/pools/addLiquidity", query: { pool: selectedPoolInfo?.poolAddress } }}>
               <Plus className="size-4" />
               Add Liquidity
             </Link>
           </Button>
+          <MaxSlippage maxSlippage={maxSlippage} setMaxSlippage={setMaxSlippage} />
         </CardAction>
       </CardHeader>
 

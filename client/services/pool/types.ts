@@ -71,5 +71,5 @@ export interface IPoolService {
     _percentageToWithdraw: number,
   ) => Promise<TransactionResponse>;
 
-  swap: (_signer: JsonRpcSigner, _pool: PoolInfo, _tokenIn: AddressLike, _amountIn: number, _slippage: number) => Promise<TransactionResponse>;
+  swap: (_signer: JsonRpcSigner, _pool: PoolInfo, _tokenIn: AddressLike, _amountIn: number, _maxSlippage: number) => Promise<TransactionResponse>;
 }

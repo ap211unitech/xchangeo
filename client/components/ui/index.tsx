@@ -12,6 +12,7 @@ export * from "./label";
 export * from "./loading";
 export * from "./logo";
 export * from "./navigation-menu";
+export * from "./popover";
 export * from "./refresh";
 export * from "./select";
 export * from "./sonner";

@@ -195,7 +195,13 @@ export class PoolService implements IPoolService {
     };
   }
 
-  public async swap(signer: JsonRpcSigner, pool: PoolInfo, tokenIn: AddressLike, amountIn: number, slippage: number): Promise<TransactionResponse> {
+  public async swap(
+    signer: JsonRpcSigner,
+    pool: PoolInfo,
+    tokenIn: AddressLike,
+    amountIn: number,
+    maxSlippage: number,
+  ): Promise<TransactionResponse> {
     const poolAddress = pool.poolAddress;
     const formattedAmountIn = parseUnits(amountIn);
 
@@ -206,7 +212,7 @@ export class PoolService implements IPoolService {
 
     const [, formattedAmountOut] = await poolContract.getAmountOut(formattedAmountIn, await tokenIn);
 
-    const minAmountOut = BigInt(formattedAmountOut) * BigInt(slippage);
+    const minAmountOut = (BigInt(formattedAmountOut) * BigInt(100 - maxSlippage)) / BigInt(100);
 
     await tokenInContract.approve(poolAddress, formattedAmountIn);
 
