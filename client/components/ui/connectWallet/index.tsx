@@ -34,7 +34,7 @@ export const ConnectWallet = () => {
           </div>
           <div className="flex items-center gap-2">
             <p>{trimString(address)}</p>
-            <Circle className="size-3.5 fill-green-400 stroke-0" />
+            <Circle className="size-3.5 animate-pulse fill-green-400 stroke-0" />
           </div>
         </Button>
       </>
