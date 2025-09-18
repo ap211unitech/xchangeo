@@ -18,7 +18,6 @@ This project is modeled with a constant product market maker logic and designed 
 
 ## Features
 
-
 -   ⚖️ **Decentralized ERC20 Swaps:** Swap supported ERC20 tokens directly on-chain using the constant product formula ($x * y = k$).
 
 -   💧 **Liquidity Pools & LP Tokens:** Add or remove liquidity to token pairs and receive LP (Liquidity Provider) tokens representing your share of the pool.
