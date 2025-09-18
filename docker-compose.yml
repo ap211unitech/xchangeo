@@ -1,0 +1,22 @@
+services:
+  # Hardhat node
+  hardhat:
+    build:
+      context: ./hardhat
+    ports:
+      - "8545:8545"
+
+  # Indexer
+  
+  # The Next.js client-side application
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - hardhat
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      - /app/.next # Prevent build artifacts from being overwritten
