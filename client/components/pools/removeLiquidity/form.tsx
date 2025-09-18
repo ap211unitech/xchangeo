@@ -29,7 +29,7 @@ import {
   TokenLogo,
 } from "@/components/ui";
 import { useGetAmountsOnRemoveLiquidity, useRemoveLiquidity, useUserShare } from "@/hooks";
-import { cn } from "@/lib/utils";
+import { cn, getHumanizeValue } from "@/lib/utils";
 import { PoolInfo } from "@/types";
 
 const formSchema = z.object({
@@ -74,15 +74,15 @@ export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
 
   const [debouncedUserShareToWithdraw] = useDebounceValue(userShareToWithdraw, 500);
 
-  const { isLoading: isLoadingAmountsOnRemovingLiquidity, data: amountsOnRemovingLiquidity } = useGetAmountsOnRemoveLiquidity(
-    selectedPoolInfo.poolAddress,
-    selectedPoolInfo.lpToken.contractAddress,
-    debouncedUserShareToWithdraw,
-  );
+  const {
+    isLoading: isLoadingAmountsOnRemovingLiquidity,
+    isRefetching: isRefetchingAmountsOnRemovingLiquidity,
+    data: amountsOnRemovingLiquidity,
+  } = useGetAmountsOnRemoveLiquidity(selectedPoolInfo.poolAddress, selectedPoolInfo.lpToken.contractAddress, debouncedUserShareToWithdraw);
 
   const isFetchingAmountsOnRemovingLiquidity = useMemo(
-    () => isLoadingAmountsOnRemovingLiquidity && userShareToWithdraw > 0,
-    [isLoadingAmountsOnRemovingLiquidity, userShareToWithdraw],
+    () => (isLoadingAmountsOnRemovingLiquidity || isRefetchingAmountsOnRemovingLiquidity) && userShareToWithdraw > 0,
+    [isLoadingAmountsOnRemovingLiquidity, isRefetchingAmountsOnRemovingLiquidity, userShareToWithdraw],
   );
 
   const isDisabled = useMemo(
@@ -217,13 +217,15 @@ export const RemoveLiquidityForm = ({ allLiquidityPools }: Props) => {
                   <div className="flex items-center justify-center gap-2 border-r p-4">
                     <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
                     <p>
-                      {amountsOnRemovingLiquidity?.amountTokenA} {selectedPoolInfo.tokenA.ticker}
+                      {amountsOnRemovingLiquidity?.amountTokenA ? getHumanizeValue(+amountsOnRemovingLiquidity?.amountTokenA) : "--"}{" "}
+                      {selectedPoolInfo.tokenA.ticker}
                     </p>
                   </div>
                   <div className="flex items-center justify-center gap-2 p-4">
                     <TokenLogo ticker={selectedPoolInfo.tokenB.ticker} />
                     <p>
-                      {amountsOnRemovingLiquidity?.amountTokenB} {selectedPoolInfo.tokenB.ticker}
+                      {amountsOnRemovingLiquidity?.amountTokenB ? getHumanizeValue(+amountsOnRemovingLiquidity?.amountTokenB) : "--"}{" "}
+                      {selectedPoolInfo.tokenB.ticker}
                     </p>
                   </div>
                 </div>

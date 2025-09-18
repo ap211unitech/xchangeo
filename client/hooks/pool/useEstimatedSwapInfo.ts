@@ -7,7 +7,7 @@ import { PoolInfo } from "@/types";
 export const useEstimatedSwapInfo = (pool: PoolInfo | undefined, tokenIn: string, amountIn: number) => {
   return useQuery({
     enabled: !!pool?.poolAddress && amountIn > 0,
-    queryKey: QUERY_KEYS.getEstimatedSwapInfo(pool?.poolAddress || "", tokenIn, amountIn),
+    queryKey: QUERY_KEYS.getEstimatedSwapInfo(pool, tokenIn, amountIn),
     queryFn: async () => {
       if (!pool?.poolAddress) return undefined;
       return appService.poolService.getAmountOutOnSwap(pool, tokenIn, amountIn);
