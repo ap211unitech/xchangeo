@@ -207,6 +207,8 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
     });
   };
 
+  //  Handle reserve change after swap, fee estimate shows wrong some time or large input and very small inputs
+
   if (isBalancesPending) return <Loading />;
 
   return (
