@@ -62,6 +62,7 @@ export interface IPoolService {
     _tokenB: AddressLike,
     _amountTokenA: number,
     _amountTokenB: number,
+    _maxSlippage: number,
   ) => Promise<TransactionResponse>;
 
   removeLiquidity: (

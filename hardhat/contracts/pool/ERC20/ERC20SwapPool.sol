@@ -58,6 +58,18 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         reserve2 = _reserve2;
     }
 
+    function quote(
+        uint256 amountA,
+        uint256 reserveA,
+        uint256 reserveB
+    ) internal pure returns (uint256 amountB) {
+        if (reserveA == 0 || reserveB == 0) {
+            revert ERC20SwapPool__InsufficientReserves("Invalid reserves");
+        }
+        // amountB = amountA * reserveB / reserveA
+        return (amountA * reserveB) / reserveA;
+    }
+
     function swap(
         address _tokenIn,
         uint256 amountIn,
@@ -143,57 +155,77 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
     }
 
     function addLiquidity(
-        uint256 amountToken1,
-        uint256 amountToken2
+        uint256 amountADesired,
+        uint256 amountBDesired,
+        uint256 amountAMin,
+        uint256 amountBMin
     ) external nonReentrant returns (uint256) {
-        if (amountToken1 == 0 || amountToken2 == 0) {
+        uint256 amountA = 0;
+        uint256 amountB = 0;
+
+        (uint256 reserveA, uint256 reserveB) = getReserves();
+
+        // This check must exist inorder to prevent price impact on adding liquidity
+        /*****
+             reserveA        amountA
+            ------------ = ------------
+             reserveB        amountB
+        /******/
+
+        if (reserveA == 0 && reserveB == 0) {
+            amountA = amountADesired;
+            amountB = amountBDesired;
+        } else {
+            // Calculate the optimal amount of B for the desired amount of A
+            uint256 amountBOptimal = quote(amountADesired, reserveA, reserveB);
+
+            if (amountBOptimal <= amountBDesired) {
+                // User's desired B is sufficient or more than optimal
+                if (amountBOptimal < amountBMin) {
+                    revert ERC20SwapPool__InvalidAmount(
+                        "Insufficient token B amount"
+                    );
+                }
+                amountA = amountADesired;
+                amountB = amountBOptimal;
+            } else {
+                // User's desired B is not enough, so we must use it all and calculate the required A
+                uint256 amountAOptimal = quote(
+                    amountBDesired,
+                    reserveB,
+                    reserveA
+                );
+                // This amountAOptimal should be <= amountADesired
+                if (amountAOptimal < amountAMin) {
+                    revert ERC20SwapPool__InvalidAmount(
+                        "Insufficient token A amount"
+                    );
+                }
+                amountA = amountAOptimal;
+                amountB = amountBDesired;
+            }
+        }
+
+        if (amountADesired == 0 || amountBDesired == 0) {
             revert ERC20SwapPool__InvalidAmount(
                 "Amount must be greater than zero"
             );
         }
 
-        (uint256 reserve_1, uint256 reserve_2) = getReserves();
-
-        if (reserve_1 > 0 || reserve_2 > 0) {
-            // This check must exist inorder to prevent price impact on adding liquidity
-            /*****
-                 reserve_1      amountToken1
-                ------------ = --------------
-                 reserve_2      amountToken2
-            /******/
-
-            (bool successLeft, uint256 leftSide) = reserve_1.tryMul(
-                amountToken2
-            );
-            (bool successRight, uint256 rightSide) = amountToken1.tryMul(
-                reserve_2
-            );
-
-            if (!(successLeft && successRight)) {
-                revert ERC20SwapPool__OverflowInRatioCheck(
-                    "Overflow in ratio check"
-                );
-            }
-
-            if (leftSide != rightSide) {
-                revert ERC20SwapPool__InvalidTokenRatio("Invalid token ratio");
-            }
-        }
-
         // Transfer tokens to pool
-        token1.transferFrom(msg.sender, address(this), amountToken1);
-        token2.transferFrom(msg.sender, address(this), amountToken2);
+        token1.transferFrom(msg.sender, address(this), amountA);
+        token2.transferFrom(msg.sender, address(this), amountB);
 
+        // --- Mint LP tokens ---
         uint256 mintingLpTokens = 0;
         uint256 totalSupply = lpToken.totalSupply();
-
-        // Mint LP tokens
         if (totalSupply == 0) {
-            mintingLpTokens = Math.sqrt(amountToken1 * amountToken2);
+            mintingLpTokens = Math.sqrt(amountA * amountB);
         } else {
+            // Since the ratio is now guaranteed to be correct, we can use either calculation
             mintingLpTokens = Math.min(
-                (amountToken1 * totalSupply) / reserve_1,
-                (amountToken2 * totalSupply) / reserve_2
+                (amountA * totalSupply) / reserveA,
+                (amountB * totalSupply) / reserveB
             );
         }
 
@@ -206,8 +238,8 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
         lpToken.mint(msg.sender, mintingLpTokens);
 
         // Update Reserves/Liquidity
-        uint256 new_reserve1 = reserve_1 + amountToken1;
-        uint256 new_reserve2 = reserve_2 + amountToken2;
+        uint256 new_reserve1 = reserveA + amountA;
+        uint256 new_reserve2 = reserveB + amountB;
         _updateReserves(new_reserve1, new_reserve2);
 
         // Emit event
@@ -215,14 +247,78 @@ contract ERC20SwapPool is IERC20SwapPool, ReentrancyGuard {
             address(this),
             address(token1),
             address(token2),
-            amountToken1,
-            amountToken2,
+            amountA,
+            amountB,
             mintingLpTokens,
             new_reserve1,
             new_reserve2,
             block.timestamp,
             msg.sender
         );
+
+        // if (reserve_1 > 0 || reserve_2 > 0) {
+
+        //     (bool successLeft, uint256 leftSide) = reserve_1.tryMul(
+        //         amountToken2
+        //     );
+        //     (bool successRight, uint256 rightSide) = amountToken1.tryMul(
+        //         reserve_2
+        //     );
+
+        //     if (!(successLeft && successRight)) {
+        //         revert ERC20SwapPool__OverflowInRatioCheck(
+        //             "Overflow in ratio check"
+        //         );
+        //     }
+
+        //     if (leftSide != rightSide) {
+        //         revert ERC20SwapPool__InvalidTokenRatio("Invalid token ratio");
+        //     }
+        // }
+
+        // Transfer tokens to pool
+        // token1.transferFrom(msg.sender, address(this), amountToken1);
+        // token2.transferFrom(msg.sender, address(this), amountToken2);
+
+        // uint256 mintingLpTokens = 0;
+        // uint256 totalSupply = lpToken.totalSupply();
+
+        // // Mint LP tokens
+        // if (totalSupply == 0) {
+        //     mintingLpTokens = Math.sqrt(amountToken1 * amountToken2);
+        // } else {
+        //     mintingLpTokens = Math.min(
+        //         (amountToken1 * totalSupply) / reserve_1,
+        //         (amountToken2 * totalSupply) / reserve_2
+        //     );
+        // }
+
+        // if (mintingLpTokens == 0) {
+        //     revert ERC20SwapPool__ZeroLiquidityToken(
+        //         "Can not mint 0 LP tokens"
+        //     );
+        // }
+
+        // lpToken.mint(msg.sender, mintingLpTokens);
+
+        // // Update Reserves/Liquidity
+        // uint256 new_reserve1 = reserve_1 + amountToken1;
+        // uint256 new_reserve2 = reserve_2 + amountToken2;
+        // _updateReserves(new_reserve1, new_reserve2);
+
+        // // Emit event
+        // emit LiquidityAdded(
+        //     address(this),
+        //     address(token1),
+        //     address(token2),
+        //     amountToken1,
+        //     amountToken2,
+        //     mintingLpTokens,
+        //     new_reserve1,
+        //     new_reserve2,
+        //     block.timestamp,
+        //     msg.sender
+        // );
 
         return mintingLpTokens;
     }

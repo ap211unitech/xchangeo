@@ -3,16 +3,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import BN from "bignumber.js";
 import { isAddress } from "ethers";
-import { Loader } from "lucide-react";
+import { ArrowLeftRight, ArrowUp, Loader } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import z from "zod";
 
 import {
   Button,
   Card,
+  CardAction,
   CardContent,
+  CardHeader,
+  CardTitle,
   Form,
   FormControl,
   FormField,
@@ -32,6 +36,7 @@ import { getAmountOnAddingLiquidity } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
 import { Loading } from "./loading";
+import { MaxSlippage } from "./maxSlippage";
 
 const formSchema = z.object({
   pool: z
@@ -60,6 +65,7 @@ type Props = {
 export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [maxSlippage, setMaxSlippage] = useState(0.5);
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
   const { mutateAsync: onAddLiquidity, isPending } = useAddLiquidity();
 
@@ -106,7 +112,14 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
       true,
     );
 
-    form.setValue("amountTokenB", tokenBValue.toString());
+    form.setValue(
+      "amountTokenB",
+      new Intl.NumberFormat("en-US", {
+        notation: "standard",
+        useGrouping: false,
+        maximumFractionDigits: 18,
+      }).format(tokenBValue.toNumber()),
+    );
   };
 
   const onChangeTokenB = (field: ControllerRenderProps<z.infer<typeof formSchema>>, tokenBValue: string) => {
@@ -120,7 +133,14 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
       false,
     );
 
-    form.setValue("amountTokenA", tokenAValue.toString());
+    form.setValue(
+      "amountTokenA",
+      new Intl.NumberFormat("en-US", {
+        notation: "standard",
+        useGrouping: false,
+        maximumFractionDigits: 18,
+      }).format(tokenAValue.toNumber()),
+    );
   };
 
   const onSubmit = async ({ amountTokenA, amountTokenB, pool }: z.infer<typeof formSchema>) => {
@@ -130,6 +150,7 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
       tokenB: selectedPoolInfo.tokenB.contractAddress,
       amountTokenA: +amountTokenA,
       amountTokenB: +amountTokenB,
+      maxSlippage,
     });
   };
 
@@ -137,6 +158,40 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
 
   return (
     <Card className="shadow-md md:mx-auto md:max-w-3/4">
+      <CardHeader>
+        <CardTitle>
+          {!!selectedPoolInfo && (
+            <div
+              className="hover:text-primary flex w-fit cursor-pointer items-center"
+              onClick={() => window.open(`https://sepolia.etherscan.io/address/${selectedPoolInfo.poolAddress}`)}
+            >
+              <div className="-mr-1 flex items-center">
+                <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />
+                <TokenLogo className="relative -left-3" ticker={selectedPoolInfo.tokenB.ticker} />
+              </div>
+              <p className="tracking-wide">
+                {selectedPoolInfo.tokenA.ticker}/{selectedPoolInfo.tokenB.ticker}
+              </p>
+              <ArrowUp className="ml-1 size-4 rotate-45" />
+            </div>
+          )}
+        </CardTitle>
+        <CardAction className="flex items-center gap-2">
+          <Button type="button" variant="secondary" asChild>
+            <Link
+              href={{
+                pathname: "/swap",
+                query: { sellToken: selectedPoolInfo?.tokenA.contractAddress, buyToken: selectedPoolInfo.tokenB.contractAddress },
+              }}
+            >
+              <ArrowLeftRight className="size-4" />
+              Swap
+            </Link>
+          </Button>
+          <MaxSlippage maxSlippage={maxSlippage} setMaxSlippage={setMaxSlippage} />
+        </CardAction>
+      </CardHeader>
+
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

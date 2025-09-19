@@ -382,12 +382,22 @@ export const ERC20_SWAP_ABI = [
     inputs: [
       {
         internalType: "uint256",
-        name: "amountToken1",
+        name: "amountADesired",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "amountToken2",
+        name: "amountBDesired",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountAMin",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountBMin",
         type: "uint256",
       },
     ],

@@ -31,7 +31,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     beforeEach(async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 995, 995);
     });
 
     it("Should revert if amount is zero", async () => {

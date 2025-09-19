@@ -140,12 +140,16 @@ interface IERC20SwapPool {
 
     /// @notice Adds liquidity to the pool with specified token amounts
     /// @dev Transfers the specified amounts of token A and token B from the sender to the pool and mints LP tokens in return
-    /// @param _amountTokenA The amount of token A to add to the pool
-    /// @param _amountTokenB The amount of token B to add to the pool
+    /// @param amountADesired The desired amount of token A to add to the pool
+    /// @param amountBDesired The desired amount of token B to add to the pool
+    /// @param amountAMin The minimum amount of token A to add to the pool
+    /// @param amountBMin The minimum amount of token B to add to the pool
     /// @return mintedLpTokens The amount of LP tokens minted for the added liquidity
     function addLiquidity(
-        uint256 _amountTokenA,
-        uint256 _amountTokenB
+        uint256 amountADesired,
+        uint256 amountBDesired,
+        uint256 amountAMin,
+        uint256 amountBMin
     ) external returns (uint256 mintedLpTokens);
 
     /// @notice Removes liquidity from the pool by burning LP tokens

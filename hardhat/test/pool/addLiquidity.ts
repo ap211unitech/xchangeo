@@ -29,11 +29,11 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
   describe("Add Liquidity", () => {
     it("Should throw error on zero amount", async () => {
-      await expect(pool.addLiquidity(0, 1)).to.be.revertedWithCustomError(
+      await expect(pool.addLiquidity(0, 1, 0, 0)).to.be.revertedWithCustomError(
         pool,
         `ERC20SwapPool__InvalidAmount`
       );
-      await expect(pool.addLiquidity(1, 0)).to.be.revertedWithCustomError(
+      await expect(pool.addLiquidity(1, 0, 0, 0)).to.be.revertedWithCustomError(
         pool,
         `ERC20SwapPool__InvalidAmount`
       );
@@ -43,17 +43,21 @@ describe("ERC20/ERC20 Pool Contract", () => {
       await token1.approve(pool, 10);
       await token2.approve(pool, 5); // not sufficient allowance
 
-      await expect(pool.addLiquidity(10, 10)).to.be.revertedWithCustomError(
-        token2,
-        "ERC20InsufficientAllowance"
-      );
+      await expect(
+        pool.addLiquidity(10, 10, 0, 0)
+      ).to.be.revertedWithCustomError(token2, "ERC20InsufficientAllowance");
     });
 
     it("Should add initial liquidity and mint LP tokens", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 4000);
 
-      const tx = await pool.addLiquidity(1000, 4000);
+      const tx = await pool.addLiquidity(
+        1000,
+        4000,
+        1000 * 0.995, // 0.5% sllipage
+        4000 * 0.995 // 0.5% sllipage
+      );
       await tx.wait();
 
       const [reserve1, reserve2] = await pool.getReserves();
@@ -71,15 +75,14 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should revert if token ratio does not match existing pool reserves", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 1000, 1000);
 
       await token1.approve(pool, 100);
       await token2.approve(pool, 200); // wrong ratio
 
-      await expect(pool.addLiquidity(100, 200)).to.be.revertedWithCustomError(
-        pool,
-        "ERC20SwapPool__InvalidTokenRatio"
-      );
+      await expect(
+        pool.addLiquidity(100, 200, 100, 200)
+      ).to.be.revertedWithCustomError(pool, "ERC20SwapPool__InvalidAmount");
     });
 
     it("Should allow adding liquidity with correct ratio after initial", async () => {
@@ -88,7 +91,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
       await token1.approve(pool, amountToken1_A);
       await token2.approve(pool, amountToken2_A);
-      await pool.addLiquidity(amountToken1_A, amountToken2_A);
+      await pool.addLiquidity(amountToken1_A, amountToken2_A, 0, 0);
 
       // Second addition, same ratio (1:3)
       const amountToken1_B = 149;
@@ -96,7 +99,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
       await token1.approve(pool, amountToken1_B);
       await token2.approve(pool, amountToken2_B);
-      const tx = await pool.addLiquidity(amountToken1_B, amountToken2_B);
+      const tx = await pool.addLiquidity(amountToken1_B, amountToken2_B, 0, 0);
       await tx.wait();
 
       // Check that reserves are correctly updated
@@ -116,7 +119,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should update reserves after each liquidity addition", async () => {
       await token1.approve(pool, 500);
       await token2.approve(pool, 500);
-      await pool.addLiquidity(500, 500);
+      await pool.addLiquidity(500, 500, 0, 0);
 
       let [reserve1, reserve2] = await pool.getReserves();
       expect(reserve1).to.equal(500);
@@ -124,7 +127,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 0, 0);
 
       [reserve1, reserve2] = await pool.getReserves();
       expect(reserve1).to.equal(1500);
@@ -135,7 +138,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
 
-      const tx = await pool.addLiquidity(1000, 1000);
+      const tx = await pool.addLiquidity(1000, 1000, 0, 0);
       const receipt = (await tx.wait()) as ContractTransactionReceipt;
       const block = (await hre.ethers.provider.getBlock(
         receipt.blockNumber
@@ -161,7 +164,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
       // Bootstrap Liquidity
       await token1.approve(pool, 1000);
       await token2.approve(pool, 4000);
-      await pool.addLiquidity(1000, 4000);
+      await pool.addLiquidity(1000, 4000, 0, 0);
       expect(await lpToken.balanceOf(signer.address)).to.be.equal(2000);
 
       const [, other] = await hre.ethers.getSigners();
@@ -171,7 +174,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
       await token1.connect(other).approve(pool, 500);
       await token2.connect(other).approve(pool, 2000);
-      await expect(pool.connect(other).addLiquidity(500, 2000)).to.not.be
+      await expect(pool.connect(other).addLiquidity(500, 2000, 0, 0)).to.not.be
         .reverted;
 
       const [reserve1, reserve2] = await pool.getReserves();
@@ -186,7 +189,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
       await token1.approve(pool, 800);
       await token2.approve(pool, 2400);
-      await pool.addLiquidity(800, 2400); // signer gets LP
+      await pool.addLiquidity(800, 2400, 0, 0); // signer gets LP
 
       await token1.transfer(user1.address, 400);
       await token2.transfer(user1.address, 1200);
@@ -198,8 +201,8 @@ describe("ERC20/ERC20 Pool Contract", () => {
       await token1.connect(user2).approve(pool, 400);
       await token2.connect(user2).approve(pool, 1200);
 
-      await pool.connect(user1).addLiquidity(400, 1200);
-      await pool.connect(user2).addLiquidity(400, 1200);
+      await pool.connect(user1).addLiquidity(400, 1200, 0, 0);
+      await pool.connect(user2).addLiquidity(400, 1200, 0, 0);
 
       expect(await lpToken.balanceOf(signer.address)).to.equal(1385);
       expect(await lpToken.balanceOf(user1.address)).to.equal(692);

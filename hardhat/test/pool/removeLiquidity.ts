@@ -45,7 +45,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should revert if user tries to remove more LP than they have", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 995, 995);
 
       await expect(pool.removeLiquidity(1001))
         .to.be.revertedWithCustomError(pool, "ERC20SwapPool__InvalidAmount")
@@ -55,7 +55,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should burn LP tokens and transfer reserves proportionally", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 995, 995);
 
       const lpTokensToBurn = Math.ceil(
         Number(await lpToken.balanceOf(signer.address)) / 3
@@ -73,7 +73,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should emit LiquidityRemoved event", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 1000, 1000);
       const lpBalance = await lpToken.balanceOf(signer.address);
       await lpToken.approve(pool, lpBalance);
 
@@ -102,7 +102,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should handle reserves with rounding differences", async () => {
       await token1.approve(pool, 3);
       await token2.approve(pool, 7);
-      await pool.addLiquidity(3, 7);
+      await pool.addLiquidity(3, 7, 1, 1);
 
       const lpBalance = await lpToken.balanceOf(signer.address);
       await lpToken.approve(pool, lpBalance);
@@ -120,14 +120,14 @@ describe("ERC20/ERC20 Pool Contract", () => {
 
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 0, 0);
 
       await token1.transfer(userB.address, 1000);
       await token2.transfer(userB.address, 1000);
 
       await token1.connect(userB).approve(pool, 1000);
       await token2.connect(userB).approve(pool, 1000);
-      await pool.connect(userB).addLiquidity(1000, 1000);
+      await pool.connect(userB).addLiquidity(1000, 1000, 0, 0);
 
       const lpB = await lpToken.balanceOf(userB.address);
       await lpToken.connect(userB).approve(pool, lpB);
@@ -139,7 +139,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should revert if LP tokens not approved for transfer", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 995, 995);
 
       const lpBal = await lpToken.balanceOf(signer.address);
       await expect(pool.removeLiquidity(lpBal)).to.be.revertedWithCustomError(
@@ -151,7 +151,7 @@ describe("ERC20/ERC20 Pool Contract", () => {
     it("Should update reserves correctly after partial LP burn", async () => {
       await token1.approve(pool, 1000);
       await token2.approve(pool, 1000);
-      await pool.addLiquidity(1000, 1000);
+      await pool.addLiquidity(1000, 1000, 995, 995);
 
       const lpBal = await lpToken.balanceOf(signer.address);
       const half = lpBal / 2n;

@@ -14,6 +14,7 @@ type AddLiquidityProps = {
   tokenB: AddressLike;
   amountTokenA: number;
   amountTokenB: number;
+  maxSlippage: number;
 };
 
 export const useAddLiquidity = () => {
@@ -22,12 +23,12 @@ export const useAddLiquidity = () => {
   const { walletProvider } = useAppKitProvider("eip155");
 
   return useMutation({
-    mutationFn: async ({ poolAddress, tokenA, tokenB, amountTokenA, amountTokenB }: AddLiquidityProps) => {
+    mutationFn: async ({ poolAddress, tokenA, tokenB, amountTokenA, amountTokenB, maxSlippage }: AddLiquidityProps) => {
       if (!address || !walletProvider) throw new Error("Please connect your wallet");
 
       const signer = await getSigner(walletProvider as Eip1193Provider, address);
 
-      const tx = await appService.poolService.addLiquidity(signer, poolAddress, tokenA, tokenB, amountTokenA, amountTokenB);
+      const tx = await appService.poolService.addLiquidity(signer, poolAddress, tokenA, tokenB, amountTokenA, amountTokenB, maxSlippage);
       const txHash = (await tx.wait())?.hash;
       if (!txHash) throw new Error("Could not add liquidity!");
       return txHash;

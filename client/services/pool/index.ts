@@ -69,6 +69,7 @@ export class PoolService implements IPoolService {
     tokenB: AddressLike,
     amountTokenA: number,
     amountTokenB: number,
+    maxSlippage: number,
   ): Promise<TransactionResponse> {
     const [formattedAmountA, formattedAmountB] = [parseUnits(amountTokenA), parseUnits(amountTokenB)];
 
@@ -76,10 +77,13 @@ export class PoolService implements IPoolService {
     const tokenAContract = new Contract(await tokenA, ABI.ERC20TOKEN, signer);
     const tokenBContract = new Contract(await tokenB, ABI.ERC20TOKEN, signer);
 
+    const amountAMin = (BigInt(formattedAmountA) * BigInt(10000 - maxSlippage * 100)) / BigInt(10000);
+    const amountBMin = (BigInt(formattedAmountB) * BigInt(10000 - maxSlippage * 100)) / BigInt(10000);
+
     await tokenAContract.approve(poolAddress, formattedAmountA);
     await tokenBContract.approve(poolAddress, formattedAmountB);
 
-    const tx: TransactionResponse = await poolContract.addLiquidity(formattedAmountA, formattedAmountB);
+    const tx: TransactionResponse = await poolContract.addLiquidity(formattedAmountA, formattedAmountB, amountAMin, amountBMin);
     return tx;
   }
 
@@ -212,7 +216,7 @@ export class PoolService implements IPoolService {
 
     const [, formattedAmountOut] = await poolContract.getAmountOut(formattedAmountIn, await tokenIn);
 
-    const minAmountOut = (BigInt(formattedAmountOut) * BigInt(100 - maxSlippage)) / BigInt(100);
+    const minAmountOut = (BigInt(formattedAmountOut) * BigInt(10000 - maxSlippage * 100)) / BigInt(10000);
 
     await tokenInContract.approve(poolAddress, formattedAmountIn);
 
