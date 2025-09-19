@@ -117,7 +117,7 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
       new Intl.NumberFormat("en-US", {
         notation: "standard",
         useGrouping: false,
-        maximumFractionDigits: 18,
+        maximumFractionDigits: 15,
       }).format(tokenBValue.toNumber()),
     );
   };
@@ -138,7 +138,7 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
       new Intl.NumberFormat("en-US", {
         notation: "standard",
         useGrouping: false,
-        maximumFractionDigits: 18,
+        maximumFractionDigits: 15,
       }).format(tokenAValue.toNumber()),
     );
   };
@@ -310,7 +310,7 @@ export const AddLiquidityForm = ({ tokens, allLiquidityPools }: Props) => {
                   Adding liquidity...
                 </>
               ) : (
-                <>Add liquidity</>
+                <>Add Liquidity</>
               )}
             </Button>
           </form>

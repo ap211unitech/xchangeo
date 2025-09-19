@@ -193,7 +193,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       new Intl.NumberFormat("en-US", {
         notation: "standard",
         useGrouping: false,
-        maximumFractionDigits: 8,
+        maximumFractionDigits: 14,
       }).format(tokenBValue.toNumber()),
     );
   };
@@ -210,7 +210,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       new Intl.NumberFormat("en-US", {
         notation: "standard",
         useGrouping: false,
-        maximumFractionDigits: 8,
+        maximumFractionDigits: 14,
       }).format(tokenAValue.toNumber()),
     );
   };
@@ -230,7 +230,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
           new Intl.NumberFormat("en-US", {
             notation: "standard",
             useGrouping: false,
-            maximumFractionDigits: 8,
+            maximumFractionDigits: 14,
           }).format(invalidatedAmountOut),
         );
       },

@@ -15,7 +15,7 @@ export const AddLiquidity = async () => {
           <div className="to-primary mr-3 rounded-full bg-gradient-to-tl from-violet-600 p-3">
             <Droplet className="text-primary-foreground h-8 w-8" />
           </div>
-          <h1 className="text-foreground text-4xl font-bold">Add liquidity</h1>
+          <h1 className="text-foreground text-4xl font-bold">Add Liquidity</h1>
         </div>
         <p className="text-muted-foreground max-w-2xl text-lg">Deposit tokens into the pool and start earning from swaps.</p>
       </div>
