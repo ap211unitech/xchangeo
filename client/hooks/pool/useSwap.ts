@@ -7,13 +7,14 @@ import { ABI, revalidateAllPools } from "@/constants";
 import { QUERY_KEYS } from "@/constants/queryKeys";
 import { getSigner, parseRevertError } from "@/lib/utils";
 import { appService } from "@/services";
-import { PoolInfo } from "@/types";
+import { GetAmountOutOnSwap, PoolInfo } from "@/types";
 
 type SwapProps = {
   pool?: PoolInfo;
   tokenIn: AddressLike;
   amountIn: number;
   maxSlippage: number;
+  cb: (_invalidatedAmountOut: number) => void;
 };
 
 export const useSwap = () => {
@@ -22,17 +23,16 @@ export const useSwap = () => {
   const { walletProvider } = useAppKitProvider("eip155");
 
   return useMutation({
-    mutationFn: async ({ pool, tokenIn, amountIn, maxSlippage }: SwapProps) => {
+    mutationFn: async ({ pool, tokenIn, amountIn, maxSlippage, cb }: SwapProps) => {
       if (!address || !walletProvider) throw new Error("Please connect your wallet");
       if (!pool) throw new Error("Invalid pool");
 
       const signer = await getSigner(walletProvider as Eip1193Provider, address);
 
-      //  TODO: Handle sllipage
       const tx = await appService.poolService.swap(signer, pool, tokenIn, amountIn, maxSlippage);
       const txHash = (await tx.wait())?.hash;
       if (!txHash) throw new Error("Could not swap tokens!");
-      return { txHash, pool, tokenIn, amountIn };
+      return { txHash, pool, tokenIn, amountIn, cb };
     },
     onSuccess: ({ txHash }) =>
       toast.success("Tokens swapped successfully", {
@@ -43,10 +43,16 @@ export const useSwap = () => {
       }),
     onError: error => toast.error(parseRevertError(error, ABI.ERC20_SWAP)),
     onSettled: async data => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) });
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.getEstimatedSwapInfo(data?.pool?.poolAddress || "", data?.tokenIn.toString() || "", data?.amountIn ?? 0),
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) });
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.getEstimatedSwapInfo(data?.pool.poolAddress || "", data?.tokenIn.toString() || "", data?.amountIn ?? 0),
       });
+
+      const invalidatedEstimatedInfo = queryClient.getQueryData<GetAmountOutOnSwap>(
+        QUERY_KEYS.getEstimatedSwapInfo(data?.pool.poolAddress || "", data?.tokenIn.toString() || "", data?.amountIn ?? 0),
+      );
+
+      data?.cb(invalidatedEstimatedInfo?.amountOut ?? 0);
       await revalidateAllPools();
     },
   });

@@ -204,10 +204,18 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       tokenIn: sellToken,
       amountIn: +sellAmount,
       maxSlippage,
+      cb: (invalidatedAmountOut: number) => {
+        form.setValue(
+          "buyAmount",
+          new Intl.NumberFormat("en-US", {
+            notation: "standard",
+            useGrouping: false,
+            maximumFractionDigits: 8,
+          }).format(invalidatedAmountOut),
+        );
+      },
     });
   };
-
-  //  Handle reserve change after swap, fee estimate shows wrong some time or large input and very small inputs
 
   if (isBalancesPending) return <Loading />;
 

@@ -69,7 +69,7 @@ export const Home = () => {
 
           {/* Trading Interface Preview */}
           <div className="relative mt-16">
-            <Card className="bg-card/50 mx-auto max-w-md shadow-2xl backdrop-blur-sm">
+            <Card className="bg-card/50 mx-auto max-w-md py-2 shadow-2xl backdrop-blur-sm">
               <CardContent className="p-8">
                 <div className="text-left">
                   <div className="mb-6 flex items-center justify-between">

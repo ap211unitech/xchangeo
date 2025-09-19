@@ -1,5 +1,3 @@
-import { PoolInfo } from "@/types";
-
 import { PREFIX } from ".";
 
 export const QUERY_KEYS = {
@@ -14,11 +12,5 @@ export const QUERY_KEYS = {
     percentageToWithdraw,
   ],
   getPoolsActivity: () => [PREFIX, "getPoolsActivity"],
-  getEstimatedSwapInfo: (pool: PoolInfo | undefined, tokenIn: string, amountIn: number) => [
-    PREFIX,
-    "getEstimatedSwapInfo",
-    JSON.stringify(pool),
-    tokenIn,
-    amountIn,
-  ],
+  getEstimatedSwapInfo: (poolAddress: string, tokenIn: string, amountIn: number) => [PREFIX, "getEstimatedSwapInfo", poolAddress, tokenIn, amountIn],
 };
