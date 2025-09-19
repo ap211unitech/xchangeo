@@ -45,8 +45,8 @@ const tradeLinks = [
     href: "/send",
   },
   {
-    title: "Pool Activity",
-    description: "View recent pool activity.",
+    title: "Pools Activity",
+    description: "View recent pools activity.",
     href: "/pools/history",
   },
 ];
