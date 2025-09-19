@@ -16,36 +16,37 @@ export const MaxSlippage = ({ maxSlippage, setMaxSlippage }: Props) => {
           <SettingsIcon className="size-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-52 text-sm">
+      <PopoverContent className="w-60 text-sm">
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">Max Slippage</p>
-          <Input
-            type="number"
-            className="max-w-12"
-            placeholder="0"
-            value={maxSlippage}
-            onChange={e => {
-              const value = e.target.value;
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              className="max-w-12"
+              placeholder="0"
+              value={maxSlippage}
+              onChange={e => {
+                const value = e.target.value;
 
-              // Allow only valid float-like input
-              if (/^\d*\.?\d*$/.test(value)) {
-                const num = parseFloat(value);
+                // Allow only valid float-like input
+                if (/^\d*\.?\d*$/.test(value)) {
+                  const num = parseFloat(value);
 
-                // If empty, let it through (so user can clear input)
-                if (value === "") {
-                  setMaxSlippage(+value);
-                  return;
+                  // If empty, let it through (so user can clear input)
+                  if (value === "") {
+                    setMaxSlippage(+value);
+                    return;
+                  }
+
+                  // Enforce 0 <= num <= 10
+                  if (!isNaN(num) && num >= 0 && num <= 10) {
+                    setMaxSlippage(+value);
+                  }
                 }
-
-                // Enforce 0 <= num <= 10
-                if (!isNaN(num) && num >= 0 && num <= 10) {
-                  setMaxSlippage(+value);
-                }
-              }
-            }}
-          />
-
-          <span>%</span>
+              }}
+            />
+            <span>%</span>
+          </div>
         </div>
 
         <div className="text-muted-foreground mt-4 text-xs italic">

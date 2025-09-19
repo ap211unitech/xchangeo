@@ -74,7 +74,7 @@ type Props = {
 export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [maxSlippage, setMaxSlippage] = useState(5);
+  const [maxSlippage, setMaxSlippage] = useState(0.5);
   const { data: availableTokens = [], isPending: isBalancesPending } = useBalances(tokens);
   const { mutateAsync: onSwap, isPending } = useSwap();
 
