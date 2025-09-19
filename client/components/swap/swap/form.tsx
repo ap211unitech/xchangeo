@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import BN from "bignumber.js";
 import { isAddress } from "ethers";
-import { ArrowUp, Loader, Plus } from "lucide-react";
+import { ArrowUp, ArrowUpDown, Loader, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -134,6 +134,26 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
       availableTokens.find(token => token.contractAddress === buyTokenFormValue)?.balance ?? 0,
     ];
   }, [availableTokens, buyTokenFormValue, sellTokenFormValue]);
+
+  const onSwitchTokens = () => {
+    const el = document.getElementById("switchAssets");
+
+    if (el) {
+      el.classList.add("animate-spin-once");
+
+      el.addEventListener("animationend", () => el.classList.remove("animate-spin-once"), { once: true });
+    }
+
+    const { sellToken, buyToken, sellAmount, buyAmount } = form.getValues();
+
+    form.setValue("buyToken", sellToken);
+    form.setValue("sellToken", buyToken);
+
+    form.setValue("sellAmount", buyAmount);
+    form.setValue("buyAmount", sellAmount);
+
+    router.replace(`?sellToken=${buyToken}&buyToken=${sellToken}`);
+  };
 
   const onChangeSellToken = (field: ControllerRenderProps<z.infer<typeof formSchema>>, selectedSellToken: string) => {
     const allowedTokensForBuy = getOtherTokensToSwap(allLiquidityPools, selectedSellToken);
@@ -314,6 +334,17 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
                 </FormItem>
               )}
             />
+
+            <Button
+              asChild
+              id="switchAssets"
+              variant="secondary"
+              onClick={onSwitchTokens}
+              className="absolute left-1/2 -mt-5 -translate-x-1/2 p-2"
+              size="icon"
+            >
+              <ArrowUpDown className="size-6" />
+            </Button>
 
             {/* Buy token */}
             <FormField

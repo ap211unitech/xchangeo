@@ -30,7 +30,7 @@ export const SwapInfo = ({ estimatedFeeInfo, isFetchingEstimatedFeeInfo, sellAmo
             <SkeletonLoading isLoading={!estimatedFeeInfo}>
               <div className="flex items-center gap-2">
                 <span>
-                  {getHumanizeValue(sellAmountFormValue)} {selectedSellToken?.ticker}
+                  {getHumanizeValue(sellAmountFormValue, 6)} {selectedSellToken?.ticker}
                 </span>
                 <TokenLogo className="size-6" ticker={selectedSellToken?.ticker || ""} />
               </div>

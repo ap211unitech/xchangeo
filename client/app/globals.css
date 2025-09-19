@@ -134,6 +134,22 @@
   animation: fade-in-up 0.8s ease-out;
 }
 
+@keyframes spin-once {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    scale: 1.5;
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+.animate-spin-once {
+  animation: spin-once 0.3s linear;
+}
+
 /* Remove arrows from input type number in all browsers */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
