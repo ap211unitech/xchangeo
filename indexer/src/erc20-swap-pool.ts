@@ -101,7 +101,7 @@ export function handleTokenSwapped(event: TokenSwappedEvent): void {
     poolEntity.reserveB = event.params.reserveToken2;
 
     // Update all-time volumes for tokens
-    if (event.params.tokenIn.toHex() === poolEntity.tokenA) {
+    if (event.params.tokenIn.toHex() == poolEntity.tokenA) {
       poolEntity.allTimeVolumeA = poolEntity.allTimeVolumeA.plus(
         event.params.amountIn
       );
