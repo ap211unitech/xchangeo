@@ -248,7 +248,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
           {!!selectedPoolInfo && (
             <div
               className="hover:text-primary flex w-fit cursor-pointer items-center"
-              onClick={() => window.open(`https://sepolia.etherscan.io/address/${selectedPoolInfo.poolAddress}`)}
+              onClick={() => window.open(`/pool/${selectedPoolInfo.poolAddress}`)}
             >
               <div className="-mr-1 flex items-center">
                 <TokenLogo ticker={selectedPoolInfo.tokenA.ticker} />

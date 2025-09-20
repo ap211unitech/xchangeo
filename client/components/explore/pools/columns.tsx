@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { Plus } from "lucide-react";
+import { EyeIcon, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
@@ -29,10 +29,7 @@ export const columns = (userShares: UserShare[]) =>
       cell: info => {
         const { poolAddress, tokenA, tokenB } = info.getValue();
         return (
-          <div
-            className="hover:text-primary flex w-fit items-center"
-            onClick={() => window.open(`https://sepolia.etherscan.io/address/${poolAddress}`)}
-          >
+          <div className="hover:text-primary flex w-fit items-center" onClick={() => window.open(`/pool/${poolAddress}`)}>
             <div className="relative h-8 w-8 overflow-hidden rounded-full">
               <TokenLogo ticker={tokenA.ticker} />
             </div>
@@ -136,6 +133,11 @@ export const columns = (userShares: UserShare[]) =>
 
         return (
           <div className="flex items-center gap-2 text-right">
+            <Button variant="secondary" size="sm" asChild>
+              <Link href={`/pool/${poolAddress}`}>
+                <EyeIcon className="size-4" /> View Pool
+              </Link>
+            </Button>
             <Button variant="secondary" size="sm" asChild>
               <Link
                 href={{
