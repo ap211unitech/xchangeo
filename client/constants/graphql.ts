@@ -110,3 +110,35 @@ export const GET_POOLS_ACTIVITY = `{
     transactionHash
   }
 }`;
+
+export const GET_POOL_INFO = (poolAddress: string) => `{
+  pool(id: "${poolAddress}") {
+    fee
+    id
+    pool
+    reserveA
+    reserveB
+    allTimeVolumeA
+    allTimeVolumeB
+    allTimeFeesA
+    allTimeFeesB
+    lpToken {
+      id
+      name
+      symbol
+      tokenAddress
+    }
+    tokenA {
+      id
+      name
+      symbol
+      tokenAddress
+    }
+    tokenB {
+      id
+      name
+      symbol
+      tokenAddress
+    }
+  }
+}`;

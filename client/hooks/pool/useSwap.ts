@@ -29,7 +29,7 @@ export const useSwap = () => {
 
       const signer = await getSigner(walletProvider as Eip1193Provider, address);
 
-      const tx = await appService.poolService.swap(signer, pool, tokenIn, amountIn, maxSlippage);
+      const tx = await appService.poolService.swap(signer, pool.poolAddress, tokenIn, amountIn, maxSlippage);
       const txHash = (await tx.wait())?.hash;
       if (!txHash) throw new Error("Could not swap tokens!");
       return { txHash, pool, tokenIn, amountIn, cb };
@@ -44,6 +44,7 @@ export const useSwap = () => {
     onError: error => toast.error(parseRevertError(error, ABI.ERC20_SWAP)),
     onSettled: async data => {
       await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getBalances(address!) });
+      await queryClient.invalidateQueries({ queryKey: QUERY_KEYS.getPoolInfo(data?.pool.poolAddress || "") });
       await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.getEstimatedSwapInfo(data?.pool.poolAddress || "", data?.tokenIn.toString() || "", data?.amountIn ?? 0),
       });

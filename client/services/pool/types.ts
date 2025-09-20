@@ -57,6 +57,8 @@ export interface IPoolService {
 
   getPoolsActivity: () => Promise<PoolActivity[]>;
 
+  getPoolInfo: (_poolAddress: string) => Promise<PoolInfo>;
+
   getAmountOutOnSwap: (_pool: PoolInfo, _tokenIn: AddressLike, _amountIn: number) => Promise<GetAmountOutOnSwap>;
 
   addLiquidity: (
@@ -76,5 +78,11 @@ export interface IPoolService {
     _percentageToWithdraw: number,
   ) => Promise<TransactionResponse>;
 
-  swap: (_signer: JsonRpcSigner, _pool: PoolInfo, _tokenIn: AddressLike, _amountIn: number, _maxSlippage: number) => Promise<TransactionResponse>;
+  swap: (
+    _signer: JsonRpcSigner,
+    _poolAddress: AddressLike,
+    _tokenIn: AddressLike,
+    _amountIn: number,
+    _maxSlippage: number,
+  ) => Promise<TransactionResponse>;
 }

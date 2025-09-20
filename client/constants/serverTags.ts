@@ -7,4 +7,5 @@ export const TAGS = {
   getFaucetTransactionsHistory: () => [PREFIX, "getFaucetTransactionsHistory"].join("--"),
   getAllPools: () => [PREFIX, "getAllPools"].join("--"),
   getPoolsActivity: () => [PREFIX, "getPoolsActivity"].join("--"),
+  getPoolInfo: (poolAddress: string) => [PREFIX, "getPoolInfo", poolAddress].join("--"),
 };

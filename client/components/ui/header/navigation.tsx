@@ -67,11 +67,6 @@ const poolLinks = [
     description: "Withdraw tokens from pool",
     href: "/pools/removeLiquidity",
   },
-  {
-    title: "My Positions",
-    description: "Manage your liquidity positions.",
-    href: "/pools/positions",
-  },
 ];
 
 export const Navigation = () => {

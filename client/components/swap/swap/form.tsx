@@ -32,7 +32,7 @@ import {
   SelectValue,
   TokenLogo,
 } from "@/components/ui";
-import { useBalances, useEstimatedSwapInfo, useSwap } from "@/hooks";
+import { useBalances, useEstimatedSwapInfo, usePoolInfo, useSwap } from "@/hooks";
 import { getAmountInForSwap, getAmountOutOnSwap, getOtherTokensToSwap } from "@/lib/utils";
 import { PoolInfo, TokenMetadata } from "@/types";
 
@@ -115,6 +115,8 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
   const selectedSellToken = tokens.find(e => e.contractAddress === sellTokenFormValue);
   const selectedBuyToken = tokens.find(e => e.contractAddress === buyTokenFormValue);
 
+  const { data: lastUpdatedSelectedPoolInfo } = usePoolInfo(selectedPoolInfo?.poolAddress ?? "");
+
   const [debouncedSellAmountFormValue] = useDebounceValue(sellAmountFormValue, 500);
 
   const { isLoading: isLoadingEstimatedFeeInfo, data: estimatedFeeInfo } = useEstimatedSwapInfo(
@@ -186,7 +188,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
 
     field.onChange(sellTokenValue);
 
-    const tokenBValue = getAmountOutOnSwap(selectedPoolInfo, sellTokenFormValue, new BN(sellTokenValue));
+    const tokenBValue = getAmountOutOnSwap(lastUpdatedSelectedPoolInfo ?? selectedPoolInfo, sellTokenFormValue, new BN(sellTokenValue));
 
     form.setValue(
       "buyAmount",
@@ -203,7 +205,7 @@ export const SwapTokensForm = ({ tokens, allLiquidityPools, allowedTokensForSwap
 
     field.onChange(buyTokenValue);
 
-    const tokenAValue = getAmountInForSwap(selectedPoolInfo, buyTokenFormValue, new BN(buyTokenValue));
+    const tokenAValue = getAmountInForSwap(lastUpdatedSelectedPoolInfo ?? selectedPoolInfo, buyTokenFormValue, new BN(buyTokenValue));
 
     form.setValue(
       "sellAmount",

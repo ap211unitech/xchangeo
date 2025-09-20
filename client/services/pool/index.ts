@@ -1,7 +1,7 @@
 import BN from "bignumber.js";
 import { AddressLike, Contract, JsonRpcSigner, TransactionResponse } from "ethers";
 
-import { ABI, GET_ALL_POOLS, GET_POOLS_ACTIVITY, TAGS } from "@/constants";
+import { ABI, GET_ALL_POOLS, GET_POOL_INFO, GET_POOLS_ACTIVITY, TAGS } from "@/constants";
 import { executeGraphQLQuery, formatUnits, parseUnits } from "@/lib/utils";
 import { GetAmountOutOnSwap, GetAmountsOnRemovingLiquidity, PoolActivity, PoolInfo, UserShare } from "@/types";
 
@@ -159,6 +159,43 @@ export class PoolService implements IPoolService {
     });
   }
 
+  public async getPoolInfo(poolAddress: string): Promise<PoolInfo> {
+    const pool = await executeGraphQLQuery<GetAllPoolsResponse>(
+      "pool",
+      GET_POOL_INFO(poolAddress),
+      {
+        tags: [TAGS.getPoolInfo(poolAddress)],
+      },
+      "no-cache",
+    );
+
+    return {
+      poolAddress: pool.pool,
+      feeTier: +pool.fee,
+      lpToken: {
+        name: pool.lpToken.name,
+        ticker: pool.lpToken.symbol,
+        contractAddress: pool.lpToken.tokenAddress,
+      },
+      tokenA: {
+        name: pool.tokenA.name,
+        ticker: pool.tokenA.symbol,
+        contractAddress: pool.tokenA.tokenAddress,
+        allTimeVolume: formatUnits(BigInt(pool.allTimeVolumeA)),
+        allTimeFee: formatUnits(BigInt(pool.allTimeFeesA)),
+        reserve: formatUnits(BigInt(pool.reserveA)),
+      },
+      tokenB: {
+        name: pool.tokenB.name,
+        ticker: pool.tokenB.symbol,
+        contractAddress: pool.tokenB.tokenAddress,
+        allTimeVolume: formatUnits(BigInt(pool.allTimeVolumeB)),
+        allTimeFee: formatUnits(BigInt(pool.allTimeFeesB)),
+        reserve: formatUnits(BigInt(pool.reserveB)),
+      },
+    };
+  }
+
   public async getAmountOutOnSwap(pool: PoolInfo, tokenIn: AddressLike, amountIn: number): Promise<GetAmountOutOnSwap> {
     const poolContract = new Contract(pool.poolAddress, ABI.ERC20_SWAP, rpcProvider);
 
@@ -201,16 +238,15 @@ export class PoolService implements IPoolService {
 
   public async swap(
     signer: JsonRpcSigner,
-    pool: PoolInfo,
+    poolAddress: AddressLike,
     tokenIn: AddressLike,
     amountIn: number,
     maxSlippage: number,
   ): Promise<TransactionResponse> {
-    const poolAddress = pool.poolAddress;
     const formattedAmountIn = parseUnits(amountIn);
 
     const [poolContract, tokenInContract] = await Promise.all([
-      new Contract(poolAddress, ABI.ERC20_SWAP, signer),
+      new Contract(await poolAddress, ABI.ERC20_SWAP, signer),
       new Contract(await tokenIn, ABI.ERC20TOKEN, signer),
     ]);
 
