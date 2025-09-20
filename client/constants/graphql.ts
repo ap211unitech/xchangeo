@@ -60,6 +60,10 @@ export const GET_ALL_POOLS = `{
     pool
     reserveA
     reserveB
+    allTimeVolumeA
+    allTimeVolumeB
+    allTimeFeesA
+    allTimeFeesB
     lpToken {
       id
       name

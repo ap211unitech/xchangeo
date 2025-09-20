@@ -16,6 +16,10 @@ export type GetAllPoolsResponse = {
   tokenB: TokenInfo;
   reserveA: string;
   reserveB: string;
+  allTimeVolumeA: string;
+  allTimeVolumeB: string;
+  allTimeFeesA: string;
+  allTimeFeesB: string;
   fee: string;
   lpToken: TokenInfo;
 };

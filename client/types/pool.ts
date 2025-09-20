@@ -2,8 +2,16 @@ import { TokenMetadata } from "./token";
 
 export type PoolInfo = {
   poolAddress: string;
-  tokenA: TokenMetadata & { reserve: number; allTimeVolume: number };
-  tokenB: TokenMetadata & { reserve: number; allTimeVolume: number };
+  tokenA: TokenMetadata & {
+    reserve: number;
+    allTimeVolume: number;
+    allTimeFee: number;
+  };
+  tokenB: TokenMetadata & {
+    reserve: number;
+    allTimeVolume: number;
+    allTimeFee: number;
+  };
   lpToken: TokenMetadata;
   feeTier: number;
 };

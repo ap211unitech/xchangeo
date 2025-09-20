@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
+import { getHumanizeValue } from "@/lib/utils";
 import { PoolInfo, UserShare } from "@/types";
 
 const columnHelper = createColumnHelper<PoolInfo>();
@@ -70,6 +71,24 @@ export const columns = (userShares: UserShare[]) =>
             </span>
             <span className="text-muted-foreground">
               {getFormattedVolume(tokenB.allTimeVolume)} {tokenB.ticker}
+            </span>
+          </div>
+        );
+      },
+      footer: e => e.column.id,
+    }),
+    columnHelper.accessor(row => row, {
+      id: "allTimeFee",
+      header: () => <span>All-Time Fee</span>,
+      cell: info => {
+        const { tokenA, tokenB } = info.getValue();
+        return (
+          <div className="flex flex-col gap-2 justify-self-start">
+            <span className="text-base font-semibold">
+              {getHumanizeValue(tokenA.allTimeFee, 6)} {tokenA.ticker} /
+            </span>
+            <span className="text-muted-foreground">
+              {getHumanizeValue(tokenB.allTimeFee, 6)} {tokenB.ticker}
             </span>
           </div>
         );

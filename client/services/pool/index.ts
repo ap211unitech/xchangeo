@@ -19,7 +19,7 @@ export class PoolService implements IPoolService {
       "no-cache",
     );
 
-    return res.map(pool => {
+    return res.map((pool): PoolInfo => {
       return {
         poolAddress: pool.pool,
         feeTier: +pool.fee,
@@ -32,16 +32,16 @@ export class PoolService implements IPoolService {
           name: pool.tokenA.name,
           ticker: pool.tokenA.symbol,
           contractAddress: pool.tokenA.tokenAddress,
-          // TODO: Add this later
-          allTimeVolume: 0,
+          allTimeVolume: formatUnits(BigInt(pool.allTimeVolumeA)),
+          allTimeFee: formatUnits(BigInt(pool.allTimeFeesA)),
           reserve: formatUnits(BigInt(pool.reserveA)),
         },
         tokenB: {
           name: pool.tokenB.name,
           ticker: pool.tokenB.symbol,
           contractAddress: pool.tokenB.tokenAddress,
-          // TODO: Add this later
-          allTimeVolume: 0,
+          allTimeVolume: formatUnits(BigInt(pool.allTimeVolumeB)),
+          allTimeFee: formatUnits(BigInt(pool.allTimeFeesB)),
           reserve: formatUnits(BigInt(pool.reserveB)),
         },
       };
