@@ -1,6 +1,7 @@
 import { PoolInfo } from "@/types";
 
 import { Actions } from "./actions";
+import { Links } from "./links";
 import { Stats } from "./stats";
 
 export const Metadata = ({ poolInfo }: { poolInfo: PoolInfo }) => {
@@ -8,6 +9,7 @@ export const Metadata = ({ poolInfo }: { poolInfo: PoolInfo }) => {
     <div className="col-span-full space-y-4 md:col-span-3 xl:col-span-2">
       <Actions poolInfo={poolInfo} />
       <Stats poolInfo={poolInfo} />
+      <Links poolInfo={poolInfo} />
     </div>
   );
 };
