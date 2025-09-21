@@ -6,7 +6,7 @@ export const Analytics = ({ poolInfo }: { poolInfo: PoolInfo }) => {
   return (
     <>
       <Header poolInfo={poolInfo} />
-      <div className="my-4 h-60 border">Analytics</div>
+      <div className="my-4 h-96 border">Analytics</div>
     </>
   );
 };
