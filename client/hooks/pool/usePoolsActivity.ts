@@ -4,7 +4,7 @@ import { QUERY_KEYS } from "@/constants/queryKeys";
 import { appService } from "@/services";
 import { PoolActivity } from "@/types";
 
-export const usePoolActivity = () => {
+export const usePoolsActivity = () => {
   return useQuery<PoolActivity[]>({
     queryKey: QUERY_KEYS.getPoolsActivity(),
     queryFn: async () => {

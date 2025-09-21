@@ -8,7 +8,7 @@ import { PoolInfo } from "@/types";
 
 export const Header = ({ poolInfo }: { poolInfo: PoolInfo }) => {
   return (
-    <div className="flex items-center justify-between space-y-4">
+    <div className="flex items-center justify-between">
       <div className="flex items-center">
         <div className="to-primary mr-3 rounded-full bg-gradient-to-tl from-violet-600 p-3">
           <EyeIcon className="text-primary-foreground h-8 w-8" />
