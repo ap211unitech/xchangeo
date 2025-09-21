@@ -25,8 +25,8 @@ export const PoolInfo = async ({ poolAddress }: Props) => {
   if (!poolInfo) return notFound();
 
   return (
-    <section className="grid grid-cols-6 gap-10">
-      <div className="col-span-full border md:col-span-3 xl:col-span-4">
+    <section className="grid grid-cols-8 gap-10 xl:grid-cols-6">
+      <div className="col-span-full border lg:col-span-5 xl:col-span-4">
         {/* Header */}
         <div className="space-y-4">
           <div className="flex items-center">
