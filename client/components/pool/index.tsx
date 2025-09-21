@@ -1,8 +1,8 @@
-import { EyeIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { appService } from "@/services";
 
+import { Analytics } from "./analytics";
 import { Metadata } from "./metadata";
 
 type Props = {
@@ -25,19 +25,9 @@ export const PoolInfo = async ({ poolAddress }: Props) => {
   if (!poolInfo) return notFound();
 
   return (
-    <section className="grid grid-cols-8 gap-10 xl:grid-cols-6">
-      <div className="col-span-full border lg:col-span-5 xl:col-span-4">
-        {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-center">
-            <div className="to-primary mr-3 rounded-full bg-gradient-to-tl from-violet-600 p-3">
-              <EyeIcon className="text-primary-foreground h-8 w-8" />
-            </div>
-            <h1 className="text-foreground text-4xl font-bold">
-              {poolInfo.tokenA.ticker}/{poolInfo.tokenB.ticker}
-            </h1>
-          </div>
-        </div>
+    <section className="grid grid-cols-8 gap-6 xl:grid-cols-6">
+      <div className="col-span-full lg:col-span-5 xl:col-span-4">
+        <Analytics poolInfo={poolInfo} />
       </div>
       <Metadata poolInfo={poolInfo} />
     </section>
