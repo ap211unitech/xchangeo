@@ -12,6 +12,7 @@ export const QUERY_KEYS = {
     percentageToWithdraw,
   ],
   getPoolsActivity: () => [PREFIX, "getPoolsActivity"],
+  getPoolActivity: (poolAddress: string) => [PREFIX, "getPoolActivity", poolAddress],
   getPoolInfo: (poolAddress: string) => [PREFIX, "getPoolInfo", poolAddress],
   getEstimatedSwapInfo: (poolAddress: string, tokenIn: string, amountIn: number) => [PREFIX, "getEstimatedSwapInfo", poolAddress, tokenIn, amountIn],
 };

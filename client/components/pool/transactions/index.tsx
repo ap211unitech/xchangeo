@@ -4,7 +4,7 @@ import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@
 import { ChevronsUpDown } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
-import { usePoolsActivity } from "@/hooks";
+import { usePoolActivity } from "@/hooks";
 import { cn } from "@/lib/utils";
 
 import { columns } from "./columns";
@@ -12,8 +12,8 @@ import { Loading } from "./loading";
 
 const actionKeys = ["timestamp"];
 
-export const Transactions = () => {
-  const { data: poolsActivity = [], isLoading } = usePoolsActivity();
+export const PoolTransactions = ({ poolAddress }: { poolAddress: string }) => {
+  const { data: poolsActivity = [], isLoading } = usePoolActivity(poolAddress);
 
   const table = useReactTable({
     columns,

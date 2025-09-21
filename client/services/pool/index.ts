@@ -1,7 +1,7 @@
 import BN from "bignumber.js";
 import { AddressLike, Contract, JsonRpcSigner, TransactionResponse } from "ethers";
 
-import { ABI, GET_ALL_POOLS, GET_POOL_INFO, GET_POOLS_ACTIVITY, TAGS } from "@/constants";
+import { ABI, GET_ALL_POOLS, GET_POOL_ACTIVITY, GET_POOL_INFO, GET_POOLS_ACTIVITY, TAGS } from "@/constants";
 import { executeGraphQLQuery, formatUnits, parseUnits } from "@/lib/utils";
 import { GetAmountOutOnSwap, GetAmountsOnRemovingLiquidity, PoolActivity, PoolInfo, UserShare } from "@/types";
 
@@ -124,6 +124,39 @@ export class PoolService implements IPoolService {
 
     const tx: TransactionResponse = await poolContract.removeLiquidity(lpTokensToWithdraw);
     return tx;
+  }
+
+  public async getPoolActivity(poolAddress: string): Promise<PoolActivity[]> {
+    const res = await executeGraphQLQuery<GetPoolsActivityResponse[]>(
+      "poolTransactions",
+      GET_POOL_ACTIVITY(poolAddress),
+      {
+        tags: [TAGS.getPoolActivity(poolAddress)],
+      },
+      "no-cache",
+    );
+
+    return res.map(tx => {
+      return {
+        id: tx.id,
+        eventType: tx.eventType,
+        sender: tx.sender,
+        timestamp: +tx.timestamp,
+        transactionHash: tx.transactionHash,
+        tokenA: {
+          name: tx.tokenA.name,
+          ticker: tx.tokenA.symbol,
+          tokenAddress: tx.tokenA.tokenAddress,
+          amount: formatUnits(BigInt(tx.amountA)),
+        },
+        tokenB: {
+          name: tx.tokenB.name,
+          ticker: tx.tokenB.symbol,
+          tokenAddress: tx.tokenB.tokenAddress,
+          amount: formatUnits(BigInt(tx.amountB)),
+        },
+      };
+    });
   }
 
   public async getPoolsActivity(): Promise<PoolActivity[]> {

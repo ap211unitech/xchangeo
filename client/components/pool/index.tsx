@@ -29,7 +29,7 @@ export const PoolInfo = async ({ poolAddress }: Props) => {
     <section className="grid grid-cols-8 gap-6 xl:grid-cols-6">
       <div className="col-span-full lg:col-span-5 xl:col-span-4">
         <Analytics poolInfo={poolInfo} />
-        <PoolTransactions />
+        <PoolTransactions poolAddress={poolAddress} />
       </div>
       <Metadata poolInfo={poolInfo} />
     </section>

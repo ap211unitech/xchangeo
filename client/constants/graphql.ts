@@ -111,6 +111,33 @@ export const GET_POOLS_ACTIVITY = `{
   }
 }`;
 
+export const GET_POOL_ACTIVITY = (poolAddress: string) => `{
+  poolTransactions(
+    where: {pool_: {pool: "${poolAddress}"}},
+    orderBy: timestamp,
+    orderDirection: desc,
+    first: 50
+  ) {
+    amountA
+    amountB
+    eventType
+    id
+    sender
+    timestamp
+    tokenA {
+      name
+      symbol
+      tokenAddress
+    }
+    tokenB {
+      name
+      symbol
+      tokenAddress
+    }
+    transactionHash
+  }
+}`;
+
 export const GET_POOL_INFO = (poolAddress: string) => `{
   pool(id: "${poolAddress}") {
     fee

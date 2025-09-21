@@ -55,6 +55,8 @@ export interface IPoolService {
     _address: string,
   ) => Promise<GetAmountsOnRemovingLiquidity>;
 
+  getPoolActivity: (_poolAddress: string) => Promise<PoolActivity[]>;
+
   getPoolsActivity: () => Promise<PoolActivity[]>;
 
   getPoolInfo: (_poolAddress: string) => Promise<PoolInfo>;
