@@ -61,6 +61,11 @@ export function handleLiquidityAdded(event: LiquidityAddedEvent): void {
     poolTransactionEntity.amountB = event.params.tokenAmount2;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "AddLiquidity";
+    poolTransactionEntity.reserveA = event.params.reserveToken1;
+    poolTransactionEntity.reserveB = event.params.reserveToken2;
+    poolTransactionEntity.feesA = BigInt.fromI32(0);
+    poolTransactionEntity.feesB = BigInt.fromI32(0);
+    poolTransactionEntity.lpTokenAmount = event.params.mintedLpTokens;
     poolTransactionEntity.transactionHash = event.transaction.hash;
 
     poolTransactionEntity.save();
@@ -87,6 +92,13 @@ export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
     poolTransactionEntity.amountB = event.params.tokenAmount2;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "RemoveLiquidity";
+    poolTransactionEntity.reserveA = event.params.reserveToken1;
+    poolTransactionEntity.reserveB = event.params.reserveToken2;
+    poolTransactionEntity.feesA = BigInt.fromI32(0);
+    poolTransactionEntity.feesB = BigInt.fromI32(0);
+    poolTransactionEntity.lpTokenAmount =
+      event.params.liquidityPoolTokens.times(BigInt.fromI32(-1)); // minus sign coz those assets were burnt
+
     poolTransactionEntity.transactionHash = event.transaction.hash;
 
     poolTransactionEntity.save();
@@ -95,6 +107,9 @@ export function handleLiquidityRemoved(event: LiquidityRemovedEvent): void {
 
 export function handleTokenSwapped(event: TokenSwappedEvent): void {
   const poolEntity = Pool.load(event.params.pool.toHex());
+
+  let feesA = BigInt.fromI32(0);
+  let feesB = BigInt.fromI32(0);
 
   if (poolEntity) {
     poolEntity.reserveA = event.params.reserveToken1;
@@ -110,7 +125,7 @@ export function handleTokenSwapped(event: TokenSwappedEvent): void {
       );
 
       // fees in tokenA
-      let feesA = event.params.amountIn
+      feesA = event.params.amountIn
         .times(poolEntity.fee)
         .div(BigInt.fromI32(10000)); // fee in basis points i.e. 0.3% denoted as 30; so, 0.3% = 30/100_00
       poolEntity.allTimeFeesA = poolEntity.allTimeFeesA.plus(feesA);
@@ -123,7 +138,7 @@ export function handleTokenSwapped(event: TokenSwappedEvent): void {
       );
 
       // fees in tokenB
-      let feesB = event.params.amountIn
+      feesB = event.params.amountIn
         .times(poolEntity.fee)
         .div(BigInt.fromI32(10000));
       poolEntity.allTimeFeesB = poolEntity.allTimeFeesB.plus(feesB);
@@ -142,6 +157,12 @@ export function handleTokenSwapped(event: TokenSwappedEvent): void {
     poolTransactionEntity.amountB = event.params.amountOut;
     poolTransactionEntity.timestamp = event.block.timestamp;
     poolTransactionEntity.eventType = "Swap";
+    poolTransactionEntity.reserveA = event.params.reserveToken1;
+    poolTransactionEntity.reserveB = event.params.reserveToken2;
+    poolTransactionEntity.feesA = feesA;
+    poolTransactionEntity.feesB = feesB;
+    poolTransactionEntity.lpTokenAmount = BigInt.fromI32(0);
+
     poolTransactionEntity.transactionHash = event.transaction.hash;
 
     poolTransactionEntity.save();

@@ -61,6 +61,19 @@ type PoolTransaction @entity(immutable: true) {
   amountA: BigInt!
   amountB: BigInt!
   timestamp: BigInt!
-  eventType: String!
+  eventType: String! # AddLiquidity, RemoveLiquidity, Swap
+  
+  # Fields for ALL event types
+  # These will be populated for every event to track reserves
+  reserveA: BigInt!
+  reserveB: BigInt!
+
+  # These are ONLY for Swap events
+  feesA: BigInt!
+  feesB: BigInt!
+
+  # This is ONLY for AddLiquidity/RemoveLiquidity events (will be 0 otherwise)
+  lpTokenAmount: BigInt!
+
   transactionHash: Bytes!
 }
