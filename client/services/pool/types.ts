@@ -41,6 +41,11 @@ export type GetPoolsActivityResponse = {
     symbol: string;
     tokenAddress: string;
   };
+  reserveA: string;
+  reserveB: string;
+  feesA: string;
+  feesB: string;
+  lpTokenAmount: string;
   transactionHash: string;
 };
 

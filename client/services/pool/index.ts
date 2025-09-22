@@ -155,6 +155,11 @@ export class PoolService implements IPoolService {
           tokenAddress: tx.tokenB.tokenAddress,
           amount: formatUnits(BigInt(tx.amountB)),
         },
+        reserveA: formatUnits(BigInt(tx.reserveA)),
+        reserveB: formatUnits(BigInt(tx.reserveB)),
+        feesA: formatUnits(BigInt(tx.feesA)),
+        feesB: formatUnits(BigInt(tx.feesB)),
+        lpTokenAmount: formatUnits(BigInt(tx.lpTokenAmount)),
       };
     });
   }
@@ -188,6 +193,11 @@ export class PoolService implements IPoolService {
           tokenAddress: tx.tokenB.tokenAddress,
           amount: formatUnits(BigInt(tx.amountB)),
         },
+        reserveA: formatUnits(BigInt(tx.reserveA)),
+        reserveB: formatUnits(BigInt(tx.reserveB)),
+        feesA: formatUnits(BigInt(tx.feesA)),
+        feesB: formatUnits(BigInt(tx.feesB)),
+        lpTokenAmount: formatUnits(BigInt(tx.lpTokenAmount)),
       };
     });
   }

@@ -107,6 +107,11 @@ export const GET_POOLS_ACTIVITY = `{
       symbol
       tokenAddress
     }
+    reserveA
+    reserveB
+    feesA
+    feesB
+    lpTokenAmount
     transactionHash
   }
 }`;
@@ -134,6 +139,11 @@ export const GET_POOL_ACTIVITY = (poolAddress: string) => `{
       symbol
       tokenAddress
     }
+    reserveA
+    reserveB
+    feesA
+    feesB
+    lpTokenAmount
     transactionHash
   }
 }`;

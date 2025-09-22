@@ -43,6 +43,11 @@ export type PoolActivity = {
     tokenAddress: string;
     amount: number;
   };
+  reserveA: number;
+  reserveB: number;
+  feesA: number;
+  feesB: number;
+  lpTokenAmount: number;
   eventType: "AddLiquidity" | "RemoveLiquidity" | "Swap";
 };
 
