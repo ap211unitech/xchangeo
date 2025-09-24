@@ -9,10 +9,13 @@ const chartData = [
 
 export const Loading = () => {
   return (
-    <div className="pointer-events-none h-[350px] w-full">
-      <div className="bg-secondary mb-6 h-10 w-48 rounded-md" />
+    <div className="pointer-events-none w-full">
+      <div className="mb-6 grid max-w-fit place-items-start gap-2">
+        <div className="bg-secondary h-8 w-48 rounded-md" />
+        <div className="bg-secondary h-4 w-28 rounded-sm" />
+      </div>
 
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={350}>
         <AreaChart data={chartData}>
           <CartesianGrid vertical={false} strokeDasharray="1 40" stroke="gray" />
           <defs>

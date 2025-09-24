@@ -1,22 +1,22 @@
-import { EyeIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Badge, Button } from "@/components/ui";
+import { Badge, Button, TokenLogo } from "@/components/ui";
 import Etherscan from "@/public/etherscan.svg";
 import { PoolInfo } from "@/types";
 
 export const Header = ({ poolInfo }: { poolInfo: PoolInfo }) => {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center">
-        <div className="to-primary mr-3 rounded-full bg-gradient-to-tl from-violet-600 p-3">
-          <EyeIcon className="text-primary-foreground h-8 w-8" />
+      <div className="flex items-center gap-2">
+        <div className="-mr-6 flex items-center">
+          <TokenLogo className="size-14" ticker={poolInfo.tokenA.ticker} />
+          <TokenLogo className="relative -left-6 size-14" ticker={poolInfo.tokenB.ticker} />
         </div>
         <h1 className="text-foreground text-4xl font-bold">
           {poolInfo.tokenA.ticker}/{poolInfo.tokenB.ticker}
         </h1>
-        <Badge variant="secondary" size="lg" className="ml-2 rounded-sm px-2">
+        <Badge variant="secondary" size="lg" className="rounded-sm px-2">
           {poolInfo.feeTier / 100}%
         </Badge>
       </div>

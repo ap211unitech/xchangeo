@@ -121,7 +121,7 @@ export const GET_POOL_ACTIVITY = (poolAddress: string) => `{
     where: {pool_: {pool: "${poolAddress}"}},
     orderBy: timestamp,
     orderDirection: desc,
-    first: 50
+    first: 500
   ) {
     amountA
     amountB

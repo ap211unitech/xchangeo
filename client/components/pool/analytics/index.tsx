@@ -5,11 +5,9 @@ import { Header } from "./header";
 
 export const Analytics = ({ poolInfo }: { poolInfo: PoolInfo }) => {
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <Header poolInfo={poolInfo} />
-      <div className="pb-20">
-        <Charts poolInfo={poolInfo} />
-      </div>
+      <Charts poolInfo={poolInfo} />
     </div>
   );
 };
