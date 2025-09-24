@@ -6,7 +6,7 @@ import { PoolInfo } from "@/types";
 
 export const Actions = ({ poolInfo }: { poolInfo: PoolInfo }) => {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-2 gap-4">
       <Button asChild className="bg-primary/10 hover:bg-primary/10 text-primary rounded-xl font-semibold" size="xl">
         <Link
           href={{

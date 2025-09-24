@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 const chartData = [
@@ -21,13 +22,33 @@ export const Loading = () => {
           <defs>
             <linearGradient id="loading-gradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="65%" stopColor="var(--secondary)" stopOpacity={0.6} />
-              <stop offset="95%" stopColor="var(--secondary)" stopOpacity={0} />
+              <stop offset="95%" stopColor="var(--secondary)" stopOpacity={0.3} />
             </linearGradient>
           </defs>
 
-          {/* Hide ticks during loading */}
-          <XAxis dataKey="timestamp" hide />
-          <YAxis domain={[100, 1050]} hide />
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            domain={["dataMin", "dataMax"]}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={time => moment(new Date(time)).format("MMM DD, HH:mmA")}
+            stroke="var(--muted-foreground)"
+            fontSize={12}
+            tickMargin={10}
+          />
+          <YAxis
+            orientation="right"
+            dataKey="price"
+            type="number"
+            domain={[180, 1100]}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={price => price}
+            stroke="var(--muted-foreground)"
+            fontSize={12}
+            tickMargin={10}
+          />
 
           <Area
             type="natural"
