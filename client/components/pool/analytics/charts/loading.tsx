@@ -16,7 +16,7 @@ export const Loading = () => {
         <div className="bg-secondary h-4 w-28 rounded-sm" />
       </div>
 
-      <ResponsiveContainer width="100%" height={350}>
+      <ResponsiveContainer width="100%" height={402}>
         <AreaChart data={chartData}>
           <CartesianGrid vertical={false} strokeDasharray="1 40" stroke="gray" />
           <defs>

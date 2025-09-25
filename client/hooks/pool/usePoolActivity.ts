@@ -8,7 +8,7 @@ export const usePoolActivity = (poolAddress: string) => {
   return useQuery<PoolActivity[]>({
     queryKey: QUERY_KEYS.getPoolActivity(poolAddress),
     queryFn: async () => {
-      return appService.poolService.getPoolActivity(poolAddress);
+      return await appService.poolService.getPoolActivity(poolAddress);
     },
     refetchOnWindowFocus: true,
     refetchOnMount: true,
