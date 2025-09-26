@@ -5,6 +5,7 @@
 This project is modeled with a constant product market maker logic and designed to be fully EVM-compatible. It includes custom token faucets, an indexer built with The Graph, and a modern frontend for liquidity control and token tracking.
 
 ## Live Application
+
 **Check out the live deployment:** [https://xchangeo.vercel.app/](https://xchangeo.vercel.app/)
 
 ## Table of Contents
@@ -18,19 +19,19 @@ This project is modeled with a constant product market maker logic and designed 
 
 ## Features
 
--   ⚖️ **Decentralized ERC20 Swaps:** Swap supported ERC20 tokens directly on-chain using the constant product formula ($x * y = k$).
+- ⚖️ **Decentralized ERC20 Swaps:** Swap supported ERC20 tokens directly on-chain using the constant product formula ($x * y = k$).
 
--   💧 **Liquidity Pools & LP Tokens:** Add or remove liquidity to token pairs and receive LP (Liquidity Provider) tokens representing your share of the pool.
+- 💧 **Liquidity Pools & LP Tokens:** Add or remove liquidity to token pairs and receive LP (Liquidity Provider) tokens representing your share of the pool.
 
--   🛡️ **Slippage & Fee Handling:** Smart contract-enforced slippage protection and a transparent fee mechanism ensure fair and predictable trades.
+- 🛡️ **Slippage & Fee Handling:** Smart contract-enforced slippage protection and a transparent fee mechanism ensure fair and predictable trades.
 
--   📈 **Real-time Pool Analytics:** View live data such as token reserves, volume, and LP positions via an integrated Subgraph indexer.
+- 📈 **Real-time Pool Analytics:** View pool performance with interactive, real-time charts for price movements, liquidity, and protocol fees via an integrated Subgraph indexer, ensuring accurate insights into trading activity and LP positions.
 
--   🧩 **Modular & Upgradable Contracts:** A clean, modular contract architecture separating the factory, pools, and routing logic.
+- 🧩 **Modular & Battle-tested Contracts:** A clean, modular contract architecture separating the factory, pools, and routing logic.
 
--   🧪 **Token Faucets:** Includes custom faucets to acquire test tokens for experimenting with the platform.
+- 🧪 **Token Faucets:** Includes custom faucets to acquire test tokens for experimenting with the platform.
 
--   🌐 **Full Local Development Stack:** A Docker-based environment that replicates the entire production stack (Hardhat Node, Indexer, Frontend) for seamless offline development and testing.
+- 🌐 **Full Local Development Stack:** A Docker-based environment that replicates the entire production stack (Hardhat Node, Indexer, Frontend) for seamless offline development and testing.
 
 ## Tech Stack
 
@@ -67,17 +68,15 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 4. Push to the branch (`git push origin feature-branch`)
 5. Open a pull request
 
-
 ## Local Development Setup
 
 Follow these steps to set up and run the entire project on your local machine.
 
 ### Prerequisites
 
--   [Node.js](https://nodejs.org/en/) (v18 or later)
--   [pnpm](https://pnpm.io/installation)
--   [Docker](https://www.docker.com/get-started/) and Docker Compose
-
+- [Node.js](https://nodejs.org/en/) (v18 or later)
+- [pnpm](https://pnpm.io/installation)
+- [Docker](https://www.docker.com/get-started/) and Docker Compose
 
 ### 1. Clone the Repository
 
@@ -87,9 +86,11 @@ cd xchangeo
 ```
 
 ### 2. Install Dependencies
+
 Install dependencies for all workspaces (root, client, hardhat).
 
 ### 3. Configure Environment Variables
+
 The client application requires environment variables. Create a `.env.local` file inside the `/client` directory.
 
 ```
