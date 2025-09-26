@@ -6,6 +6,7 @@ import { BTC } from "./btc";
 import { DAI } from "./dai";
 import { ETH } from "./eth";
 import { LINK } from "./link";
+import { LP } from "./lp";
 import { UNKNOWN } from "./unkn";
 import { USDC } from "./usdc";
 import { USDT } from "./usdt";
@@ -15,6 +16,7 @@ const ICONS: Record<string, (_props: SVGProps<SVGSVGElement>) => ReactElement> =
   WETH: ETH,
   HETH: ETH,
   DAI,
+  LP,
   LINK,
   USDT,
   USDC,
@@ -29,7 +31,7 @@ type Props = {
 };
 
 export const TokenLogo = ({ className, id, ticker }: Props) => {
-  const Icon = ICONS[ticker] ?? ICONS.UNKNOWN;
+  const Icon = ICONS[ticker.includes("LP") ? "LP" : ticker] ?? ICONS.UNKNOWN;
 
   return <Icon id={id} className={cn("size-8", className)} />;
 };

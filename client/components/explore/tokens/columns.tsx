@@ -58,7 +58,11 @@ export const columns = (walletTokens: string[], addTokenToWallet: (_token: Token
     id: "actions",
     header: () => <div>Actions</div>,
     cell: info => {
-      const contractAddress = info.getValue().contractAddress;
+      const { contractAddress, ticker } = info.getValue();
+
+      if (ticker.includes("LP")) {
+        return <></>;
+      }
 
       return (
         <div className="flex items-center gap-2 text-right">
