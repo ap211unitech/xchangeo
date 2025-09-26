@@ -8,18 +8,19 @@
     "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ indexer",
     "create-local": "graph create --node http://localhost:8020/ indexer",
     "remove-local": "graph remove --node http://localhost:8020/ indexer",
-    "deploy-local": "node generate-subgraph.js && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 indexer",
+    "deploy-local": "tsx generate-subgraph.js && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 indexer",
     "test": "graph test",
     "clean": "rm -rf build generated data",
-    "ready": "node generate-subgraph.js && pnpm codegen && pnpm build",
+    "ready": "tsx generate-subgraph.js && pnpm codegen && pnpm build",
     "docker:start": "docker compose up"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.96.0",
-    "@graphprotocol/graph-ts": "0.37.0",
-    "@types/node": "^24.0.10"
+    "@graphprotocol/graph-ts": "0.37.0"
   },
   "devDependencies": {
-    "matchstick-as": "0.6.0"
+    "@types/node": "^24.0.10",
+    "matchstick-as": "0.6.0",
+    "tsx": "^4.20.6"
   }
 }

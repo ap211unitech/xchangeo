@@ -7,7 +7,7 @@ const TOKENS = [
     symbol: "USDT",
     maximumCap: 100_000_000,
     faucet: {
-      lockTime: 60 * 1,
+      lockTime: 60 * 5, // 5m
       withdrawalAmount: 5,
     },
   },
@@ -16,7 +16,7 @@ const TOKENS = [
     symbol: "USDC",
     maximumCap: 100_000_000,
     faucet: {
-      lockTime: 60 * 1,
+      lockTime: 60 * 5, // 5m
       withdrawalAmount: 10,
     },
   },
@@ -25,7 +25,7 @@ const TOKENS = [
     symbol: "DAI",
     maximumCap: 50_000_000,
     faucet: {
-      lockTime: 60 * 5,
+      lockTime: 60 * 5, // 5m
       withdrawalAmount: 15,
     },
   },
@@ -34,8 +34,26 @@ const TOKENS = [
     symbol: "WBTC",
     maximumCap: 21_000_000,
     faucet: {
-      lockTime: 60 * 10,
+      lockTime: 60 * 10, // 10m
       withdrawalAmount: 0.005,
+    },
+  },
+  {
+    name: "Wrapped Ether",
+    symbol: "WETH",
+    maximumCap: 5_000_000_000,
+    faucet: {
+      lockTime: 60 * 10, // 10m
+      withdrawalAmount: 0.1,
+    },
+  },
+  {
+    name: "Chainlink",
+    symbol: "LINK",
+    maximumCap: 14_000_000_000,
+    faucet: {
+      lockTime: 60 * 15, // 15m
+      withdrawalAmount: 2,
     },
   },
 ];
@@ -43,7 +61,10 @@ const TOKENS = [
 const POOLS = [
   { tokenA: "USDT", tokenB: "USDC", fee: 5 }, // 0.05% fee for stable pairs
   { tokenA: "USDC", tokenB: "DAI", fee: 5 }, // 0.05% fee for stable pairs
-  { tokenA: "USDT", tokenB: "WBTC", fee: 30 }, // 0.3% fee for a more volatile pair
+  { tokenA: "USDT", tokenB: "WBTC", fee: 50 }, // 0.5% fee for a volatile pair
+  { tokenA: "WETH", tokenB: "USDC", fee: 30 }, // ETH-stable pool
+  { tokenA: "WETH", tokenB: "WBTC", fee: 30 }, // blue-chip volatile pair
+  { tokenA: "LINK", tokenB: "WETH", fee: 30 }, // alt-to-ETH pool
 ];
 
 const DeployModule = buildModule("DeployModule", (m) => {

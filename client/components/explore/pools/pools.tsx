@@ -71,7 +71,7 @@ export const PoolsList = ({ allLiquidityPools }: Props) => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="h-40 space-y-2 text-center">
+              <TableCell colSpan={7} className="h-40 space-y-2 text-center">
                 No pools found.
               </TableCell>
             </TableRow>

@@ -63,7 +63,7 @@ export const TokensList = ({ tokens }: Props) => {
           <TableBody>
             {isBalancesPending ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                <TableCell colSpan={4} className="h-40 space-y-2 text-center">
                   <Loading />
                 </TableCell>
               </TableRow>
@@ -81,7 +81,7 @@ export const TokensList = ({ tokens }: Props) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-40 space-y-2 text-center">
+                <TableCell colSpan={4} className="h-40 space-y-2 text-center">
                   No tokens found
                 </TableCell>
               </TableRow>

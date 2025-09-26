@@ -1,59 +1,10 @@
 import fs from "fs";
 
-const TOKENS = [
-  {
-    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    startBlock: 0,
-  },
-  {
-    address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    startBlock: 0,
-  },
-  {
-    address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    startBlock: 0,
-  },
-  {
-    address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    startBlock: 0,
-  },
-];
+import { TOKENS, FAUCETS, POOLS } from "./contracts";
 
-const FAUCETS = [
-  {
-    address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-    startBlock: 0,
-  },
-  {
-    address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-    startBlock: 0,
-  },
-  {
-    address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-    startBlock: 0,
-  },
-  {
-    address: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-    startBlock: 0,
-  },
-];
+type Contract = { address: string; startBlock: number };
 
-const POOLS = [
-  {
-    address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-    startBlock: 0,
-  },
-  {
-    address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
-    startBlock: 0,
-  },
-  {
-    address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-    startBlock: 0,
-  },
-];
-
-const header = (dataSources) => `
+const header = (dataSources: string) => `
 specVersion: 1.2.0
 indexerHints:
   prune: auto
@@ -62,7 +13,7 @@ schema:
 dataSources:${dataSources}
 `;
 
-const tokenDataSourceTemplate = (token, index) => `
+const tokenDataSourceTemplate = (token: Contract, index: number) => `
   - kind: ethereum
     name: ERC20Token${index === 0 ? "" : "-" + token.address}
     network: sepolia
@@ -87,7 +38,7 @@ const tokenDataSourceTemplate = (token, index) => `
       file: ./src/erc-20-token.ts
 `;
 
-const faucetDataSourceTemplate = (faucet, index) => `
+const faucetDataSourceTemplate = (faucet: Contract, index: number) => `
   - kind: ethereum
     name: Faucet${index === 0 ? "" : "-" + faucet.address}
     network: sepolia
@@ -112,7 +63,7 @@ const faucetDataSourceTemplate = (faucet, index) => `
       file: ./src/faucet.ts
 `;
 
-const liquidityPoolsDataSourceTemplate = (pool, index) => `
+const liquidityPoolsDataSourceTemplate = (pool: Contract, index: number) => `
   - kind: ethereum
     name: ERC20SwapPool${index === 0 ? "" : "-" + pool.address}
     network: sepolia
