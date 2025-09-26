@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 import { ConnectWalletOverlay, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
 import { useAddToWallet, useBalances, useWalletTokens } from "@/hooks";
-import { cn } from "@/lib/utils";
+import { cn, isLpToken } from "@/lib/utils";
 import { TokenMetadata } from "@/types";
 
 import { columns } from "./columns";
@@ -24,8 +24,8 @@ export const TokensList = ({ tokens }: Props) => {
   const filteredTokensWithBalances = useMemo(() => {
     return tokensWithBalances
       .sort((a, b) => {
-        const aIsLP = a.name.includes("LP") || a.ticker.includes("LP");
-        const bIsLP = b.name.includes("LP") || b.ticker.includes("LP");
+        const aIsLP = isLpToken(a);
+        const bIsLP = isLpToken(b);
 
         // if a is LP and b is not → a goes after b → return 1
         // if b is LP and a is not → a goes before b → return -1
@@ -35,8 +35,7 @@ export const TokensList = ({ tokens }: Props) => {
         return 0;
       })
       .filter(token => {
-        const isLP = token.name.includes("LP") || token.ticker.includes("LP");
-        return !(isLP && token.balance === 0);
+        return !(isLpToken(token) && token.balance === 0);
       });
   }, [tokensWithBalances]);
 

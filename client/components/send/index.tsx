@@ -1,12 +1,14 @@
 import { SendIcon } from "lucide-react";
 
 import { ConnectWalletOverlay } from "@/components/ui";
+import { isLpToken } from "@/lib/utils";
 import { appService } from "@/services";
 
 import { SendTokensForm } from "./form";
 
 export const Send = async () => {
   const tokens = await appService.tokenService.getAllTokens();
+  const filteredTokens = tokens.filter(t => !isLpToken(t));
 
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
@@ -23,7 +25,7 @@ export const Send = async () => {
 
       {/* Main Form */}
       <ConnectWalletOverlay className="h-72 md:mx-auto md:max-w-3/4">
-        <SendTokensForm tokens={tokens} />
+        <SendTokensForm tokens={filteredTokens} />
       </ConnectWalletOverlay>
     </section>
   );

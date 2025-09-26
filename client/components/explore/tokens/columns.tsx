@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
+import { isLpToken } from "@/lib/utils";
 import { TokenMetadata, TokenWithBalance } from "@/types";
 
 const columnHelper = createColumnHelper<TokenWithBalance>();
@@ -58,9 +59,10 @@ export const columns = (walletTokens: string[], addTokenToWallet: (_token: Token
     id: "actions",
     header: () => <div>Actions</div>,
     cell: info => {
-      const { contractAddress, ticker } = info.getValue();
+      const token = info.getValue();
+      const { contractAddress } = token;
 
-      if (ticker.includes("LP")) {
+      if (isLpToken(token)) {
         return <></>;
       }
 

@@ -222,3 +222,5 @@ export const getHumanizeValue = (value?: number, maximumFractionDigits?: number)
     return value;
   }
 };
+
+export const isLpToken = (token: TokenMetadata) => token.name.includes("LP") || token.ticker.includes("LP");

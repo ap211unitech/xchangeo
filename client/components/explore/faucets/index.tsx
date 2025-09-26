@@ -1,5 +1,6 @@
 import { Droplets } from "lucide-react";
 
+import { isLpToken } from "@/lib/utils";
 import { appService } from "@/services";
 
 import { FaucetForm } from "./form";
@@ -9,6 +10,8 @@ export const Faucets = async () => {
     await appService.tokenService.getAllTokens(),
     await appService.faucetService.getAllFaucetsMetadata(),
   ]);
+
+  const filteredTokens = tokens.filter(t => !isLpToken(t));
 
   return (
     <section className="mx-auto max-w-[40rem] space-y-10">
@@ -26,7 +29,7 @@ export const Faucets = async () => {
       </div>
 
       {/* Main Form */}
-      <FaucetForm availableTokens={tokens} allFaucetsMetadata={allFaucetsMetadata} />
+      <FaucetForm availableTokens={filteredTokens} allFaucetsMetadata={allFaucetsMetadata} />
     </section>
   );
 };
