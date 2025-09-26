@@ -2,6 +2,7 @@
 
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ChevronsUpDown } from "lucide-react";
+import { useMemo } from "react";
 
 import { ConnectWalletOverlay, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui";
 import { useAddToWallet, useBalances, useWalletTokens } from "@/hooks";
@@ -20,9 +21,28 @@ export const TokensList = ({ tokens }: Props) => {
   const { data: tokensWithBalances = [], isPending: isBalancesPending } = useBalances(tokens);
   const { mutateAsync: addTokenToWallet, isPending: isAddingTokenToWallet } = useAddToWallet();
 
+  const filteredTokensWithBalances = useMemo(() => {
+    return tokensWithBalances
+      .sort((a, b) => {
+        const aIsLP = a.name.includes("LP") || a.ticker.includes("LP");
+        const bIsLP = b.name.includes("LP") || b.ticker.includes("LP");
+
+        // if a is LP and b is not → a goes after b → return 1
+        // if b is LP and a is not → a goes before b → return -1
+        // else keep order → return 0
+        if (aIsLP && !bIsLP) return 1;
+        if (!aIsLP && bIsLP) return -1;
+        return 0;
+      })
+      .filter(token => {
+        const isLP = token.name.includes("LP") || token.ticker.includes("LP");
+        return !(isLP && token.balance === 0);
+      });
+  }, [tokensWithBalances]);
+
   const table = useReactTable({
     columns: columns(walletTokens, addTokenToWallet, isAddingTokenToWallet),
-    data: tokensWithBalances,
+    data: filteredTokensWithBalances,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });

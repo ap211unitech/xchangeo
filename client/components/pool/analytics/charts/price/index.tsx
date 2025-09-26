@@ -32,25 +32,23 @@ export const PriceChart = ({ poolInfo, poolsActivity }: Props) => {
   const chartData = useMemo(() => {
     if (!poolsActivity) return [];
 
-    return poolsActivity
-      .filter(tx => tx.eventType === "Swap")
-      .map(tx => {
-        const reserveA = tx.reserveA;
-        const reserveB = tx.reserveB;
+    return poolsActivity.map(tx => {
+      const reserveA = tx.reserveA;
+      const reserveB = tx.reserveB;
 
-        const price = invertPrice
-          ? reserveB > 0
-            ? reserveA / reserveB
-            : 0 // Price of TokenB in terms of TokenA
-          : reserveA > 0
-            ? reserveB / reserveA
-            : 0; // Price of TokenA in terms of TokenB
+      const price = invertPrice
+        ? reserveB > 0
+          ? reserveA / reserveB
+          : 0 // Price of TokenB in terms of TokenA
+        : reserveA > 0
+          ? reserveB / reserveA
+          : 0; // Price of TokenA in terms of TokenB
 
-        return {
-          timestamp: tx.timestamp * 1000,
-          price,
-        };
-      });
+      return {
+        timestamp: tx.timestamp * 1000,
+        price,
+      };
+    });
   }, [invertPrice, poolsActivity]);
 
   const yAxisDomain = useMemo(() => {
