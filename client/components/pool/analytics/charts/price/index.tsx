@@ -1,7 +1,7 @@
 import { ArrowUpDown } from "lucide-react";
 import moment from "moment";
 import { useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { Button } from "@/components/ui";
 import { PoolActivity, PoolInfo } from "@/types";
@@ -110,8 +110,8 @@ export const PriceChart = ({ poolInfo, poolsActivity }: Props) => {
 
           <defs>
             <linearGradient id="chart-gradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="25%" stopColor="var(--primary)" stopOpacity={0.2} />
-              <stop offset="65%" stopColor="var(--primary)" stopOpacity={0.15} />
+              <stop offset="25%" stopColor="var(--primary)" stopOpacity={0.15} />
+              <stop offset="65%" stopColor="var(--primary)" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <XAxis
@@ -138,7 +138,9 @@ export const PriceChart = ({ poolInfo, poolsActivity }: Props) => {
             tickMargin={10}
           />
           <Tooltip cursor={{ stroke: "var(--muted-foreground)", strokeWidth: 1, strokeDasharray: "3 3" }} content={() => null} />
+          <Legend verticalAlign="top" align="left" wrapperStyle={{ fontSize: "12px", paddingBottom: "10px" }} />
           <Area
+            name="Price"
             type="monotone"
             dataKey="price"
             stroke="var(--primary)"

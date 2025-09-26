@@ -7,10 +7,11 @@ import { usePoolActivity } from "@/hooks";
 import { PoolInfo } from "@/types";
 
 import { Error } from "./error";
+import { LiquidityChart } from "./liquidity";
 import { Loading } from "./loading";
 import { PriceChart } from "./price";
 
-const availableChartTypes = ["Price", "Volume", "Fee"] as const;
+const availableChartTypes = ["Price", "Liquidity", "Fee"] as const;
 type SelectedChartType = (typeof availableChartTypes)[number];
 
 export const Charts = ({ poolInfo }: { poolInfo: PoolInfo }) => {
@@ -22,6 +23,8 @@ export const Charts = ({ poolInfo }: { poolInfo: PoolInfo }) => {
     switch (selectedChartType) {
       case "Price":
         return <PriceChart poolInfo={poolInfo} poolsActivity={poolsActivity} />;
+      case "Liquidity":
+        return <LiquidityChart poolInfo={poolInfo} poolsActivity={poolsActivity} />;
       default:
         return null;
     }
