@@ -28,19 +28,39 @@ export const CumulativeFeesChart = ({ poolsActivity, poolInfo }: Props) => {
   const [hoverData, setHoverData] = useState<ChartHoverData | null>(null);
 
   const chartData = useMemo(() => {
-    if (!poolsActivity) return [];
+    if (!poolsActivity || poolsActivity.length === 0) return [];
 
+    // Group all transactions by day and sum the fees for each day.
+    const dailyTotals = poolsActivity.reduce(
+      (acc, tx) => {
+        // Group by the start of the day to get a consistent timestamp for each day
+        const day = moment(tx.timestamp * 1000)
+          .startOf("day")
+          .valueOf();
+
+        if (!acc[day]) {
+          acc[day] = { timestamp: day, dailyFeesA: 0, dailyFeesB: 0 };
+        }
+        acc[day].dailyFeesA += tx.feesA;
+        acc[day].dailyFeesB += tx.feesB;
+        return acc;
+      },
+      {} as { [key: number]: { timestamp: number; dailyFeesA: number; dailyFeesB: number } },
+    );
+
+    // Convert the daily totals object into a sorted array
+    const sortedDays = Object.values(dailyTotals).sort((a, b) => a.timestamp - b.timestamp);
+
+    // Calculate the cumulative total from the daily sums.
     let cumulativeFeesA = 0;
     let cumulativeFeesB = 0;
 
-    return poolsActivity
-      .toReversed()
-      .map(tx => {
-        cumulativeFeesA += tx.feesA;
-        cumulativeFeesB += tx.feesB;
-
+    return sortedDays
+      .map(day => {
+        cumulativeFeesA += day.dailyFeesA;
+        cumulativeFeesB += day.dailyFeesB;
         return {
-          timestamp: tx.timestamp * 1000,
+          timestamp: day.timestamp,
           totalFeesA: cumulativeFeesA,
           totalFeesB: cumulativeFeesB,
         };

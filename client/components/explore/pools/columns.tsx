@@ -118,7 +118,8 @@ export const columns = (userShares: UserShare[]) =>
           <span>
             {new Intl.NumberFormat("en-US", {
               notation: "standard",
-              maximumFractionDigits: 2,
+              useGrouping: false,
+              maximumFractionDigits: 4,
             }).format(userShares.find(({ poolAddress }) => poolAddress === info.getValue().poolAddress)?.userShare ?? 0)}
             %
           </span>
