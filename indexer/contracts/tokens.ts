@@ -27,4 +27,30 @@ export const TOKENS = isLocalhost
         startBlock: 0,
       },
     ]
-  : [];
+  : // contracts on sepolia
+    [
+      {
+        address: "0x4854F674F5c26FF24Bda3F231177368B45C46aB3",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x50E0F593305f2ba31AfB5F17De6C61390CaD2e4c",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x5C7c5D30402c6f1AA21eC81c8E3CbFe50C38c6B8",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x298858DDcFa8C475d6580b5D2Fcc4d8365A31Fb5",
+        startBlock: 9289313,
+      },
+      {
+        address: "0xeDcFf9982C22f64Afe248b8BD088Fc3c9863A8e3",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x37af3A601301F858F8C1E89426459714eE8B69fe",
+        startBlock: 9289313,
+      },
+    ];

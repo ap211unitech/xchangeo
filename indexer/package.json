@@ -11,6 +11,7 @@
     "deploy-local": "tsx generate-subgraph.js && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 indexer",
     "test": "graph test",
     "clean": "rm -rf build generated data",
+    "ready:testnet": "tsx generate-subgraph.js --network=sepolia && pnpm codegen && pnpm build",
     "ready": "tsx generate-subgraph.js && pnpm codegen && pnpm build",
     "docker:start": "docker compose up"
   },

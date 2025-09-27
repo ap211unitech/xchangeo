@@ -27,4 +27,30 @@ export const FAUCETS = isLocalhost
         startBlock: 0,
       },
     ]
-  : [];
+  : // contracts on sepolia
+    [
+      {
+        address: "0x42dA0Dee05ABE99F11C73d9E1dfC7b43130C35e1",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x99B8b358A1098529c11dc148621b39dDc0168Cc5",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x34e74cE0c019C80643Afaa403f51C92D48A98Ca3",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x306E3bEbe6D82850178269A48B220cbbFCd93311",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x57911E20A857C28E082f30145bBcb1659Fdc7f1F",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x71CaC24D3FfC2987CEFFa2B1e130DEa3D3B913F0",
+        startBlock: 9289313,
+      },
+    ];

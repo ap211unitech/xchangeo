@@ -27,4 +27,30 @@ export const POOLS = isLocalhost
         startBlock: 0,
       },
     ]
-  : [];
+  : // contracts on sepolia
+    [
+      {
+        address: "0x877303A3a0F7d4ce6307834a34168DcC41642afD",
+        startBlock: 9289313,
+      },
+      {
+        address: "0xA391760a43672061297D326F7703223145240989",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x27418f3BaC291d24Fd7Cb252906F20f5Fc006Fd9",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x55FEB15bB7a5e84733C905f6878f96e5e4274995",
+        startBlock: 9289313,
+      },
+      {
+        address: "0xf6F61B54B7bbe655cEAC5Dc6c161AF0d3B5B1C17",
+        startBlock: 9289313,
+      },
+      {
+        address: "0x73676BE2e60aE2600D6F97699Cb0CD6B557E8579",
+        startBlock: 9289313,
+      },
+    ];
