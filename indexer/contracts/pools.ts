@@ -1,26 +1,30 @@
-export const POOLS = [
-  {
-    address: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-    startBlock: 0,
-  },
-  {
-    address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-    startBlock: 0,
-  },
-  {
-    address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
-    startBlock: 0,
-  },
-  {
-    address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
-    startBlock: 0,
-  },
-  {
-    address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
-    startBlock: 0,
-  },
-  {
-    address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
-    startBlock: 0,
-  },
-];
+import { isLocalhost } from "./utils";
+
+export const POOLS = isLocalhost
+  ? [
+      {
+        address: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+        startBlock: 0,
+      },
+      {
+        address: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
+        startBlock: 0,
+      },
+      {
+        address: "0x9A676e781A523b5d0C0e43731313A708CB607508",
+        startBlock: 0,
+      },
+      {
+        address: "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+        startBlock: 0,
+      },
+      {
+        address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+        startBlock: 0,
+      },
+      {
+        address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+        startBlock: 0,
+      },
+    ]
+  : [];
