@@ -131,7 +131,7 @@ cd hardhat
 npx hardhat test # run all unit and integration tests
 npx hardhat compile # compiles all Solidity contracts and generates artifacts (ABI, bytecode, metadata)
 npx hardhat node # keep this running
-npx hardhat ignition deploy ./ignition/modules/index.ts --network localhost
+npx hardhat ignition deploy ./ignition/modules/index.ts --network localhost # add `--verify` to verify contracts
 ```
 
 ```bash
