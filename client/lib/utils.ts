@@ -86,7 +86,15 @@ export const executeGraphQLQuery = async <T>(
 export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | JsonFragment>, customMessages?: Record<string, string>): string {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const e = error as any;
-  const revertData = e?.cause?.error?.data ?? e?.cause?.data ?? e?.error?.data ?? e?.data ?? e?.message;
+  let revertData = e?.cause?.error?.data ?? e?.cause?.data ?? e?.error?.data ?? e?.data ?? e?.message;
+
+  if (typeof revertData === "string") {
+    // Sometimes providers wrap inside a message like "execution reverted: 0x..."
+    const match = revertData.match(/0x[0-9a-fA-F]+/);
+    if (match) {
+      revertData = match[0];
+    }
+  }
 
   try {
     const iface = new Interface(abi);
@@ -96,6 +104,7 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
     }
 
     const parsedError = iface.parseError(revertData);
+    console.log("inside try");
 
     if (!parsedError) {
       return `Transaction reverted`;
@@ -107,7 +116,8 @@ export function parseRevertError(error: Error, abi: ReadonlyArray<Fragment | Jso
 
     const reason = parsedError.args?.description || "Unknown reason";
     return `${parsedError.name}: ${reason}`;
-  } catch {
+  } catch (e) {
+    console.log("here", e);
     return revertData?.toString()?.includes("user rejected action") ? "User denied transaction signature" : "Transaction reverted: Unknown reason.";
   }
 }
