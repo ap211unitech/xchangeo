@@ -80,8 +80,11 @@ export class PoolService implements IPoolService {
     const amountAMin = (BigInt(formattedAmountA) * BigInt(10000 - maxSlippage * 100)) / BigInt(10000);
     const amountBMin = (BigInt(formattedAmountB) * BigInt(10000 - maxSlippage * 100)) / BigInt(10000);
 
-    await tokenAContract.approve(poolAddress, formattedAmountA);
-    await tokenBContract.approve(poolAddress, formattedAmountB);
+    const approveTokenATx: TransactionResponse = await tokenAContract.approve(poolAddress, formattedAmountA);
+    await approveTokenATx.wait();
+
+    const approveTokenBTx: TransactionResponse = await tokenBContract.approve(poolAddress, formattedAmountB);
+    await approveTokenBTx.wait();
 
     const tx: TransactionResponse = await poolContract.addLiquidity(formattedAmountA, formattedAmountB, amountAMin, amountBMin);
     return tx;
@@ -120,7 +123,8 @@ export class PoolService implements IPoolService {
     const userBalance = await lpTokenContract.balanceOf(signer.address);
     const lpTokensToWithdraw = (BigInt(userBalance) * BigInt(percentageToWithdraw)) / BigInt(100);
 
-    await lpTokenContract.approve(await poolAddress, lpTokensToWithdraw);
+    const approveLpTokenTx: TransactionResponse = await lpTokenContract.approve(await poolAddress, lpTokensToWithdraw);
+    await approveLpTokenTx.wait();
 
     const tx: TransactionResponse = await poolContract.removeLiquidity(lpTokensToWithdraw);
     return tx;
@@ -297,7 +301,8 @@ export class PoolService implements IPoolService {
 
     const minAmountOut = (BigInt(formattedAmountOut) * BigInt(10000 - maxSlippage * 100)) / BigInt(10000);
 
-    await tokenInContract.approve(poolAddress, formattedAmountIn);
+    const approveTokenInTx: TransactionResponse = await tokenInContract.approve(poolAddress, formattedAmountIn);
+    await approveTokenInTx.wait();
 
     const tx: TransactionResponse = await poolContract.swap(tokenIn, formattedAmountIn, minAmountOut);
     return tx;
