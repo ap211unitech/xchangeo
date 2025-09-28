@@ -11,7 +11,7 @@ export * from "./serverTags";
 export const PREFIX = "@Xchangeo";
 
 export const NATIVE_TOKEN: TokenMetadata = {
-  name: CONFIG.IN_PRODUCTION ? "Ether" : "Hardhat Ether",
+  name: CONFIG.IN_PRODUCTION ? "Ethereum" : "Hardhat Ether",
   ticker: CONFIG.IN_PRODUCTION ? "ETH" : "HETH",
   contractAddress: ZeroAddress,
 };

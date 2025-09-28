@@ -10,10 +10,11 @@ import { LP } from "./lp";
 import { UNKNOWN } from "./unkn";
 import { USDC } from "./usdc";
 import { USDT } from "./usdt";
+import { WETH } from "./weth";
 
 const ICONS: Record<string, (_props: SVGProps<SVGSVGElement>) => ReactElement> = {
   ETH,
-  WETH: ETH,
+  WETH,
   HETH: ETH,
   DAI,
   LP,

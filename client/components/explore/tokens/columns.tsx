@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button, TokenLogo } from "@/components/ui";
+import { NATIVE_TOKEN } from "@/constants";
 import { isLpToken } from "@/lib/utils";
 import { TokenMetadata, TokenWithBalance } from "@/types";
 
@@ -23,7 +24,13 @@ export const columns = (walletTokens: string[], addTokenToWallet: (_token: Token
       return (
         <div
           className="hover:text-primary flex items-center gap-2"
-          onClick={() => window.open(`https://sepolia.etherscan.io/address/${contractAddress}`)}
+          onClick={() =>
+            window.open(
+              contractAddress === NATIVE_TOKEN.contractAddress
+                ? "https://sepolia.etherscan.io"
+                : `https://sepolia.etherscan.io/address/${contractAddress}`,
+            )
+          }
         >
           <TokenLogo id={`token-${contractAddress}`} ticker={ticker} />
           <div className="flex flex-col">
@@ -68,7 +75,7 @@ export const columns = (walletTokens: string[], addTokenToWallet: (_token: Token
 
       return (
         <div className="flex items-center gap-2 text-right">
-          {!!contractAddress && !walletTokens.includes(contractAddress) && (
+          {!!contractAddress && !walletTokens.includes(contractAddress) && contractAddress !== NATIVE_TOKEN.contractAddress && (
             <Button disabled={isAddingTokenToWallet} onClick={() => addTokenToWallet(info.getValue())} variant="secondary" size="sm">
               <Plus className="size-4" /> Add to Wallet
             </Button>
@@ -83,9 +90,11 @@ export const columns = (walletTokens: string[], addTokenToWallet: (_token: Token
               Send
             </Link>
           </Button>
-          <Button size="sm" asChild>
-            <Link href={`/explore/faucets?token=${info.getValue().contractAddress}`}>Get Tokens</Link>
-          </Button>
+          {contractAddress !== NATIVE_TOKEN.contractAddress && (
+            <Button size="sm" asChild>
+              <Link href={`/explore/faucets?token=${info.getValue().contractAddress}`}>Get Tokens</Link>
+            </Button>
+          )}
         </div>
       );
     },
