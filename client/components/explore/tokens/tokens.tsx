@@ -49,7 +49,7 @@ export const TokensList = ({ tokens }: Props) => {
   return (
     <ConnectWalletOverlay>
       <div className="overflow-hidden rounded-xl border">
-        <Table>
+        <Table className={cn(isBalancesPending && "overflow-hidden")}>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className="!bg-muted">

@@ -24,7 +24,7 @@ export const Transactions = () => {
 
   return (
     <div className="overflow-hidden rounded-xl border">
-      <Table>
+      <Table className={cn(isLoading && "overflow-hidden")}>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="!bg-muted">

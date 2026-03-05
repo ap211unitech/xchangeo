@@ -24,7 +24,7 @@ export const Transactions = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <div className="max-h-[40rem] overflow-x-hidden overflow-y-auto rounded-xl border">
-      <Table>
+      <Table className={cn(isLoading && "overflow-hidden")}>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id} className="!bg-muted">
